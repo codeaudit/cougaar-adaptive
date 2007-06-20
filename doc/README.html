@@ -7,20 +7,38 @@ with a running Java program, by invoking methods on objects.
 </p>
 
 <p>To use Bean Shell, include the following in your society xml:
-
+</p>
 <pre>
-  <i> Under Construction </i>
+<code>
+  &lt;component class="org.cougaar.tutorials.bsh.BeanShellPlugin"/&gt;
+</code>
 </pre>
+	
+	<p>
+The interactive variable <code>component</code> will be bound to the plugin
+		itself.  The interactive variable <code>sb</code> will be bound
+		to its ServiceBroker.
+</p>
+	
+	<p>
+		Example interaction (cut-and-pasted from a BeanShell window):
+	</p>
+	<pre>
+    <i>bsh %</i> import org.cougaar.core.node.NodeIdentificationService;
+    <i>bsh %</i> nis = sb.getService(component, NodeIdentificationService.class, null);
+    <i>&lt;org.cougaar.core.agent.AgentManager$3@8c8d17&gt;</i>
+    <i>bsh %</i> nis.getMessageAddress();
+    <i>&lt;Node1&gt;</i>
 
+		</pre>
 
-
-
-<a name="support">
+<a name="support"></a>
 <h2>Support:</h2>
 If you have any questions or comments, please:<ol>
-  <li>Subscribe to the cougaar-developers mailing list:<br>
+  <li>Subscribe to the cougaar-developers mailing list:
        &nbsp;&nbsp;<a href="http://cougaar.org/mailman/listinfo/cougaar-developers">http://cougaar.org/mailman/listinfo/cougaar-developers</a></li>
-  <li>Then send email to:<br>
-       &nbsp;&nbsp;<a href="mailto:cougaar-developers@cougaar.org">cougaar-developers@cougaar.org</a>
+  <li>Then send email to:
+       &nbsp;&nbsp;<a href="mailto:cougaar-developers@cougaar.org">cougaar-developers@cougaar.org</a></li>
 </ol>
 </body>
+	</html>
