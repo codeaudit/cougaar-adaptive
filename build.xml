@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Sample build script for the Cougaar sample debugging Tools.
+-->
+<project name="tools" basedir="." default="dist">
+
+  <property environment="env"/>
+  <property name="cougaar.install.path" value="${env.COUGAAR_INSTALL_PATH}" />
+  <property name="cougaar.home" value="${env.COUGAAR_HOME}" />
+
+  <!--- Configure all required paths -->
+  <property name="src.dir" value="${basedir}/src" description="Java source files" />
+  <property name="build.dir" value="${basedir}/tmp" description="Class files" />
+  <property name="dist.dir" value="${basedir}/lib" description="Generated jars" />
+
+  <property name="cip.lib" value="${cougaar.install.path}/lib"/>
+  <property name="cip.sys" value="${cougaar.install.path}/sys"/>
+  <property name="local.lib" value="sys"/>
+
+  <!--- Compiler properties -->
+  <property name="compile.deprecation" value="true" />
+  <property name="compile.debug" value="on" />
+  <property name="compile.optimize" value="off" />
+
+  <path id="sys.classpath">
+    <!-- none from ${local.lib} -->
+  </path>
+  <path id="cougaar.lib.classpath">
+    <pathelement location="${cip.lib}/bootstrap.jar" />
+    <pathelement location="${cip.lib}/util.jar" />
+    <pathelement location="${cip.lib}/core.jar" />
+  </path>
+  <path id="cougaar.sys.classpath">
+    <pathelement location="${cip.sys}/bsh.jar" />
+  </path>
+
+  <path id="compile.classpath">
+    <path refid="sys.classpath" />
+    <path refid="cougaar.lib.classpath" />
+    <path refid="cougaar.sys.classpath" />
+  </path>
+
+  <!-- Load user defaults -->
+  <property file="${user.home}/.${ant.project.name}-build.properties" />
+  <property file="${user.home}/.build.properties" />	
+
+  <patternset id="ps.jar.extras">
+    <include name="**/*.xml"/>
+    <include name="**/*.dtd"/>
+    <include name="**/*.properties"/>
+    <include name="**/*.png"/>
+  </patternset>
+
+  <target name="init" description="Initialize the build env.  Check for required properties">
+    <fail unless="cougaar.install.path">		
+      You must define a 'cougaar.install.path' property.  
+      Create a '.build.properties' file in your home dir with the property.
+      Line format ==> cougaar.install.path=[your path]		
+    </fail>
+
+    <echo message="Using COUGAAR_INSTALL_PATH: ${cougaar.install.path}"/>
+  </target>
+
+  <target name="prepare" depends="init" description="Prepares for building, creates required directories">
+    <tstamp />
+
+    <mkdir dir="${build.dir}" description="Creates the build directory for class files" />
+    <mkdir dir="${dist.dir}" description="Creates the dist directory for jar files" />
+  </target>
+
+  <target name="compile" depends="prepare" description="Compiles all source files.">
+    <javac srcdir="${src.dir}" destdir="${build.dir}" debug="${compile.debug}" deprecation="${compile.deprecation}" optimize="${compile.optimize}" encoding="ISO-8859-1" includeantruntime="no">
+      <classpath>
+	<path refid="compile.classpath" />
+      </classpath>
+    </javac>
+    <copy todir="${build.dir}" >
+      <fileset dir="${src.dir}">
+        <patternset refid="ps.jar.extras"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="dist" depends="compile" description="Creates a jar file for this module.">
+    <jar jarfile="${dist.dir}/${ant.project.name}.jar" casesensitive="yes">
+      <manifest>
+        <attribute name="Application-Title" value="Cougaar - ${ant.project.name}" />
+        <attribute name="Built-By" value="${user.name}" />
+        <attribute name="Build-Date" value="${TODAY}" />
+        <attribute name="Implementation-Version" value="1" />
+      </manifest>
+      <fileset dir="${build.dir}" />
+    </jar>
+  </target>
+
+  <target name="install" depends="dist" description="Creates jar and copies it and sys jars to $CIP">
+    <copy todir="${cip.sys}">
+      <fileset dir="${local.lib}"/>
+    </copy>
+    <copy file="${dist.dir}/${ant.project.name}.jar" todir="${cip.lib}"/>
+  </target>
+
+  <target name="clean" depends="" description="Deletes all class files and all module generated jars">
+    <delete dir="${build.dir}" />
+    <delete file="${dist.dir}/${ant.project.name}.jar" />
+  </target>
+</project>
