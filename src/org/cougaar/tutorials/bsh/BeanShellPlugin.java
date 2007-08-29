@@ -25,7 +25,7 @@
  */
 package org.cougaar.tutorials.bsh;
 
-import org.cougaar.core.qos.metrics.ParameterizedPlugin;
+import org.cougaar.core.plugin.ParameterizedPlugin;
 
 /**
  * @author jzinky
