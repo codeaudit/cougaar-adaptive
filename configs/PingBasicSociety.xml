@@ -1,0 +1,36 @@
+<?xml version='1.0'?>
+
+<!--
+Single-node "ping" society definition.
+-->
+<society>
+
+  <node name="Node1">
+  <!--  
+      <component class="org.cougaar.core.qos.rss.ConfigFinderDataFeedComponent"
+                  insertionpoint="Node.AgentManager.Agent.MetricsServices.Component">
+        <argument name="name" value="sites"/>
+        <argument name="url" value="file:sites.conf"/>
+      </component>
+  -->
+
+    <agent name="A">
+      <!-- This plugin sends the ping to agent "B" -->
+      <component class="org.cougaar.demo.ping.PingSender">
+        <argument name="target" value="B"/>
+      </component>
+
+      <!-- Our servlet to view the blackboard -->
+      <component class="org.cougaar.demo.ping.PingServlet">
+        <argument name="path" value="/ping"/>
+      </component>
+    </agent>
+
+    <agent name="B">
+      <!-- This plugin replies to pings from any sender -->
+      <component class="org.cougaar.demo.ping.PingReceiver"/>
+    </agent>
+
+  </node>
+
+</society>
