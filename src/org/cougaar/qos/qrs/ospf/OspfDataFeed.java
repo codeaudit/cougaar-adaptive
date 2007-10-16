@@ -48,7 +48,6 @@ import org.snmp4j.smi.OID;
 import org.snmp4j.smi.OctetString;
 import org.snmp4j.smi.Variable;
 import org.snmp4j.smi.VariableBinding;
-import org.snmp4j.tools.console.SnmpRequest;
 
 /**
  * @author jzinky
@@ -59,7 +58,7 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
     private static final String TRANSFORM_ARG = "--transform=";
     
     private final Logger log;
-    private final SnmpRequest request;
+    private final SimpleSnmpRequest request;
     private final long pollPeriodMillis;
     private final Map<String, SiteAddress> peerSites;
     private final OspfMetricTransform transform;
@@ -92,7 +91,7 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
         transform = tf;
         String[] snmpArgs = new String[snmpArgList.size()];
         snmpArgList.toArray(snmpArgs);
-        request = new SnmpRequest(snmpArgs);
+        request = new SimpleSnmpRequest(snmpArgs);
         
         RSSUtils.schedule(new SiteFinder(), 0);
     }
