@@ -18,7 +18,6 @@
   _##
   _##########################################################################*/
 
-
 package org.cougaar.qos.qrs.ospf;
 
 import java.io.IOException;
@@ -79,6 +78,7 @@ import org.snmp4j.util.TreeUtils;
 public class SimpleSnmpRequest {
     private final Logger log = Logging.getLogger(getClass());
     private final PDUv1 v1TrapPDU = new PDUv1();
+    private final TimeTicks sysUpTime = new TimeTicks(0);
     private Vector<VariableBinding> vbs = new Vector<VariableBinding>();
     private Target target;
     private Address address;
@@ -104,7 +104,6 @@ public class SimpleSnmpRequest {
     private int operation = SnmpRequest.DEFAULT;
     private int pduType = PDU.GETNEXT;
     // private boolean useDenseTableOperation = false;
-    private TimeTicks sysUpTime = new TimeTicks(0);
 
     public SimpleSnmpRequest(String[] args) {
         // Set the default counter listener to return proper USM and MP error
@@ -115,7 +114,7 @@ public class SimpleSnmpRequest {
         int paramStart = parseArgs(args);
         if (paramStart >= args.length) {
             // printUsage();
-            // TODO: Log something
+            log.error("Weird argument parsing error");
             return;
         } else {
             checkOptions();
@@ -127,33 +126,31 @@ public class SimpleSnmpRequest {
             }
         }
     }
-    
+
     private Vector<VariableBinding> getVariableBindings(String[] args, int position) {
-        Vector<VariableBinding> v = new Vector<VariableBinding>(args.length-position+1);
-        for (int i=position; i<args.length; i++) {
+        Vector<VariableBinding> v = new Vector<VariableBinding>(args.length - position + 1);
+        for (int i = position; i < args.length; i++) {
             String oid = args[i];
             char type = 'i';
             String value = null;
             int equal = oid.indexOf("={");
             if (equal > 0) {
                 oid = args[i].substring(0, equal);
-                type = args[i].charAt(equal+2);
-                value = args[i].substring(args[i].indexOf('}')+1);
-            }
-            else if (oid.indexOf('-') > 0) {
+                type = args[i].charAt(equal + 2);
+                value = args[i].substring(args[i].indexOf('}') + 1);
+            } else if (oid.indexOf('-') > 0) {
                 StringTokenizer st = new StringTokenizer(oid, "-");
                 if (st.countTokens() != 2) {
-                    throw new IllegalArgumentException("Illegal OID range specified: '"+
-                                                       oid);
+                    throw new IllegalArgumentException("Illegal OID range specified: '" + oid);
                 }
                 oid = st.nextToken();
                 VariableBinding vbLower = new VariableBinding(new OID(oid));
                 v.add(vbLower);
                 long last = Long.parseLong(st.nextToken());
                 long first = vbLower.getOid().lastUnsigned();
-                for (long k=first+1; k<=last; k++) {
-                    OID nextOID = new OID(vbLower.getOid().getValue(), 0,
-                                          vbLower.getOid().size()-1);
+                for (long k = first + 1; k <= last; k++) {
+                    OID nextOID =
+                            new OID(vbLower.getOid().getValue(), 0, vbLower.getOid().size() - 1);
                     nextOID.appendUnsigned(k);
                     VariableBinding next = new VariableBinding(nextOID);
                     v.add(next);
@@ -195,8 +192,8 @@ public class SimpleSnmpRequest {
                         variable = new IpAddress(value);
                         break;
                     default:
-                        throw new IllegalArgumentException("Variable type "+type+
-                        " not supported");
+                        throw new IllegalArgumentException("Variable type " + type
+                                + " not supported");
                 }
                 vb.setVariable(variable);
             }
@@ -210,7 +207,7 @@ public class SimpleSnmpRequest {
         int colon = transportAddress.indexOf(':');
         if (colon > 0) {
             transport = transportAddress.substring(0, colon);
-            transportAddress = transportAddress.substring(colon+1);
+            transportAddress = transportAddress.substring(colon + 1);
         }
         // set default port
         if (transportAddress.indexOf('/') < 0) {
@@ -218,67 +215,54 @@ public class SimpleSnmpRequest {
         }
         if (transport.equalsIgnoreCase("udp")) {
             return new UdpAddress(transportAddress);
-        }
-        else if (transport.equalsIgnoreCase("tcp")) {
+        } else if (transport.equalsIgnoreCase("tcp")) {
             return new TcpAddress(transportAddress);
         }
-        throw new IllegalArgumentException("Unknown transport "+transport);
+        throw new IllegalArgumentException("Unknown transport " + transport);
     }
-    
+
     private void checkOptions() {
-        if ((operation == SnmpRequest.WALK) &&
-                ((pduType != PDU.GETBULK) && (pduType != PDU.GETNEXT))) {
-            throw new IllegalArgumentException(
-                                               "Walk operation is not supported for PDU type: "+
-                                               PDU.getTypeString(pduType));
+        if (operation == SnmpRequest.WALK && pduType != PDU.GETBULK && pduType != PDU.GETNEXT) {
+            throw new IllegalArgumentException("Walk operation is not supported for PDU type: "
+                    + PDU.getTypeString(pduType));
+        } else if (operation == SnmpRequest.WALK && vbs.size() != 1) {
+            throw new IllegalArgumentException("There must be exactly one OID supplied for walk operations");
         }
-        else if ((operation == SnmpRequest.WALK) && (vbs.size() != 1)) {
-            throw new IllegalArgumentException(
-            "There must be exactly one OID supplied for walk operations");
-        }
-        if ((pduType == PDU.V1TRAP) && (version != SnmpConstants.version1)) {
-            throw new IllegalArgumentException(
-            "V1TRAP PDU type is only available for SNMP version 1");
+        if (pduType == PDU.V1TRAP && version != SnmpConstants.version1) {
+            throw new IllegalArgumentException("V1TRAP PDU type is only available for SNMP version 1");
         }
     }
 
     private void checkTrapVariables(Vector<VariableBinding> vbs) {
-        if ((pduType == PDU.INFORM) ||
-                (pduType == PDU.TRAP)) {
-            if ((vbs.size() == 0) ||
-                    ((vbs.size() > 1) &&
-                            (!vbs.get(0).getOid().equals(SnmpConstants.
-                                                                             sysUpTime)))) {
+        if (pduType == PDU.INFORM || pduType == PDU.TRAP) {
+            if (vbs.size() == 0 || vbs.size() > 1
+                    && !vbs.get(0).getOid().equals(SnmpConstants.sysUpTime)) {
                 vbs.add(0, new VariableBinding(SnmpConstants.sysUpTime, sysUpTime));
             }
-            if ((vbs.size() == 1) ||
-                    ((vbs.size() > 2) &&
-                            (!vbs.get(1).getOid().equals(SnmpConstants.
-                                                                             snmpTrapOID)))) {
+            if (vbs.size() == 1 || vbs.size() > 2
+                    && !vbs.get(1).getOid().equals(SnmpConstants.snmpTrapOID)) {
                 vbs.add(1, new VariableBinding(SnmpConstants.snmpTrapOID, trapOID));
             }
         }
     }
-    
+
     private String nextOption(String[] args, int position) {
-        if (position+1 >= args.length) {
-            throw new IllegalArgumentException("Missing option value for " +
-                                               args[position]);
+        if (position + 1 >= args.length) {
+            throw new IllegalArgumentException("Missing option value for " + args[position]);
         }
-        return args[position+1];
+        return args[position + 1];
     }
-    
+
     private OctetString createOctetString(String s) {
         OctetString octetString;
         if (s.startsWith("0x")) {
             octetString = OctetString.fromHexString(s.substring(2), ':');
-        }
-        else {
+        } else {
             octetString = new OctetString(s);
         }
         return octetString;
     }
-    
+
     private int parseArgs(String[] args) {
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-a")) {
@@ -308,7 +292,8 @@ public class SimpleSnmpRequest {
                 // localEngineID = createOctetString(nextOption(args, i++));
             } else if (args[i].equals("-e")) {
                 log.error("-e is not supported");
-                // authoritativeEngineID = createOctetString(nextOption(args, i++));
+                // authoritativeEngineID = createOctetString(nextOption(args,
+                // i++));
             } else if (args[i].equals("-E")) {
                 contextEngineID = createOctetString(nextOption(args, i++));
             } else if (args[i].equals("-n")) {
