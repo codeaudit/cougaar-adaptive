@@ -17,7 +17,7 @@ Single-node "ping" society definition.
                   insertionpoint="Node.AgentManager.Agent.MetricsServices.Component">
         <argument name="name" value="ospf"/>
         <argument name="class" value="org.cougaar.qos.qrs.ospf.OspfDataFeed"/>
-        <argument name="args" value="-c public -v 1 hops.bbn.com"/>
+        <argument name="args" value="--poll-period=10000 --transform=org.cougaar.qos.qrs.ospf.UnityTransform -c public -v 1 hops.bbn.com"/>
       </component>
       
     <agent name="A">
