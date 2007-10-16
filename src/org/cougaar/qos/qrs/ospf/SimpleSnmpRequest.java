@@ -507,21 +507,21 @@ public class SimpleSnmpRequest {
                 if (e.getVariableBindings() != null) {
                     counts.objects += e.getVariableBindings().length;
                     for (int i = 0; i < e.getVariableBindings().length; i++) {
-                        System.out.println(e.getVariableBindings()[i].toString());
+                        log.info(e.getVariableBindings()[i].toString());
                     }
                 }
                 return true;
             }
 
             public void finished(TreeEvent e) {
-                System.out.println();
-                System.out.println("Total requests sent:    " + counts.requests);
-                System.out.println("Total objects received: " + counts.objects);
-                System.out.println("Total walk time:        "
+                log.info("Total requests sent:    " + counts.requests);
+                log.info("Total objects received: " + counts.objects);
+                log.info("Total walk time:        "
                         + (System.currentTimeMillis() - startTime) + " milliseconds");
                 if (e.isError()) {
-                    System.err.println("The following error occurred during walk:");
-                    System.err.println(e.getErrorMessage());
+                    
+                    log.error("The following error occurred during walk:");
+                    log.error(e.getErrorMessage());
                 }
             }
         });
