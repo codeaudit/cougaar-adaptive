@@ -6,10 +6,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/qos"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/qrs"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/util"/>
-	<classpathentry kind="lib" path="lib/SNMP4J.jar" sourcepath="/Data/snmp4j/src">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/Data/snmp4j/doc/"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="lib/SNMP4J.jar"/>
 	<classpathentry kind="output" path="tmp/classes"/>
 </classpath>
