@@ -15,4 +15,4 @@ log4j.appender.A1=org.apache.log4j.ConsoleAppender
 #  -Dorg.cougaar.util.log.log4j.appender.A1.File=foo.log
 
 # optionally enable logging categories, e.g.:
-#log4j.category.org.cougaar.core=INFO
+log4j.category.org.cougaar.qos.qrs.ospf=INFO
