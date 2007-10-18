@@ -239,7 +239,7 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
                 OID oid = binding.getOid();
                 if (oid.startsWith(ROSPF_METRIC_NEIGHBOR_OID)) {
                     int offset = ROSPF_METRIC_NEIGHBOR_OID.size();
-                    if (oid.size() == offset+4) {
+                    if (oid.size() == offset+5) {
                         byte[] bytes = oid.toByteArray();
                         byte[] addressBytes = new byte[4];
                         for (int i = 0; i < 4; i++) {
