@@ -59,8 +59,7 @@ public class IndirectBlackOspfDataFeed extends SimpleQueueingDataFeed implements
     private String[] command;
     private PrintStream printer;
     private BufferedReader inReader;
-    private InputStream stderr;
-    
+
     public IndirectBlackOspfDataFeed(String[] args) {
         log = Logging.getLogger(getClass());
         for (String arg : args) {
@@ -154,14 +153,13 @@ public class IndirectBlackOspfDataFeed extends SimpleQueueingDataFeed implements
                 OutputStream stdin = p.getOutputStream();
                 printer = new PrintStream(stdin);
                 InputStream stdout = p.getInputStream();
-                stderr = p.getErrorStream();
                 inReader = new BufferedReader(new InputStreamReader(stdout));
                 String line;
                 while ((line=inReader.readLine()) != null) {
                     if (line.startsWith("User Access Verification")) {
                         inReader.readLine(); // skip blank line
                         char[] prompt = new char[10];
-                        int count = inReader.read(prompt);
+                        inReader.read(prompt);
                         printer.println(password);
                         printer.flush();
                         inReader.readLine(); // skip blank line
