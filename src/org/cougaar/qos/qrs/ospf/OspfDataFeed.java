@@ -28,6 +28,7 @@ package org.cougaar.qos.qrs.ospf;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,14 +50,15 @@ import org.snmp4j.smi.VariableBinding;
 public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
     private static final String POLL_PERIOD_ARG = "--poll-period=";
     private static final String TRANSFORM_ARG = "--transform=";
-    private static final OID PREFIX_OID = new OID("1.3.6.1.2.1.14.10.1.12");
+    private static final OID ROSPF_METRIC_NEIGHBOR_OID = new OID("1.3.6.1.2.1.14.10.1.12");
     private static final Logger log = Logging.getLogger(OspfDataFeed.class);
     
-    private SimpleSnmpRequest request;
+   
     private long pollPeriodMillis;
     private Map<String, SiteAddress> peerSites;
     private OspfMetricTransform transform;
     private SiteAddress mySite;
+    private String[] snmpArgs;
     
     public OspfDataFeed(String[] feedArgs) {
         peerSites = new HashMap<String, SiteAddress>();
@@ -80,18 +82,25 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
                 snmpArgList.add(arg);
             }
         }
-        String[] snmpArgs = new String[snmpArgList.size()];
+        snmpArgs = new String[snmpArgList.size()];
         snmpArgList.toArray(snmpArgs);
-        try {
-            request = new SimpleSnmpRequest(snmpArgs, PREFIX_OID);
-        } catch (RuntimeException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-            request = null;
-            return;
+        
+        String[] testOIDs = {
+                "1.3.6.1.2.1.4.21.1.1",
+                "1.3.6.1.2.1.4.21.1.7",
+                "1.3.6.1.2.1.4.21.1.11",
+        };
+        
+        for (String oidString : testOIDs) {
+            List<OID> oids = Collections.singletonList(new OID(oidString));
+            SimpleSnmpRequest request = new SimpleSnmpRequest(snmpArgs, oids);
+            SynchronousLoggingListener listener = new SynchronousLoggingListener();
+            log.shout("Starting " + oids.get(0).toString());
+            listener.send(request);
+            log.shout("Ending " + oids.get(0).toString());
         }
         
-        RSSUtils.schedule(new SiteFinder(), 0);
+        // RSSUtils.schedule(new SiteFinder(), 0);
     }
     
     private String makeKey(SiteAddress destination) {
@@ -101,8 +110,6 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
         + "Capacity_Max";
     }
     
-    
-    
     private void pushResults(InetAddress dest, long linkMetric) {
         // XXX: where is the net mask?
         SiteAddress destination = SiteAddress.getSiteAddress(dest.getHostAddress());
@@ -111,7 +118,13 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
         newData(key, value, null);
     }
     
-   
+    private class SynchronousLoggingListener extends SynchronousListener {
+        public void walkEvent(VariableBinding[] bindings) {
+            for (VariableBinding binding : bindings) {
+                log.shout(binding.toString());
+            }
+        }
+    }
     
     /**
      * Figure out our site, and the sites we talk to
@@ -142,14 +155,13 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
         }
     }
     
-    
-    private static final class NeighborMetricListener implements WalkListener {
+    private final class NeighborMetricListener implements WalkListener {
         private final Map<InetAddress, Long> results = new HashMap<InetAddress, Long>();
         
-        public void walkEventFired(VariableBinding[] bindings) {
+        public void walkEvent(VariableBinding[] bindings) {
             for (VariableBinding binding : bindings) {
                 OID oid = binding.getOid();
-                int offset = PREFIX_OID.size();
+                int offset = ROSPF_METRIC_NEIGHBOR_OID.size();
                 byte[] addressBytes = new byte[4];
                 for (int i=0; i<4; i++) {
                     addressBytes[i] = (byte) oid.get(offset+i);
@@ -168,8 +180,10 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
             }
         }
 
-        public Map<InetAddress, Long> getResults() {
-            return results;
+        public void walkCompletion(boolean success) {
+            for (Map.Entry<InetAddress, Long> entry : results.entrySet()) {
+                pushResults(entry.getKey(), entry.getValue());
+            }
         }
     }
     
@@ -179,14 +193,22 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
      * 
      */
     private final class NeighborPoller implements Runnable {
+        private SimpleSnmpRequest request;
+        
+        public NeighborPoller() {
+            List<OID> oids = Collections.singletonList(ROSPF_METRIC_NEIGHBOR_OID);
+            try {
+                request = new SimpleSnmpRequest(snmpArgs, oids);
+            } catch (RuntimeException e1) {
+                log.error(e1.getMessage(), e1);
+                return;
+            }
+        }
+        
         public void run() {
             try {
                 NeighborMetricListener body = new NeighborMetricListener();
                 request.send(body);
-                Map<InetAddress, Long> results = body.getResults();
-                for (Map.Entry<InetAddress, Long> entry : results.entrySet()) {
-                    pushResults(entry.getKey(), entry.getValue());
-                }
             } catch (IOException e) {
                 log.error("", e);
             }

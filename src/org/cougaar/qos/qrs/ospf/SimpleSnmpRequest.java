@@ -21,6 +21,7 @@
 package org.cougaar.qos.qrs.ospf;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -105,13 +106,15 @@ public class SimpleSnmpRequest {
     private int pduType = PDU.GETNEXT;
     // private boolean useDenseTableOperation = false;
 
-    public SimpleSnmpRequest(String[] args,  OID node) {
+    public SimpleSnmpRequest(String[] args, List<OID> nodes) {
         // Set the default counter listener to return proper USM and MP error
         // counters.
         CounterSupport.getInstance().addCounterListener(new DefaultCounterListener());
         
-        if (node != null) {
-            vbs.add(new VariableBinding(new OID(node)));
+        if (nodes != null) {
+            for (OID node : nodes) {
+                vbs.add(new VariableBinding(node));
+            }
         } else {
             vbs.add(new VariableBinding(new OID("1.3.6")));
         }
@@ -487,10 +490,13 @@ public class SimpleSnmpRequest {
         PDU response = null;
         if (operation == SnmpRequest.WALK) {
             WalkListener body = new WalkListener() {
-                public void walkEventFired(VariableBinding[] bindings) {
+                public void walkEvent(VariableBinding[] bindings) {
                     for (VariableBinding binding : bindings) {
                         log.info(binding.toString());
                     }
+                }
+
+                public void walkCompletion(boolean success) {
                 }
             };
             walk(snmp, request, target, body);
@@ -544,21 +550,23 @@ public class SimpleSnmpRequest {
                 VariableBinding[] variableBindings = e.getVariableBindings();
                 if (variableBindings != null) {
                     counts.objects += variableBindings.length;
-                    body.walkEventFired(variableBindings);
+                    body.walkEvent(variableBindings);
                 }
                 return true;
             }
 
             public void finished(TreeEvent e) {
-                log.info("Total walk time:        "
-                         + (System.currentTimeMillis() - startTime) + " milliseconds");
-                log.info("Total requests sent:    " + counts.requests);
-                log.info("Total objects received: " + counts.objects);
+                if (log.isInfoEnabled()) {
+                    log.info("Total walk time:        " + (System.currentTimeMillis() - startTime)
+                            + " milliseconds");
+                    log.info("Total requests sent:    " + counts.requests);
+                    log.info("Total objects received: " + counts.objects);
+                }
                 if (e.isError()) {
-                    
                     log.error("The following error occurred during walk:");
                     log.error(e.getErrorMessage());
                 }
+                body.walkCompletion(!e.isError());
             }
         });
         return response;

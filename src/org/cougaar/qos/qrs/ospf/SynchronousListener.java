@@ -25,9 +25,38 @@
  */
 package org.cougaar.qos.qrs.ospf;
 
-import org.snmp4j.smi.VariableBinding;
+import java.io.IOException;
 
-public interface WalkListener {
-    public void walkEvent(VariableBinding[] bindings);
-    public void walkCompletion(boolean success);
+public abstract class SynchronousListener implements WalkListener {
+    private final Object lock;
+    
+    public SynchronousListener() {
+        this.lock = new Object();
+    }
+    
+    public void walkCompletion(boolean success) {
+        synchronized (lock) {
+            lock.notify();
+        }
+    }
+    
+    public boolean send(SimpleSnmpRequest request) {
+        synchronized (lock) {
+            try {
+                request.send(this);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+            while (true) {
+                try {
+                    lock.wait();
+                    break;
+                } catch (InterruptedException e) {
+                    // continue waiting
+                }
+            }
+            return true;
+        }
+    }
 }
