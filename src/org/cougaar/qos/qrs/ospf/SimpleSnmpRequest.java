@@ -105,12 +105,16 @@ public class SimpleSnmpRequest {
     private int pduType = PDU.GETNEXT;
     // private boolean useDenseTableOperation = false;
 
-    public SimpleSnmpRequest(String[] args) {
+    public SimpleSnmpRequest(String[] args,  OID node) {
         // Set the default counter listener to return proper USM and MP error
         // counters.
         CounterSupport.getInstance().addCounterListener(new DefaultCounterListener());
-
-        vbs.add(new VariableBinding(new OID("1.3.6")));
+        
+        if (node != null) {
+            vbs.add(new VariableBinding(new OID(node)));
+        } else {
+            vbs.add(new VariableBinding(new OID("1.3.6")));
+        }
         int paramStart = parseArgs(args);
         if (paramStart >= args.length) {
             // printUsage();
@@ -125,6 +129,10 @@ public class SimpleSnmpRequest {
                 this.vbs = vbs;
             }
         }
+    }
+    
+    public void setOperation(int operation) {
+        this.operation = operation;
     }
 
     private Vector<VariableBinding> getVariableBindings(String[] args, int position) {
@@ -478,7 +486,14 @@ public class SimpleSnmpRequest {
 
         PDU response = null;
         if (operation == SnmpRequest.WALK) {
-            walk(snmp, request, target);
+            WalkListener body = new WalkListener() {
+                public void walkEventFired(VariableBinding[] bindings) {
+                    for (VariableBinding binding : bindings) {
+                        log.info(binding.toString());
+                    }
+                }
+            };
+            walk(snmp, request, target, body);
             return null;
         } else {
             ResponseEvent responseEvent;
@@ -493,8 +508,30 @@ public class SimpleSnmpRequest {
         snmp.close();
         return response;
     }
+    
+    public void send(WalkListener body) throws IOException {
+        Snmp snmp = createSnmpSession();
+        this.target = createTarget();
+        target.setVersion(version);
+        target.setAddress(address);
+        target.setRetries(retries);
+        target.setTimeout(timeout);
+        target.setMaxSizeRequestPDU(maxSizeResponsePDU);
+        snmp.listen();
 
-    private PDU walk(Snmp snmp, PDU request, Target target) {
+        PDU request = createPDU(target);
+        if (request.getType() == PDU.GETBULK) {
+            request.setMaxRepetitions(maxRepetitions);
+            request.setNonRepeaters(nonRepeaters);
+        }
+        for (int i = 0; i < vbs.size(); i++) {
+            request.add(vbs.get(i));
+        }
+
+        walk(snmp, request, target, body);
+    }
+
+    private PDU walk(Snmp snmp, PDU request, Target target, final WalkListener body) {
         request.setNonRepeaters(0);
         OID rootOID = request.get(0).getOid();
         PDU response = null;
@@ -504,20 +541,19 @@ public class SimpleSnmpRequest {
         treeUtils.getSubtree(target, rootOID, null, new TreeListener() {
             public boolean next(TreeEvent e) {
                 counts.requests++;
-                if (e.getVariableBindings() != null) {
-                    counts.objects += e.getVariableBindings().length;
-                    for (int i = 0; i < e.getVariableBindings().length; i++) {
-                        log.info(e.getVariableBindings()[i].toString());
-                    }
+                VariableBinding[] variableBindings = e.getVariableBindings();
+                if (variableBindings != null) {
+                    counts.objects += variableBindings.length;
+                    body.walkEventFired(variableBindings);
                 }
                 return true;
             }
 
             public void finished(TreeEvent e) {
+                log.info("Total walk time:        "
+                         + (System.currentTimeMillis() - startTime) + " milliseconds");
                 log.info("Total requests sent:    " + counts.requests);
                 log.info("Total objects received: " + counts.objects);
-                log.info("Total walk time:        "
-                        + (System.currentTimeMillis() - startTime) + " milliseconds");
                 if (e.isError()) {
                     
                     log.error("The following error occurred during walk:");

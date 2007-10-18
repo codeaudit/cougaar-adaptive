@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.cougaar.qos.qrs.Constants;
 import org.cougaar.qos.qrs.DataValue;
@@ -43,7 +42,6 @@ import org.cougaar.qos.qrs.SiteAddress;
 import org.cougaar.qos.qrs.SitesDB;
 import org.cougaar.util.log.Logger;
 import org.cougaar.util.log.Logging;
-import org.snmp4j.PDU;
 import org.snmp4j.smi.OID;
 import org.snmp4j.smi.OctetString;
 import org.snmp4j.smi.Variable;
@@ -56,30 +54,30 @@ import org.snmp4j.smi.VariableBinding;
 public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
     private static final String POLL_PERIOD_ARG = "--poll-period=";
     private static final String TRANSFORM_ARG = "--transform=";
+    private static final OID PREFIX_OID = new OID("1.3.6.1.2.1.14.10.1.12");
+    private static final Logger log = Logging.getLogger(OspfDataFeed.class);
     
-    private final Logger log;
-    private final SimpleSnmpRequest request;
-    private final long pollPeriodMillis;
-    private final Map<String, SiteAddress> peerSites;
-    private final OspfMetricTransform transform;
+    private SimpleSnmpRequest request;
+    private long pollPeriodMillis;
+    private Map<String, SiteAddress> peerSites;
+    private OspfMetricTransform transform;
     private SiteAddress mySite;
     
     public OspfDataFeed(String[] feedArgs) {
-        log = Logging.getLogger(getClass());
         peerSites = new HashMap<String, SiteAddress>();
         List<String> snmpArgList = new LinkedList<String>();
-        long ppm = 2000;
-        OspfMetricTransform tf = new UnityTransform();
+        pollPeriodMillis = 2000;
+        transform = new UnityTransform();
         for (String arg : feedArgs) {
             if (arg.startsWith(POLL_PERIOD_ARG)) {
                 int beginIndex = POLL_PERIOD_ARG.length();
-                ppm = Long.parseLong(arg.substring(beginIndex));
+                pollPeriodMillis = Long.parseLong(arg.substring(beginIndex));
             } else if (arg.startsWith(TRANSFORM_ARG)) {
                 int beginIndex = TRANSFORM_ARG.length();
                 String classname = arg.substring(beginIndex);
                 try {
                     Class<?> transformClass = Class.forName(classname);
-                    tf = (OspfMetricTransform) transformClass.newInstance();
+                    transform = (OspfMetricTransform) transformClass.newInstance();
                 } catch (Exception e) {
                     log.error("Couldn't instantiate transform " +arg);
                 }
@@ -87,11 +85,16 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
                 snmpArgList.add(arg);
             }
         }
-        pollPeriodMillis = ppm;
-        transform = tf;
         String[] snmpArgs = new String[snmpArgList.size()];
         snmpArgList.toArray(snmpArgs);
-        request = new SimpleSnmpRequest(snmpArgs);
+        try {
+            request = new SimpleSnmpRequest(snmpArgs, PREFIX_OID);
+        } catch (RuntimeException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+            request = null;
+            return;
+        }
         
         RSSUtils.schedule(new SiteFinder(), 0);
     }
@@ -114,6 +117,8 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
         newData(key, value, null);
     }
     
+   
+    
     /**
      * Figure out our site, and the sites we talk to
      *
@@ -123,7 +128,7 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
             // talk snmp to figure out our site
             if (findSite()) {
                 // ready to go, start the ospf poller
-                RSSUtils.schedule(new Poller(), 0, pollPeriodMillis);
+                RSSUtils.schedule(new NeighborPoller(), 0, pollPeriodMillis);
             } else {
                 // try again
                 RSSUtils.schedule(this, pollPeriodMillis);
@@ -143,29 +148,51 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
         }
     }
     
+    
+    private static final class NeighborMetricListener implements WalkListener {
+        private final Map<InetAddress, Long> results = new HashMap<InetAddress, Long>();
+        
+        public void walkEventFired(VariableBinding[] bindings) {
+            for (VariableBinding binding : bindings) {
+                OID oid = binding.getOid();
+                int offset = PREFIX_OID.size();
+                byte[] addressBytes = new byte[4];
+                for (int i=0; i<4; i++) {
+                    addressBytes[i] = (byte) oid.get(offset+i);
+                }
+                try {
+                    InetAddress address = InetAddress.getByAddress(addressBytes);
+                    Variable var = binding.getVariable();
+                    long metric = var.toLong();
+                    results.put(address, metric);
+                    if (log.isInfoEnabled()) {
+                        log.info(binding.toString());
+                    }
+                } catch (UnknownHostException e) {
+                    log.error(e.getMessage(), e);
+                }
+            }
+        }
+
+        public Map<InetAddress, Long> getResults() {
+            return results;
+        }
+    }
+    
     /**
      * Send snmp requests for ospf link metric and publish on this data feed as
      * inter-site capacity DataValue.
      * 
      */
-    private final class Poller implements Runnable {
+    private final class NeighborPoller implements Runnable {
         public void run() {
             try {
-                PDU reply = request.send();
-                @SuppressWarnings("unchecked")
-                Vector<VariableBinding> variableBindings = reply.getVariableBindings();
-                for (VariableBinding binding : variableBindings) {
-                    OID oid = binding.getOid();
-                    Variable var = binding.getVariable();
-                    if (var instanceof OctetString) {
-                        OctetString octets = (OctetString) var;
-                        pushResults(oid, octets);
-                    } else {
-                        log.warn("Expected OctetString for " +oid+ ", found " + var.getClass());
-                    }
-                }
+                NeighborMetricListener body = new NeighborMetricListener();
+                request.send(body);
+                Map<InetAddress, Long> results = body.getResults();
+                // TODO: publish the results
             } catch (IOException e) {
-                log.error("SNMP request failed", e);
+                log.error("", e);
             }
         }
     }

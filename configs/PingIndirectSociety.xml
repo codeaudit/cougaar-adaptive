@@ -12,12 +12,11 @@ Single-node "ping" society definition.
         <argument name="url" value="file:sites.conf"/>
       </component>
     
-    
-    <component class="org.cougaar.core.qos.metrics.FeedLoader"
+     <component class="org.cougaar.core.qos.metrics.FeedLoader"
                   insertionpoint="Node.AgentManager.Agent.MetricsServices.Component">
-        <argument name="name" value="ospf"/>
-        <argument name="class" value="org.cougaar.qos.qrs.ospf.OspfDataFeed"/>
-        <argument name="args" value="--poll-period=10000 --transform=org.cougaar.qos.qrs.ospf.UnityTransform -c public -v 1 192.168.16.82"/>
+        <argument name="name" value="netstat"/>
+        <argument name="class" value="org.cougaar.qos.qrs.ospf.IndirectBlackOspfDataFeed"/>
+        <argument name="args" value="--poll-period=1000 --transform=org.cougaar.qos.qrs.ospf.UnityTransform --host=192.168.16.82 --user=root --identity-file=/Users/jzinky/.ssh/diffserv"/>
       </component>
       
     <agent name="A">
