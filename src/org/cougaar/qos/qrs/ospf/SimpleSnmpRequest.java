@@ -520,7 +520,7 @@ public class SimpleSnmpRequest {
         return response;
     }
     
-    public void send(WalkListener body) throws IOException {
+    public void asynchronousWalk(WalkListener body) throws IOException {
         Snmp snmp = createSnmpSession();
         this.target = createTarget();
         target.setVersion(version);

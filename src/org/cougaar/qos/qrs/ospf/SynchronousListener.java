@@ -40,10 +40,10 @@ public abstract class SynchronousListener implements WalkListener {
         }
     }
     
-    public boolean send(SimpleSnmpRequest request) {
+    public boolean synchronousWalk(SimpleSnmpRequest request) {
         synchronized (lock) {
             try {
-                request.send(this);
+                request.asynchronousWalk(this);
             } catch (IOException e) {
                 e.printStackTrace();
                 return false;
