@@ -28,7 +28,6 @@ package org.cougaar.qos.qrs.ospf;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -55,6 +54,7 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
     
    
     private long pollPeriodMillis;
+    @SuppressWarnings("unused")
     private Map<String, SiteAddress> peerSites;
     private OspfMetricTransform transform;
     private SiteAddress mySite;
@@ -91,6 +91,7 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
                 "1.3.6.1.2.1.4.21.1.11",
         };
         
+        // Example:
         for (String oidString : testOIDs) {
             SimpleSnmpRequest request = new SimpleSnmpRequest(snmpArgs, new OID(oidString));
             SynchronousLoggingListener listener = new SynchronousLoggingListener();
@@ -99,7 +100,7 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
             log.shout("Ending " + oidString);
         }
         
-        // RSSUtils.schedule(new SiteFinder(), 0);
+        RSSUtils.schedule(new SiteFinder(), 0);
     }
     
     private String makeKey(SiteAddress destination) {
