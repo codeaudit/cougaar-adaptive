@@ -43,14 +43,9 @@ import org.cougaar.qos.qrs.SitesDB;
 import org.cougaar.util.log.Logger;
 import org.cougaar.util.log.Logging;
 import org.snmp4j.smi.OID;
-import org.snmp4j.smi.OctetString;
 import org.snmp4j.smi.Variable;
 import org.snmp4j.smi.VariableBinding;
 
-/**
- * @author jzinky
- *
- */
 public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
     private static final String POLL_PERIOD_ARG = "--poll-period=";
     private static final String TRANSFORM_ARG = "--transform=";
@@ -108,10 +103,9 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
     
     
     
-    private void pushResults(OID oid, OctetString octets) {
-        log.info("OID=" +oid+ " octets=" + octets);
-        SiteAddress destination = mySite; // TODO get this from the PDU
-        int linkMetric = 30;  // TODO: get this from the PDU
+    private void pushResults(InetAddress dest, long linkMetric) {
+        // XXX: where is the net mask?
+        SiteAddress destination = SiteAddress.getSiteAddress(dest.getHostAddress());
         String key = makeKey(destination);
         DataValue value = new DataValue(transform.toMaxCapacity(linkMetric), 2.0);
         newData(key, value, null);
@@ -190,7 +184,9 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
                 NeighborMetricListener body = new NeighborMetricListener();
                 request.send(body);
                 Map<InetAddress, Long> results = body.getResults();
-                // TODO: publish the results
+                for (Map.Entry<InetAddress, Long> entry : results.entrySet()) {
+                    pushResults(entry.getKey(), entry.getValue());
+                }
             } catch (IOException e) {
                 log.error("", e);
             }

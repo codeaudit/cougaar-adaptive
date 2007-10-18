@@ -27,7 +27,7 @@ package org.cougaar.qos.qrs.ospf;
 
 public class UnityTransform implements OspfMetricTransform {
     
-    public int toMaxCapacity(int linkMetric) {
+    public long toMaxCapacity(long linkMetric) {
         return linkMetric;
     }
 }

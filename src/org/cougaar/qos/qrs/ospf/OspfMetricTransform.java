@@ -30,5 +30,5 @@ package org.cougaar.qos.qrs.ospf;
  *
  */
 public interface OspfMetricTransform {
-    public int toMaxCapacity(int linkMetric);
+    public long toMaxCapacity(long linkMetric);
 }
