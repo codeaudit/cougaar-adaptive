@@ -92,12 +92,11 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
         };
         
         for (String oidString : testOIDs) {
-            List<OID> oids = Collections.singletonList(new OID(oidString));
-            SimpleSnmpRequest request = new SimpleSnmpRequest(snmpArgs, oids);
+            SimpleSnmpRequest request = new SimpleSnmpRequest(snmpArgs, new OID(oidString));
             SynchronousLoggingListener listener = new SynchronousLoggingListener();
-            log.shout("Starting " + oids.get(0).toString());
+            log.shout("Starting " + oidString);
             listener.send(request);
-            log.shout("Ending " + oids.get(0).toString());
+            log.shout("Ending " + oidString);
         }
         
         // RSSUtils.schedule(new SiteFinder(), 0);
@@ -196,9 +195,8 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
         private SimpleSnmpRequest request;
         
         public NeighborPoller() {
-            List<OID> oids = Collections.singletonList(ROSPF_METRIC_NEIGHBOR_OID);
             try {
-                request = new SimpleSnmpRequest(snmpArgs, oids);
+                request = new SimpleSnmpRequest(snmpArgs, ROSPF_METRIC_NEIGHBOR_OID);
             } catch (RuntimeException e1) {
                 log.error(e1.getMessage(), e1);
                 return;

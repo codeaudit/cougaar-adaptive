@@ -21,6 +21,7 @@
 package org.cougaar.qos.qrs.ospf;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -106,6 +107,10 @@ public class SimpleSnmpRequest {
     private int pduType = PDU.GETNEXT;
     // private boolean useDenseTableOperation = false;
 
+    public SimpleSnmpRequest(String[] args, OID node) {
+        this(args, Collections.singletonList(node));
+    }
+    
     public SimpleSnmpRequest(String[] args, List<OID> nodes) {
         // Set the default counter listener to return proper USM and MP error
         // counters.
