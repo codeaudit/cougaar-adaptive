@@ -48,12 +48,7 @@ import org.snmp4j.smi.Variable;
 import org.snmp4j.smi.VariableBinding;
 
 public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
-    private static OID append(OID base, int suffix) {
-        OID extension = (OID) base.clone();
-        extension.append(suffix);
-        return extension;
-    }
-    
+    private static final double CREDIBILITY = SECOND_MEAS_CREDIBILITY;
     private static final Logger log = Logging.getLogger(OspfDataFeed.class);
     private static final String POLL_PERIOD_ARG = "--poll-period=";
     private static final String TRANSFORM_ARG = "--transform=";
@@ -112,13 +107,19 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
             InetAddress neighbor = entry.getValue();
             if (dest.equals(neighbor)) {
                 String key = makeKey(site);
-                DataValue value = new DataValue(transform.toMaxCapacity(linkMetric), 2.0);
+                DataValue value = new DataValue(transform.toMaxCapacity(linkMetric), CREDIBILITY);
                 log.info("Pushing feed key " +key+ " with value " + value);
                 newData(key, value, null);
                 return;
             }
         }
         log.info("No site match for next hop " + dest);
+    }
+
+    private static OID append(OID base, int suffix) {
+        OID extension = (OID) base.clone();
+        extension.append(suffix);
+        return extension;
     }
     
     private class SynchronousRouteListener extends SynchronousListener {
