@@ -16,8 +16,8 @@
  *
  * Created : Aug 9, 2007
  * Workfile: RegressioNodeSequencerPlugin.java
- * $Revision: 1.1 $
- * $Date: 2007-10-19 15:01:53 $
+ * $Revision: 1.2 $
+ * $Date: 2007-10-19 15:34:24 $
  * $Author: rshapiro $
  *
  * =============================================================================
@@ -28,7 +28,6 @@ package org.cougaar.test.regression;
 import java.util.Map;
 import java.util.Set;
 
-import org.cougaar.test.sequencer.NodeRequest;
 import org.cougaar.test.sequencer.SequencerPlugin;
 import org.cougaar.test.sequencer.SocietyCompletionEvent;
 import org.cougaar.util.annotations.Cougaar;
