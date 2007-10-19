@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="test" basedir="." default="jar">
+	<property name="cougaar-minimal-release.location" location="${basedir}/../cougaar-minimal-release"/>
+	<property name="cougaar-ext-release.location" location="${basedir}/../cougaar-ext-release"/>
+
+	<import file="${cougaar-ext-release.location}/ant/cougaar-project-import.xml"/>
+
+	<target name="HubTest" depends="dist">
+		<property name="cougaar.society.file.name" value="PingHubTestSociety.xml"/>
+		<property name="cougaar.runtime.file.name" value="SingleNodeRuntime.xml"/>
+		<property name="cougaar.node.name" value="Node1"/>
+    	<ant target="cougaar-run"/>
+	</target>
+	
+	<target name="PingTest" depends="dist">
+		<property name="cougaar.society.file.name" value="PingTestSociety.xml"/>
+		<property name="cougaar.runtime.file.name" value="SingleNodeRuntime.xml"/>
+		<property name="cougaar.node.name" value="Node1"/>
+    	<ant target="cougaar-run"/>
+	</target>
+	
+	<target name="GenericRegressionTest" depends="dist">
+		<property name="cougaar.society.file.name" value="RegressionTestSociety.xml"/>
+		<property name="cougaar.runtime.file.name" value="SingleNodeRuntime.xml"/>
+		<property name="cougaar.node.name" value="Node1"/>
+    	<ant target="cougaar-run"/>
+	</target>
+	
+	<target name="runBB" depends="dist" >
+		<property name="cougaar.society.dir" value="${basedir}/configs/BB"/>
+		<ant target="cougaar-run-dir"/>
+	</target>
+
+	<target name="runSingleNode" depends="dist" >
+		<property name="cougaar.society.dir" value="${basedir}/configs/singleNode"/>
+		<ant target="cougaar-run-dir"/>
+	</target>
+	
+	<target name="runSubs" depends="dist" >
+		<property name="cougaar.society.dir" value="${basedir}/configs/subs"/>
+		<ant target="cougaar-run-dir"/>
+	</target>
+	
+	<target name="runPlugins" depends="dist" >
+		<property name="cougaar.society.dir" value="${basedir}/configs/plugins"/>
+		<ant target="cougaar-run-dir"/>
+	</target>
+
+	<target name="runThreads" depends="dist" >
+		<property name="cougaar.society.dir" value="${basedir}/configs/threads"/>
+		<ant target="cougaar-run-dir"/>
+	</target>
+
+
+	<target name="runAll" depends="dist">
+		<sequential>
+		<property name="cougaar.society.file.name" value="RegressionTestSociety.xml"/>
+    	<ant target="cougaar-run"/>
+		<property name="cougaar.society.file.name" value="PingTestSociety.xml"/>
+	    <ant target="cougaar-run"/>
+	    <property name="cougaar.society.file.name" value="PingHubTestSociety.xml"/>
+   		<ant target="cougaar-run"/>
+		</sequential>
+	</target>
+	
+	<target name="runSuite" depends="dist">
+		<sequential>
+			<ant target="runBB"/>	
+			<ant target="runPlugins"/>
+			<ant target="runSingleNode"/>
+			<ant target="runSubs"/>
+			<ant target="runThreads"/>
+		</sequential>
+	</target>
+	
+	
+	<target name="regression" depends="GenericRegressionTest,PingTest,HubTest">
+	</target>
+	
+</project>
