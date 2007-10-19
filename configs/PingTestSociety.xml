@@ -11,8 +11,8 @@ Example regression test society
 			<argument name="defaultWorkerTimeout" value="10001" />
 			<argument name="defaultNodeTimeout" value="100001" />
 			<argument name="csvFileName" value="test.csv" />
-			<argument name="collectionLength" value="3000" />
-			<argument name="steadyStateWait" value="60000" />
+			<argument name="collectionLength" value="30001" />
+			<argument name="steadyStateWait" value="1001" />
 		</component>
 		<component class="org.cougaar.test.regression.RegressionAggregatorPlugin">
 			<argument name="workerCount" value="1" />
