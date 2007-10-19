@@ -11,8 +11,14 @@ Single-node "ping" society definition.
         <argument name="name" value="sites"/>
         <argument name="url" value="file:sites.conf"/>
       </component>
-    
-    
+      
+       <component class="org.cougaar.core.qos.metrics.FeedLoader"
+                  insertionpoint="Node.AgentManager.Agent.MetricsServices.Component">
+        <argument name="name" value="dynamic-sites"/>
+        <argument name="class" value="org.cougaar.qos.qrs.PollUrlDataFeed"/>
+        <argument name="args" value="-url file:dynamic-sites.conf -poll 5000"/>
+      </component>
+       
     <component class="org.cougaar.core.qos.metrics.FeedLoader"
                   insertionpoint="Node.AgentManager.Agent.MetricsServices.Component">
         <argument name="name" value="ospf"/>
