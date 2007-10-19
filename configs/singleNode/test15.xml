@@ -1,0 +1,314 @@
+<?xml version='1.0'?>
+<!--
+singleNode: Test Society for 15 pingers on Single Node
+-->
+<society>
+  <node name="Node1">
+    <component class="org.cougaar.test.regression.ping.PingSequencerPlugin">
+      <argument name="suiteName" value="singleNode 15" />
+      <argument name="nodeCount" value="1" />
+      <argument name="defaultWorkerTimeout" value="5750" />
+      <argument name="defaultNodeTimeout" value="15750" />
+      <argument name="csvFileName" value="singleNode.csv" />
+      <argument name="collectionLength" value="20000" />
+      <argument name="steadyStateWait" value="1000" />
+    </component>
+    <component class="org.cougaar.test.regression.RegressionAggregatorPlugin">
+      <argument name="workerCount" value="15" />
+      <argument name="maxIdleTime" value="31500" />
+    </component>
+	
+    <agent name='NameServer' class='org.cougaar.core.agent.SimpleAgent'>
+      <facet role='NameServer'/>
+      <component class='org.cougaar.core.wp.server.Server'/>
+    </agent>
+
+    
+      <!--Pinger 1 -->
+    <agent name="Src1">
+      <component class="org.cougaar.test.regression.ping.PingTesterPlugin">
+         <argument name="workerId" value="Src1"/>
+         <argument name="pingerCount" value="1"/>
+       </component>
+
+      <component class="org.cougaar.test.regression.ping.PingSenderPlugin">
+        <argument name="pluginId" value="1"/>
+        <argument name="targetAgent" value="Snk1"/>
+        <argument name="targetPlugin" value="1"/>
+        <argument name="preambleCount" value="3" />
+      </component>
+    </agent>
+    <agent name="Snk1">
+      <component class="org.cougaar.test.regression.ping.PingReceiverPlugin">
+        <argument name="pluginId" value="1"/>
+      </component>
+    </agent>
+      <!--Pinger 2 -->
+    <agent name="Src2">
+      <component class="org.cougaar.test.regression.ping.PingTesterPlugin">
+         <argument name="workerId" value="Src2"/>
+         <argument name="pingerCount" value="1"/>
+       </component>
+
+      <component class="org.cougaar.test.regression.ping.PingSenderPlugin">
+        <argument name="pluginId" value="1"/>
+        <argument name="targetAgent" value="Snk2"/>
+        <argument name="targetPlugin" value="1"/>
+        <argument name="preambleCount" value="3" />
+      </component>
+    </agent>
+    <agent name="Snk2">
+      <component class="org.cougaar.test.regression.ping.PingReceiverPlugin">
+        <argument name="pluginId" value="1"/>
+      </component>
+    </agent>
+      <!--Pinger 3 -->
+    <agent name="Src3">
+      <component class="org.cougaar.test.regression.ping.PingTesterPlugin">
+         <argument name="workerId" value="Src3"/>
+         <argument name="pingerCount" value="1"/>
+       </component>
+
+      <component class="org.cougaar.test.regression.ping.PingSenderPlugin">
+        <argument name="pluginId" value="1"/>
+        <argument name="targetAgent" value="Snk3"/>
+        <argument name="targetPlugin" value="1"/>
+        <argument name="preambleCount" value="3" />
+      </component>
+    </agent>
+    <agent name="Snk3">
+      <component class="org.cougaar.test.regression.ping.PingReceiverPlugin">
+        <argument name="pluginId" value="1"/>
+      </component>
+    </agent>
+      <!--Pinger 4 -->
+    <agent name="Src4">
+      <component class="org.cougaar.test.regression.ping.PingTesterPlugin">
+         <argument name="workerId" value="Src4"/>
+         <argument name="pingerCount" value="1"/>
+       </component>
+
+      <component class="org.cougaar.test.regression.ping.PingSenderPlugin">
+        <argument name="pluginId" value="1"/>
+        <argument name="targetAgent" value="Snk4"/>
+        <argument name="targetPlugin" value="1"/>
+        <argument name="preambleCount" value="3" />
+      </component>
+    </agent>
+    <agent name="Snk4">
+      <component class="org.cougaar.test.regression.ping.PingReceiverPlugin">
+        <argument name="pluginId" value="1"/>
+      </component>
+    </agent>
+      <!--Pinger 5 -->
+    <agent name="Src5">
+      <component class="org.cougaar.test.regression.ping.PingTesterPlugin">
+         <argument name="workerId" value="Src5"/>
+         <argument name="pingerCount" value="1"/>
+       </component>
+
+      <component class="org.cougaar.test.regression.ping.PingSenderPlugin">
+        <argument name="pluginId" value="1"/>
+        <argument name="targetAgent" value="Snk5"/>
+        <argument name="targetPlugin" value="1"/>
+        <argument name="preambleCount" value="3" />
+      </component>
+    </agent>
+    <agent name="Snk5">
+      <component class="org.cougaar.test.regression.ping.PingReceiverPlugin">
+        <argument name="pluginId" value="1"/>
+      </component>
+    </agent>
+      <!--Pinger 6 -->
+    <agent name="Src6">
+      <component class="org.cougaar.test.regression.ping.PingTesterPlugin">
+         <argument name="workerId" value="Src6"/>
+         <argument name="pingerCount" value="1"/>
+       </component>
+
+      <component class="org.cougaar.test.regression.ping.PingSenderPlugin">
+        <argument name="pluginId" value="1"/>
+        <argument name="targetAgent" value="Snk6"/>
+        <argument name="targetPlugin" value="1"/>
+        <argument name="preambleCount" value="3" />
+      </component>
+    </agent>
+    <agent name="Snk6">
+      <component class="org.cougaar.test.regression.ping.PingReceiverPlugin">
+        <argument name="pluginId" value="1"/>
+      </component>
+    </agent>
+      <!--Pinger 7 -->
+    <agent name="Src7">
+      <component class="org.cougaar.test.regression.ping.PingTesterPlugin">
+         <argument name="workerId" value="Src7"/>
+         <argument name="pingerCount" value="1"/>
+       </component>
+
+      <component class="org.cougaar.test.regression.ping.PingSenderPlugin">
+        <argument name="pluginId" value="1"/>
+        <argument name="targetAgent" value="Snk7"/>
+        <argument name="targetPlugin" value="1"/>
+        <argument name="preambleCount" value="3" />
+      </component>
+    </agent>
+    <agent name="Snk7">
+      <component class="org.cougaar.test.regression.ping.PingReceiverPlugin">
+        <argument name="pluginId" value="1"/>
+      </component>
+    </agent>
+      <!--Pinger 8 -->
+    <agent name="Src8">
+      <component class="org.cougaar.test.regression.ping.PingTesterPlugin">
+         <argument name="workerId" value="Src8"/>
+         <argument name="pingerCount" value="1"/>
+       </component>
+
+      <component class="org.cougaar.test.regression.ping.PingSenderPlugin">
+        <argument name="pluginId" value="1"/>
+        <argument name="targetAgent" value="Snk8"/>
+        <argument name="targetPlugin" value="1"/>
+        <argument name="preambleCount" value="3" />
+      </component>
+    </agent>
+    <agent name="Snk8">
+      <component class="org.cougaar.test.regression.ping.PingReceiverPlugin">
+        <argument name="pluginId" value="1"/>
+      </component>
+    </agent>
+      <!--Pinger 9 -->
+    <agent name="Src9">
+      <component class="org.cougaar.test.regression.ping.PingTesterPlugin">
+         <argument name="workerId" value="Src9"/>
+         <argument name="pingerCount" value="1"/>
+       </component>
+
+      <component class="org.cougaar.test.regression.ping.PingSenderPlugin">
+        <argument name="pluginId" value="1"/>
+        <argument name="targetAgent" value="Snk9"/>
+        <argument name="targetPlugin" value="1"/>
+        <argument name="preambleCount" value="3" />
+      </component>
+    </agent>
+    <agent name="Snk9">
+      <component class="org.cougaar.test.regression.ping.PingReceiverPlugin">
+        <argument name="pluginId" value="1"/>
+      </component>
+    </agent>
+      <!--Pinger 10 -->
+    <agent name="Src10">
+      <component class="org.cougaar.test.regression.ping.PingTesterPlugin">
+         <argument name="workerId" value="Src10"/>
+         <argument name="pingerCount" value="1"/>
+       </component>
+
+      <component class="org.cougaar.test.regression.ping.PingSenderPlugin">
+        <argument name="pluginId" value="1"/>
+        <argument name="targetAgent" value="Snk10"/>
+        <argument name="targetPlugin" value="1"/>
+        <argument name="preambleCount" value="3" />
+      </component>
+    </agent>
+    <agent name="Snk10">
+      <component class="org.cougaar.test.regression.ping.PingReceiverPlugin">
+        <argument name="pluginId" value="1"/>
+      </component>
+    </agent>
+      <!--Pinger 11 -->
+    <agent name="Src11">
+      <component class="org.cougaar.test.regression.ping.PingTesterPlugin">
+         <argument name="workerId" value="Src11"/>
+         <argument name="pingerCount" value="1"/>
+       </component>
+
+      <component class="org.cougaar.test.regression.ping.PingSenderPlugin">
+        <argument name="pluginId" value="1"/>
+        <argument name="targetAgent" value="Snk11"/>
+        <argument name="targetPlugin" value="1"/>
+        <argument name="preambleCount" value="3" />
+      </component>
+    </agent>
+    <agent name="Snk11">
+      <component class="org.cougaar.test.regression.ping.PingReceiverPlugin">
+        <argument name="pluginId" value="1"/>
+      </component>
+    </agent>
+      <!--Pinger 12 -->
+    <agent name="Src12">
+      <component class="org.cougaar.test.regression.ping.PingTesterPlugin">
+         <argument name="workerId" value="Src12"/>
+         <argument name="pingerCount" value="1"/>
+       </component>
+
+      <component class="org.cougaar.test.regression.ping.PingSenderPlugin">
+        <argument name="pluginId" value="1"/>
+        <argument name="targetAgent" value="Snk12"/>
+        <argument name="targetPlugin" value="1"/>
+        <argument name="preambleCount" value="3" />
+      </component>
+    </agent>
+    <agent name="Snk12">
+      <component class="org.cougaar.test.regression.ping.PingReceiverPlugin">
+        <argument name="pluginId" value="1"/>
+      </component>
+    </agent>
+      <!--Pinger 13 -->
+    <agent name="Src13">
+      <component class="org.cougaar.test.regression.ping.PingTesterPlugin">
+         <argument name="workerId" value="Src13"/>
+         <argument name="pingerCount" value="1"/>
+       </component>
+
+      <component class="org.cougaar.test.regression.ping.PingSenderPlugin">
+        <argument name="pluginId" value="1"/>
+        <argument name="targetAgent" value="Snk13"/>
+        <argument name="targetPlugin" value="1"/>
+        <argument name="preambleCount" value="3" />
+      </component>
+    </agent>
+    <agent name="Snk13">
+      <component class="org.cougaar.test.regression.ping.PingReceiverPlugin">
+        <argument name="pluginId" value="1"/>
+      </component>
+    </agent>
+      <!--Pinger 14 -->
+    <agent name="Src14">
+      <component class="org.cougaar.test.regression.ping.PingTesterPlugin">
+         <argument name="workerId" value="Src14"/>
+         <argument name="pingerCount" value="1"/>
+       </component>
+
+      <component class="org.cougaar.test.regression.ping.PingSenderPlugin">
+        <argument name="pluginId" value="1"/>
+        <argument name="targetAgent" value="Snk14"/>
+        <argument name="targetPlugin" value="1"/>
+        <argument name="preambleCount" value="3" />
+      </component>
+    </agent>
+    <agent name="Snk14">
+      <component class="org.cougaar.test.regression.ping.PingReceiverPlugin">
+        <argument name="pluginId" value="1"/>
+      </component>
+    </agent>
+      <!--Pinger 15 -->
+    <agent name="Src15">
+      <component class="org.cougaar.test.regression.ping.PingTesterPlugin">
+         <argument name="workerId" value="Src15"/>
+         <argument name="pingerCount" value="1"/>
+       </component>
+
+      <component class="org.cougaar.test.regression.ping.PingSenderPlugin">
+        <argument name="pluginId" value="1"/>
+        <argument name="targetAgent" value="Snk15"/>
+        <argument name="targetPlugin" value="1"/>
+        <argument name="preambleCount" value="3" />
+      </component>
+    </agent>
+    <agent name="Snk15">
+      <component class="org.cougaar.test.regression.ping.PingReceiverPlugin">
+        <argument name="pluginId" value="1"/>
+      </component>
+    </agent>
+
+  </node>
+</society>
