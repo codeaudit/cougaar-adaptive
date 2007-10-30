@@ -46,7 +46,7 @@ import org.cougaar.util.annotations.Subscribe;
  */
 public abstract class RIRMulticastQueryRoleCoordinationPlugin 
         extends TodoPlugin
-        implements RIRMulticastQueryRole {
+        implements RIRMulticastBlackboardPredicates {
     
     private final Map<MessageAddress, SimpleRelay> replyRelays =
         new HashMap<MessageAddress, SimpleRelay>();
