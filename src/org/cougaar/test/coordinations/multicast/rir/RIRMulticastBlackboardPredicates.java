@@ -23,24 +23,36 @@
  *  
  * </copyright>
  */
-package org.cougaar.test.sequencer;
+package org.cougaar.test.coordinations.multicast.rir;
 
 import org.cougaar.core.util.UniqueObject;
-import org.cougaar.test.coordinations.RIRMulticastBlackboardPredicates;
 
 /**
- *  Testers for the three sorts of objects in the sequencer test harness
+ * A collection of predicate methods used by a plugin
+ * that will send queries to registered agents and
+ * handle the responses.
  */
-public class CoordinationBlackboardPredicates implements RIRMulticastBlackboardPredicates {
-    public boolean isResponse(UniqueObject event) {
-        return event instanceof NodeCompletionEvent;
-    }
-   
-    public boolean isRegistration(UniqueObject event) {
-        return event instanceof NodeRegistrationEvent;
-    }
-
-    public boolean isQuery(UniqueObject event) {
-        return event instanceof NodeRequest;
-    }
+public interface RIRMulticastBlackboardPredicates {
+    /**
+     * This will be called as an execute predicate to determine 
+     * whether or not the given object should be "registered"
+     * for subsequent queries.
+     */
+    public boolean isRegistration(UniqueObject event);
+    
+    /**
+     * This will be called as an execute predicate to determine
+     * whether or not the given object should be sent to the
+     * registrees as a query.
+     * 
+     */
+    public boolean isQuery(UniqueObject event);
+    
+    /**
+     * This will be called as an execute predicate to determine
+     * whether or not the given object is a response to a 
+     * previous query.
+     * 
+     */
+    public boolean isResponse(UniqueObject event);
 }

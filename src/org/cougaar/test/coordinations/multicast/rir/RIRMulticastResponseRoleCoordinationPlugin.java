@@ -17,13 +17,13 @@
  * Created : Aug 13, 2007
  * Workfile: NodeLocalSequencerPlugin.java
  * $Revision: 1.1 $
- * $Date: 2007-10-30 18:47:54 $
+ * $Date: 2007-10-30 19:19:14 $
  * $Author: jzinky $
  *
  * =============================================================================
  */
 
-package org.cougaar.test.coordinations;
+package org.cougaar.test.coordinations.multicast.rir;
 
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.plugin.TodoPlugin;

@@ -23,7 +23,7 @@
  *  
  * </copyright>
  */
-package org.cougaar.test.coordinations;
+package org.cougaar.test.coordinations.multicast.rir;
 
 import java.util.HashMap;
 import java.util.Map;
