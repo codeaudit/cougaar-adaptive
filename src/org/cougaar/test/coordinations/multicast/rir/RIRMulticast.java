@@ -6,17 +6,28 @@
 
 package org.cougaar.test.coordinations.multicast.rir;
 
-import org.cougaar.test.coordinations.RoleSpec;
-import org.cougaar.test.coordinations.RoleEventMatcher;
+import org.cougaar.test.coordinations.Face;
+import org.cougaar.test.coordinations.FaceEventMatcher;
 import org.cougaar.test.coordinations.CoordinationEventType;
 
 /**
- * A collection of classes and interfaces that specify
- * the abstracted receiver-initiated-registration pattern.
+ * This class comprises classes and interfaces that specify
+ * the abstracted receiver-initiated-registration coordination pattern.
+ * This coordination makes two faces available to the 
+ * outside world: {@link Query} and {@link Response}.
+ * 
+ * <p> When communicating via the Query face, the external Agent receives
+ * registrations from responders (see below). When the Agent submits
+ * a query, it will then receive responses from each of the
+ * registered responders. 
+ * 
+ * <p> When communicating via the Response face, the external Agent
+ * must register, and then provide a response to each query it receives.
+ * 
  */
 public class RIRMulticast {
-    public interface Matcher<R extends RoleSpec<EventType>> 
-        extends RoleEventMatcher<R, EventType> {
+    public interface Matcher<R extends Face<EventType>> 
+        extends FaceEventMatcher<R, EventType> {
     }
 
     public enum EventType implements CoordinationEventType {
@@ -25,30 +36,30 @@ public class RIRMulticast {
         RESPONSE;
     }
     
-    public static class Query implements RoleSpec<EventType> {
-        public EventType[] getPublishes() {
+    public static class Query implements Face<EventType> {
+        public EventType[] produces() {
             return new EventType[] {
                     EventType.REGISTRATION,
                     EventType.RESPONSE,
             };
         }
 
-        public EventType[] getSubscribes() {
+        public EventType[] consumes() {
             return new EventType[] {
                     EventType.QUERY,
             };
         }
     }
     
-    public static class Response implements RoleSpec<EventType> {
-        public EventType[] getPublishes() {
+    public static class Response implements Face<EventType> {
+        public EventType[] produces() {
             return new EventType[] {
                     EventType.QUERY,
 
             };
         }
 
-        public EventType[] getSubscribes() {
+        public EventType[] consumes() {
             return new EventType[] {
                     EventType.REGISTRATION,
                     EventType.RESPONSE,

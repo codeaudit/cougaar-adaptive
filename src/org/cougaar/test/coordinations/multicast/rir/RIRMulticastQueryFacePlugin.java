@@ -33,7 +33,7 @@ import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.relay.SimpleRelaySource;
 import org.cougaar.core.util.UID;
 import org.cougaar.core.util.UniqueObject;
-import org.cougaar.test.coordinations.RolePlugin;
+import org.cougaar.test.coordinations.FacePlugin;
 import org.cougaar.util.annotations.Cougaar;
 import org.cougaar.util.annotations.Subscribe;
 
@@ -45,14 +45,14 @@ import org.cougaar.util.annotations.Subscribe;
  * RIR == receiver initiated registration"
  */
 
-public abstract class RIRMulticastQueryRoleCoordinationPlugin 
-        extends RolePlugin<RIRMulticast.Query>
+public abstract class RIRMulticastQueryFacePlugin 
+        extends FacePlugin<RIRMulticast.Query>
         implements RIRMulticast.Matcher<RIRMulticast.Query> {
     
     private final Map<MessageAddress, SimpleRelay> replyRelays =
         new HashMap<MessageAddress, SimpleRelay>();
     
-    public RIRMulticastQueryRoleCoordinationPlugin() {
+    public RIRMulticastQueryFacePlugin() {
         super(new RIRMulticast.Query());
     }
   

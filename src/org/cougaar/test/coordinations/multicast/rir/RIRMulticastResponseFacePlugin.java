@@ -16,8 +16,8 @@
  *
  * Created : Aug 13, 2007
  * Workfile: NodeLocalSequencerPlugin.java
- * $Revision: 1.2 $
- * $Date: 2007-11-02 17:19:51 $
+ * $Revision: 1.1 $
+ * $Date: 2007-11-02 19:24:05 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -30,7 +30,7 @@ import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.relay.SimpleRelaySource;
 import org.cougaar.core.util.UID;
 import org.cougaar.core.util.UniqueObject;
-import org.cougaar.test.coordinations.RolePlugin;
+import org.cougaar.test.coordinations.FacePlugin;
 import org.cougaar.util.annotations.Cougaar;
 import org.cougaar.util.annotations.Subscribe;
 
@@ -39,15 +39,15 @@ import org.cougaar.util.annotations.Subscribe;
  * from sequencer agent. Transfer is accomplished by copying the blackboard
  * events onto the query field of a simple relay.
  */
-abstract public class RIRMulticastResponseRoleCoordinationPlugin
-    extends RolePlugin<RIRMulticast.Response>
+abstract public class RIRMulticastResponseFacePlugin
+    extends FacePlugin<RIRMulticast.Response>
     implements RIRMulticast.Matcher<RIRMulticast.Response>  {
 
     private SimpleRelay sendRelay;
     @Cougaar.Arg(name = "sequencerName", required = true)
     public MessageAddress sequencerAgent;
     
-    public RIRMulticastResponseRoleCoordinationPlugin() {
+    public RIRMulticastResponseFacePlugin() {
         super(new RIRMulticast.Response());
     }
     

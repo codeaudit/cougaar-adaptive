@@ -30,7 +30,7 @@ import org.cougaar.core.util.UniqueObject;
 /**
  *  Testers for the three sorts of objects in the sequencer test harness
  */
-public class StoNCoordinationBlackboardPredicates {
+class StoNCoordinationBlackboardPredicates {
     public boolean isResponse(UniqueObject event) {
         return event instanceof NodeCompletionEvent;
     }

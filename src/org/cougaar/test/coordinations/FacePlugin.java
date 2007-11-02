@@ -9,23 +9,24 @@ package org.cougaar.test.coordinations;
 import org.cougaar.core.plugin.TodoPlugin;
 
 /**
- * A TodoPluging for a particular coordination role
+ * A TodoPluging for a particular coordination face exposed
+ * to the outside.
  */
-public abstract class RolePlugin<R extends RoleSpec<?>> extends TodoPlugin {
-    private final R role;
+public abstract class FacePlugin<F extends Face<?>> extends TodoPlugin {
+    private final F face;
     
-    public RolePlugin(R role) {
-        this.role = role;
+    public FacePlugin(F face) {
+        this.face = face;
     }
     
-    public R getRole() {
-        return role;
+    public F getFace() {
+        return face;
     }
     
     public void load() {
         super.load();
         if (log.isInfoEnabled()) {
-            CoordinationEventType[] subscribesTo = role.getSubscribes();
+            CoordinationEventType[] subscribesTo = face.consumes();
             for (CoordinationEventType type : subscribesTo) {
                 log.info("subscribes to " + type);
             }

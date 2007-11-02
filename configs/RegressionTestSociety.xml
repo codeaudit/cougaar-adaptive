@@ -11,7 +11,7 @@ Example regression test society
 			<argument name="maxIdleTime" value="600100" />
 		</component>
 		<component
-			class="org.cougaar.test.sequencer.StoNCoordinationNodeRolePlugin">
+			class="org.cougaar.test.sequencer.StoNodeFacePlugin">
 			<argument name="sequencerName" value="Sequencer" />
 		</component>
 		
@@ -31,7 +31,7 @@ Example regression test society
 			<argument name="nodeCount" value="1" />
 		</component>
 		<component
-			class="org.cougaar.test.sequencer.StoNCoordinationSequencerRolePlugin">
+			class="org.cougaar.test.sequencer.StoNSequencerFacePlugin">
 		</component>
 		</agent>
 		

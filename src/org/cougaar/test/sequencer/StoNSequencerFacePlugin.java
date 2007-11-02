@@ -16,8 +16,8 @@
  *
  * Created : Aug 13, 2007
  * Workfile: NodeLocalSequencerPlugin.java
- * $Revision: 1.2 $
- * $Date: 2007-11-02 17:19:51 $
+ * $Revision: 1.1 $
+ * $Date: 2007-11-02 19:24:05 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -26,17 +26,17 @@
 package org.cougaar.test.sequencer;
 
 import org.cougaar.core.util.UniqueObject;
-import org.cougaar.test.coordinations.multicast.rir.RIRMulticastResponseRoleCoordinationPlugin;
+import org.cougaar.test.coordinations.multicast.rir.RIRMulticastQueryFacePlugin;
 import org.cougaar.test.coordinations.multicast.rir.RIRMulticast.EventType;
 
-/*
+/**
  * Send registrations and completions to sequencer agent and receive requests
  * from sequencer agent. Transfer is accomplished by copying the blackboard
  * events onto the query field of a simple relay.
  */
-public class StoNCoordinationNodeRolePlugin extends RIRMulticastResponseRoleCoordinationPlugin {
+public class StoNSequencerFacePlugin extends RIRMulticastQueryFacePlugin {
     private final StoNCoordinationBlackboardPredicates predicates = 
-         new StoNCoordinationBlackboardPredicates();
+        new StoNCoordinationBlackboardPredicates();
 
     public boolean match(EventType type, UniqueObject event) {
         switch (type) {
@@ -51,5 +51,5 @@ public class StoNCoordinationNodeRolePlugin extends RIRMulticastResponseRoleCoor
         }
         return false;
     }
-    
+
 }
