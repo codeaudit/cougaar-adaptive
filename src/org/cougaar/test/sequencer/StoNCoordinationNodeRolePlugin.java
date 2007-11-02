@@ -16,8 +16,8 @@
  *
  * Created : Aug 13, 2007
  * Workfile: NodeLocalSequencerPlugin.java
- * $Revision: 1.1 $
- * $Date: 2007-10-30 19:19:14 $
+ * $Revision: 1.2 $
+ * $Date: 2007-11-02 17:19:51 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -27,6 +27,7 @@ package org.cougaar.test.sequencer;
 
 import org.cougaar.core.util.UniqueObject;
 import org.cougaar.test.coordinations.multicast.rir.RIRMulticastResponseRoleCoordinationPlugin;
+import org.cougaar.test.coordinations.multicast.rir.RIRMulticast.EventType;
 
 /*
  * Send registrations and completions to sequencer agent and receive requests
@@ -37,16 +38,18 @@ public class StoNCoordinationNodeRolePlugin extends RIRMulticastResponseRoleCoor
     private final StoNCoordinationBlackboardPredicates predicates = 
          new StoNCoordinationBlackboardPredicates();
 
-    public boolean isQuery(UniqueObject event) {
-        return predicates.isQuery(event);
-    }
-
-    public boolean isRegistration(UniqueObject event) {
-        return predicates.isRegistration(event);
-    }
-
-    public boolean isResponse(UniqueObject event) {
-        return predicates.isResponse(event);
+    public boolean match(EventType type, UniqueObject event) {
+        switch (type) {
+            case QUERY:
+                return predicates.isQuery(event);
+                
+            case REGISTRATION:
+                return predicates.isRegistration(event);
+                
+            case RESPONSE:
+                return predicates.isResponse(event);
+        }
+        return false;
     }
     
 }

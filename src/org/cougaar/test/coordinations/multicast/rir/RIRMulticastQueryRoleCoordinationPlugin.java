@@ -29,11 +29,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.plugin.TodoPlugin;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.relay.SimpleRelaySource;
 import org.cougaar.core.util.UID;
 import org.cougaar.core.util.UniqueObject;
+import org.cougaar.test.coordinations.RolePlugin;
 import org.cougaar.util.annotations.Cougaar;
 import org.cougaar.util.annotations.Subscribe;
 
@@ -44,17 +44,23 @@ import org.cougaar.util.annotations.Subscribe;
  * 
  * RIR == receiver initiated registration"
  */
+
 public abstract class RIRMulticastQueryRoleCoordinationPlugin 
-        extends TodoPlugin
-        implements RIRMulticastBlackboardPredicates {
+        extends RolePlugin<RIRMulticast.Query>
+        implements RIRMulticast.Matcher<RIRMulticast.Query> {
     
     private final Map<MessageAddress, SimpleRelay> replyRelays =
         new HashMap<MessageAddress, SimpleRelay>();
+    
+    public RIRMulticastQueryRoleCoordinationPlugin() {
+        super(new RIRMulticast.Query());
+    }
   
     // Node Registration
     public boolean isRegistrationRelay(SimpleRelay relay) {
         UniqueObject query = (UniqueObject) relay.getQuery();
-        return agentId.equals(relay.getTarget()) && isRegistration(query);
+        return agentId.equals(relay.getTarget()) &&
+            match(RIRMulticast.EventType.REGISTRATION, query);
     }
 
     // Forward Node Registration to Blackboard from Relay
@@ -71,7 +77,8 @@ public abstract class RIRMulticastQueryRoleCoordinationPlugin
     // Node completion
     public boolean isResponseRelay(SimpleRelay relay) {
         UniqueObject query = (UniqueObject) relay.getQuery();
-        return agentId.equals(relay.getTarget()) && isResponse(query);
+        return agentId.equals(relay.getTarget()) && 
+            match(RIRMulticast.EventType.RESPONSE, query);
     }
 
     // Forward completion to blackboard from on relay
@@ -80,6 +87,10 @@ public abstract class RIRMulticastQueryRoleCoordinationPlugin
         blackboard.publishAdd(relay.getQuery());
     }
    
+    public boolean isQuery(UniqueObject query) {
+        return match(RIRMulticast.EventType.QUERY, query);
+    }
+    
     // Node Request
     // Forward from blackboard to relay
     @Cougaar.Execute(on = Subscribe.ModType.ADD, when="isQuery")

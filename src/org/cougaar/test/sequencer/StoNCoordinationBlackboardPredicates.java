@@ -26,12 +26,11 @@
 package org.cougaar.test.sequencer;
 
 import org.cougaar.core.util.UniqueObject;
-import org.cougaar.test.coordinations.multicast.rir.RIRMulticastBlackboardPredicates;
 
 /**
  *  Testers for the three sorts of objects in the sequencer test harness
  */
-public class StoNCoordinationBlackboardPredicates implements RIRMulticastBlackboardPredicates {
+public class StoNCoordinationBlackboardPredicates {
     public boolean isResponse(UniqueObject event) {
         return event instanceof NodeCompletionEvent;
     }
