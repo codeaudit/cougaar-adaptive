@@ -16,9 +16,9 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingReceiverPlugin.java
- * $Revision: 1.1 $
- * $Date: 2007-10-19 15:01:52 $
- * $Author: rshapiro $
+ * $Revision: 1.2 $
+ * $Date: 2007-11-05 15:43:13 $
+ * $Author: jzinky $
  *
  * =============================================================================
  */
@@ -48,11 +48,12 @@ public class PingBBReceiverPlugin extends AnnotatedSubscriptionsPlugin {
 
     @Cougaar.Execute(on = Subscribe.ModType.ADD, when = "isMyPingQuery")
     public void executeNewQueryRelay(PingQuery query) {
-        String senderPluginId = query.getOrginatorPlugin();
-        MessageAddress senderAgentId = query.getOriginatorAgent();
+        String senderPluginId = query.getSenderPlugin();
+        MessageAddress senderAgentId = query.getSenderAgent();
         String senderKey = makeSenderKey(senderAgentId, senderPluginId);
         PingReply receiverRelay = returnRelays.get(senderKey);
         if (receiverRelay == null) {
+            // originator is relative to the original query.
             PingReply reply =
                     new PingReply(uids,
                                   query.getCount(),
@@ -69,12 +70,12 @@ public class PingBBReceiverPlugin extends AnnotatedSubscriptionsPlugin {
 
     @Cougaar.Execute(on = Subscribe.ModType.CHANGE, when = "isMyPingQuery")
     public void executeQuery(PingQuery query) {
-        String senderPluginId = query.getOrginatorPlugin();
-        MessageAddress senderAgentId = query.getOriginatorAgent();
+        String senderPluginId = query.getSenderPlugin();
+        MessageAddress senderAgentId = query.getSenderAgent();
         String senderKey = makeSenderKey(senderAgentId, senderPluginId);
         PingReply reply = returnRelays.get(senderKey);
         if (reply != null) {
-            Integer count = query.getCount();
+            int count = query.getCount();
             reply.setCount(count);
             Collection<?> changes = Collections.singleton(count);
             blackboard.publishChange(reply, changes);
@@ -84,7 +85,8 @@ public class PingBBReceiverPlugin extends AnnotatedSubscriptionsPlugin {
     }
 
     public boolean isMyPingQuery(PingQuery query) {
-        return agentId.equals(query.getTargetAgent()) && pluginId.equals(query.getTargetPlugin());
+        return agentId.equals(query.getReceiverAgent()) 
+        && pluginId.equals(query.getReceiverPlugin());
     }
 
     private String makeSenderKey(MessageAddress agent, String pluginId) {

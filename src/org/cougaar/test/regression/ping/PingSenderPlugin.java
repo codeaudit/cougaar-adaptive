@@ -16,9 +16,9 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingSenderPlugin.java
- * $Revision: 1.1 $
- * $Date: 2007-10-19 15:01:52 $
- * $Author: rshapiro $
+ * $Revision: 1.2 $
+ * $Date: 2007-11-05 15:43:13 $
+ * $Author: jzinky $
  *
  * =============================================================================
  */
@@ -128,8 +128,8 @@ public class PingSenderPlugin extends AnnotatedSubscriptionsPlugin {
                  targetAgent.equals(relay.getSource())) {
              if (relay.getQuery() instanceof PingReply) {
                 PingReply pingReply = (PingReply) relay.getQuery();
-                return pluginId.equals(pingReply.getOrginatorPlugin()) && 
-                        targetPlugin.equals(pingReply.getTargetPlugin());
+                return pluginId.equals(pingReply.getSenderPlugin()) && 
+                        targetPlugin.equals(pingReply.getReceiverPlugin());
              }
          }
          return false;

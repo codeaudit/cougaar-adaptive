@@ -16,9 +16,9 @@
 *
 * Created : Aug 14, 2007
 * Workfile: PingQuery.java
-* $Revision: 1.1 $
-* $Date: 2007-10-19 15:01:52 $
-* $Author: rshapiro $
+* $Revision: 1.2 $
+* $Date: 2007-11-05 15:43:13 $
+* $Author: jzinky $
 *
 * =============================================================================
 */
@@ -32,25 +32,25 @@ import org.cougaar.core.util.UniqueObjectBase;
 public class PingQuery  extends UniqueObjectBase {
     private int count;
     private Statistic<?> statistic;
-    private MessageAddress originatorAgent;
-    private String orginatorPlugin;
-    private MessageAddress targetAgent;
-    private String targetPlugin;
+    private MessageAddress senderAgent;
+    private String senderPlugin;
+    private MessageAddress receiverAgent;
+    private String receiverPlugin;
  
     public PingQuery(UIDService uids,
                      int count,
                      Statistic<?> statistic,
-                     MessageAddress originatorAgent,
-                     String orginatorPlugin,
-                     MessageAddress targetAgent,
-                     String targetPlugin) {
+                     MessageAddress senderAgent,
+                     String senderPlugin,
+                     MessageAddress receiverAgent,
+                     String receiverPlugin) {
         super(uids.nextUID());
         this.count = count;
         this.statistic = statistic;
-        this.originatorAgent = originatorAgent;
-        this.orginatorPlugin = orginatorPlugin;
-        this.targetAgent = targetAgent;
-        this.targetPlugin = targetPlugin;
+        this.senderAgent = senderAgent;
+        this.senderPlugin = senderPlugin;
+        this.receiverAgent = receiverAgent;
+        this.receiverPlugin = receiverPlugin;
     }
  
     public int getCount() {
@@ -69,19 +69,19 @@ public class PingQuery  extends UniqueObjectBase {
         this.statistic = statistic;
     }
 
-    public MessageAddress getOriginatorAgent() {
-        return originatorAgent;
+    public MessageAddress getSenderAgent() {
+        return senderAgent;
     }
 
-    public String getOrginatorPlugin() {
-        return orginatorPlugin;
+    public String getSenderPlugin() {
+        return senderPlugin;
     }
 
-    public MessageAddress getTargetAgent() {
-        return targetAgent;
+    public MessageAddress getReceiverAgent() {
+        return receiverAgent;
     }
 
-    public String getTargetPlugin() {
-        return targetPlugin;
+    public String getReceiverPlugin() {
+        return receiverPlugin;
     }
 }

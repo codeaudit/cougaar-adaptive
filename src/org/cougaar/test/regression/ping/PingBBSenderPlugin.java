@@ -16,9 +16,9 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingSenderPlugin.java
- * $Revision: 1.1 $
- * $Date: 2007-10-19 15:01:52 $
- * $Author: rshapiro $
+ * $Revision: 1.2 $
+ * $Date: 2007-11-05 15:43:13 $
+ * $Author: jzinky $
  *
  * =============================================================================
  */
@@ -123,10 +123,10 @@ public class PingBBSenderPlugin extends AnnotatedSubscriptionsPlugin {
     }
 
     public boolean isMyPingReply(PingReply reply) {
-        return agentId.equals(reply.getTargetAgent())
-                && targetAgentId.equals(reply.getOriginatorAgent())
-                && pluginId.equals(reply.getOrginatorPlugin())
-                && targetPluginId.equals(reply.getTargetPlugin());
+        return agentId.equals(reply.getSenderAgent())
+                && pluginId.equals(reply.getSenderPlugin())
+                && targetAgentId.equals(reply.getReceiverAgent())
+                && targetPluginId.equals(reply.getReceiverPlugin());
     }
 
 }

@@ -31,6 +31,7 @@ import java.util.Set;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.relay.SimpleRelaySource;
+import org.cougaar.core.service.identity.PendingRequestException;
 import org.cougaar.core.util.UID;
 import org.cougaar.core.util.UniqueObject;
 import org.cougaar.test.coordinations.FacePlugin;
@@ -43,7 +44,10 @@ public abstract class BundledSweepFollowerFacePlugin
     
     private SimpleRelay replyRelay;
     private SimpleRelay sendRelay;
-    private final Set<UniqueObject> pendingResponses = new HashSet<UniqueObject>();
+    private final Set<UniqueObject> pendingAddResponses = new HashSet<UniqueObject>();
+    private final Set<UniqueObject> pendingChangeResponses = new HashSet<UniqueObject>();
+    private final Set<UniqueObject> pendingRemoveResponses = new HashSet<UniqueObject>();
+    private boolean ourTurnToSendRelay=false;
     
     @Cougaar.Arg(name = "leaderAgent", required = true)
     public MessageAddress leaderAgent;
@@ -51,18 +55,32 @@ public abstract class BundledSweepFollowerFacePlugin
     public BundledSweepFollowerFacePlugin() {
         super(new BundledSweep.Follower());
     }
-  
-    /**
-     * Must be called in the execute thread
-     */
-    private void bundleAndSend() {
-        Bundle pending = new Bundle(pendingResponses);
-        pendingResponses.clear();
-        sendRelay.setQuery(pending);
-        blackboard.publishChange(sendRelay);
-    }
     
-   
+    private boolean somethingToSend() {
+    	return !pendingAddResponses.isEmpty() || 
+    		   !pendingChangeResponses.isEmpty() ||
+    		   !pendingRemoveResponses.isEmpty();
+    }
+  
+    /** 
+     * At the end of an execute, deal with any pending responses
+     * if it's our turn to send.
+     */
+    public void execute () {
+        super.execute();
+        if (somethingToSend() && ourTurnToSendRelay) {
+            Bundle pending = new Bundle(pendingAddResponses,
+                                        pendingRemoveResponses,
+                                        pendingChangeResponses);
+            pendingAddResponses.clear();
+            pendingRemoveResponses.clear();
+            pendingChangeResponses.clear();
+            sendRelay.setQuery(pending);
+            blackboard.publishChange(sendRelay);
+            ourTurnToSendRelay=false;
+        }
+    }
+
     public boolean isLeaderSetup(SimpleRelay relay) {
         return relay.getSource().equals(leaderAgent) &&
             relay.getQuery() == ConnectionSetup.LEADER;
@@ -84,10 +102,18 @@ public abstract class BundledSweepFollowerFacePlugin
     @Cougaar.Execute(on = Subscribe.ModType.CHANGE, when = "isReplyRelay")
     public final void leaderChange(SimpleRelay relay) {
         Bundle bundle = (Bundle) relay.getQuery();
-        for (UniqueObject object : bundle) {
+        for (UniqueObject object : bundle.getAdds()) {
             blackboard.publishAdd(object);
         }
-        bundleAndSend();
+        for (UniqueObject object : bundle.getChanges()) {
+            blackboard.publishChange(object);
+        }
+        for (UniqueObject object : bundle.getRemoves()) {
+            blackboard.publishRemove(object);
+        }
+        ourTurnToSendRelay=true;
+        //TODO  if we have something to send, schedule a bundleAndSend to run at end of execute
+        
     }
     
     public boolean isResponse(UniqueObject event) {
@@ -95,8 +121,21 @@ public abstract class BundledSweepFollowerFacePlugin
     }
     
     @Cougaar.Execute(on = Subscribe.ModType.ADD, when="isResponse")
-    public void squirrelResponse(UniqueObject event) {
-        pendingResponses.add(event);
+    public void squirrelAddResponse(UniqueObject event) {
+        pendingAddResponses.add(event);
     }
+    
+    @Cougaar.Execute(on = Subscribe.ModType.CHANGE, when="isResponse")
+    public void squirrelChangeResponse(UniqueObject event) {
+        pendingChangeResponses.add(event);
+    }
+    
+    
+    @Cougaar.Execute(on = Subscribe.ModType.REMOVE, when="isResponse")
+    public void squirrelDeleteResponse(UniqueObject event) {
+        pendingRemoveResponses.add(event);
+    }
+
+
 
 }

@@ -16,9 +16,9 @@
 *
 * Created : Aug 14, 2007
 * Workfile: PingReply.java
-* $Revision: 1.1 $
-* $Date: 2007-10-19 15:01:52 $
-* $Author: rshapiro $
+* $Revision: 1.2 $
+* $Date: 2007-11-05 15:43:13 $
+* $Author: jzinky $
 *
 * =============================================================================
 */
@@ -31,10 +31,10 @@ import org.cougaar.core.util.UniqueObjectBase;
 
 public class PingReply extends UniqueObjectBase {
     private int count;
-    private MessageAddress originatorAgent;
-    private String orginatorPlugin;
-    private MessageAddress targetAgent;
-    private String targetPlugin;
+    private MessageAddress senderAgent;
+    private String senderPlugin;
+    private MessageAddress receiverAgent;
+    private String receiverPlugin;
  
 
    public PingReply(UIDService uids,
@@ -45,10 +45,10 @@ public class PingReply extends UniqueObjectBase {
                      String targetPlugin) {
         super(uids.nextUID());
         this.count = count;
-        this.originatorAgent = originatorAgent;
-        this.orginatorPlugin = orginatorPlugin;
-        this.targetAgent = targetAgent;
-        this.targetPlugin = targetPlugin;
+        this.senderAgent = originatorAgent;
+        this.senderPlugin = orginatorPlugin;
+        this.receiverAgent = targetAgent;
+        this.receiverPlugin = targetPlugin;
     }
 
 
@@ -60,19 +60,19 @@ public class PingReply extends UniqueObjectBase {
         this.count = count;
     }
 
-    public MessageAddress getOriginatorAgent() {
-        return originatorAgent;
+    public MessageAddress getSenderAgent() {
+        return senderAgent;
     }
 
-    public String getOrginatorPlugin() {
-        return orginatorPlugin;
+    public String getSenderPlugin() {
+        return senderPlugin;
     }
 
-    public MessageAddress getTargetAgent() {
-        return targetAgent;
+    public MessageAddress getReceiverAgent() {
+        return receiverAgent;
     }
 
-    public String getTargetPlugin() {
-        return targetPlugin;
+    public String getReceiverPlugin() {
+        return receiverPlugin;
     }
 }

@@ -43,25 +43,43 @@ public abstract class BundledSweepLeaderFacePlugin
     
     private SimpleRelay replyRelay;
     private SimpleRelay sendRelay;
-    private final Set<UniqueObject> pendingRequests = new HashSet<UniqueObject>();
-    
+    private final Set<UniqueObject> pendingAddRequests = new HashSet<UniqueObject>();
+    private final Set<UniqueObject> pendingChangeRequests = new HashSet<UniqueObject>();
+    private final Set<UniqueObject> pendingRemoveRequests = new HashSet<UniqueObject>();
+    private boolean ourTurnToSendRelay=false;
+   
     @Cougaar.Arg(name = "followerAgent", required = true)
     public MessageAddress followerAgent;
     
+    private boolean somethingToSend() {
+    	return !pendingAddRequests.isEmpty() || 
+    		   !pendingChangeRequests.isEmpty() ||
+    		   !pendingRemoveRequests.isEmpty();
+    }
+   
     public BundledSweepLeaderFacePlugin() {
         super(new BundledSweep.Leader());
     }
-  
-    /**
-     * Must be called in the execute thread
+
+    /** 
+     * At the end of an execute, deal with any pending requests
+     * if it's our turn to send.
      */
-    private void bundleAndSend() {
-        Bundle pending = new Bundle(pendingRequests);
-        pendingRequests.clear();
-        sendRelay.setQuery(pending);
-        blackboard.publishChange(sendRelay);
+    public void execute () {
+        super.execute();
+        if (somethingToSend() && ourTurnToSendRelay) {
+            Bundle pending = new Bundle(pendingAddRequests,
+                                        pendingRemoveRequests,
+                                        pendingChangeRequests);
+            pendingAddRequests.clear();
+            pendingRemoveRequests.clear();
+            pendingChangeRequests.clear();
+            sendRelay.setQuery(pending);
+            blackboard.publishChange(sendRelay);
+            ourTurnToSendRelay=false;
+        }
     }
-    
+        
     protected void setupSubscriptions() {
         super.setupSubscriptions();
         UID uid = uids.nextUID();
@@ -78,8 +96,7 @@ public abstract class BundledSweepLeaderFacePlugin
     public final void followerConnection(SimpleRelay relay) {
         // Follower has found us
         this.replyRelay = relay;
-        // send all the currently pending data
-        bundleAndSend();
+        ourTurnToSendRelay=true;
     }
     
     public boolean isReplyRelay (SimpleRelay relay) {
@@ -89,10 +106,16 @@ public abstract class BundledSweepLeaderFacePlugin
     @Cougaar.Execute(on = Subscribe.ModType.CHANGE, when = "isReplyRelay")
     public final void followerChange(SimpleRelay relay) {
         Bundle bundle = (Bundle) relay.getQuery();
-        for (UniqueObject object : bundle) {
+        for (UniqueObject object : bundle.getAdds()) {
             blackboard.publishAdd(object);
         }
-        bundleAndSend();
+        for (UniqueObject object : bundle.getChanges()) {
+            blackboard.publishChange(object);
+        }
+        for (UniqueObject object : bundle.getRemoves()) {
+            blackboard.publishRemove(object);
+        }
+       ourTurnToSendRelay=true;
     }
     
     public boolean isRequest(UniqueObject event) {
@@ -101,7 +124,18 @@ public abstract class BundledSweepLeaderFacePlugin
     
     @Cougaar.Execute(on = Subscribe.ModType.ADD, when="isRequest")
     public void squirrelRequest(UniqueObject event) {
-        pendingRequests.add(event);
+        pendingAddRequests.add(event);
+    }
+    
+    @Cougaar.Execute(on = Subscribe.ModType.CHANGE, when="isRequest")
+    public void squirrelChangeRequest(UniqueObject event) {
+        pendingChangeRequests.add(event);
+    }
+    
+    @Cougaar.Execute(on = Subscribe.ModType.REMOVE, when="isRequest")
+    public void squirrelRemoveRequest(UniqueObject event) {
+        pendingRemoveRequests.add(event);
     }
 
+ 
 }

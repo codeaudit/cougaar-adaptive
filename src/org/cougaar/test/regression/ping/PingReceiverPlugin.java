@@ -16,9 +16,9 @@
 *
 * Created : Aug 14, 2007
 * Workfile: PingReceiverPlugin.java
-* $Revision: 1.1 $
-* $Date: 2007-10-19 15:01:52 $
-* $Author: rshapiro $
+* $Revision: 1.2 $
+* $Date: 2007-11-05 15:43:13 $
+* $Author: jzinky $
 *
 * =============================================================================
 */
@@ -54,7 +54,7 @@ public class PingReceiverPlugin extends AnnotatedSubscriptionsPlugin {
             PingQuery query = (PingQuery) senderRelay.getQuery();
             PingReply reply = 
                 new PingReply(uids,query.getCount(),
-                              query.getOriginatorAgent(), query.getOrginatorPlugin(), 
+                              query.getSenderAgent(), query.getSenderPlugin(), 
                               agentId,pluginId);
             UID uid = uids.nextUID();
             receiverRelay = new SimpleRelaySource(uid, agentId, sender, reply);
@@ -72,7 +72,7 @@ public class PingReceiverPlugin extends AnnotatedSubscriptionsPlugin {
         if (receiverRelay != null) {
             PingQuery query = (PingQuery) senderRelay.getQuery();
             PingReply reply = new PingReply(uids,query.getCount(),
-                                            query.getOriginatorAgent(), query.getOrginatorPlugin(), 
+                                            query.getSenderAgent(), query.getSenderPlugin(), 
                                             agentId,pluginId);
             receiverRelay.setQuery(reply);
             Collection<?> changes = Collections.singleton(reply);
@@ -86,7 +86,7 @@ public class PingReceiverPlugin extends AnnotatedSubscriptionsPlugin {
         if (agentId.equals(relay.getTarget())) {
             if (relay.getQuery() instanceof PingQuery) {
                PingQuery pingQuery = (PingQuery) relay.getQuery();
-               return pluginId.equals(pingQuery.getTargetPlugin());
+               return pluginId.equals(pingQuery.getReceiverPlugin());
             }
         }
         return false;

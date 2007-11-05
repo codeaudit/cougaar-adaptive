@@ -14,7 +14,8 @@ public class BundleReplyFacePlugin extends BundledSweepFollowerFacePlugin {
    public boolean match(EventType type, UniqueObject object) {
         if (type == EventType.RESPONSE && object instanceof PingReply) {
             PingReply reply = (PingReply) object;
-             return reply.getTargetAgent().equals(leaderAgent);
+            // reply address are relative to the original query
+             return reply.getSenderAgent().equals(leaderAgent);
         }
         return false;
     }
