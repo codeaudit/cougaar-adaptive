@@ -8,7 +8,6 @@ package org.cougaar.test.coordinations.sweep.bundled;
 
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.cougaar.core.util.UniqueObject;

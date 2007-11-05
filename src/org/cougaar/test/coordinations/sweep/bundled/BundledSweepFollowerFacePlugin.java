@@ -31,7 +31,6 @@ import java.util.Set;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.relay.SimpleRelaySource;
-import org.cougaar.core.service.identity.PendingRequestException;
 import org.cougaar.core.util.UID;
 import org.cougaar.core.util.UniqueObject;
 import org.cougaar.test.coordinations.FacePlugin;
