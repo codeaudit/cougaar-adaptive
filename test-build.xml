@@ -26,7 +26,12 @@
 	</target>
 	
 	<target name="runBB" depends="dist" >
-		<property name="cougaar.society.dir" value="${basedir}/configs/BB"/>
+		<property name="cougaar.society.dir" value="${basedir}/configs/bb"/>
+		<ant target="cougaar-run-dir" antfile="test-build.xml"/>
+	</target>
+
+	<target name="runBundle" depends="dist" >
+		<property name="cougaar.society.dir" value="${basedir}/configs/bundle"/>
 		<ant target="cougaar-run-dir" antfile="test-build.xml"/>
 	</target>
 
@@ -65,6 +70,7 @@
 	<target name="runSuite" depends="dist">
 		<sequential>
 			<ant target="runBB" antfile="test-build.xml"/>	
+			<ant target="runBundle" antfile="test-build.xml"/>	
 			<ant target="runPlugins" antfile="test-build.xml"/>
 			<ant target="runSingleNode" antfile="test-build.xml"/>
 			<ant target="runSubs" antfile="test-build.xml"/>
