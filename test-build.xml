@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project name="tools" basedir="." default="jar">
-	<import file="${basedir}/../build/data/cougaar-app-project-import.xml"/>
-
+	<property environment="env"/>
+	<import file="${env.COUGAAR_INSTALL_PATH}/build/data/cougaar-app-project-import.xml"/>
+	
 	<target name="HubTest" depends="dist">
 		<property name="cougaar.society.file.name" value="PingHubTestSociety.xml"/>
 		<property name="cougaar.runtime.file.name" value="SingleNodeRuntime.xml"/>
