@@ -16,4 +16,5 @@
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.snmp4j.tools.console.SnmpRequest"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-c public -v 1 hops.bbn.com"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="datafeeds"/>
+<stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${project_loc:datafeeds}/run"/>
 </launchConfiguration>
