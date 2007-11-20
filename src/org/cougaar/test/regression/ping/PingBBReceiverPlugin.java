@@ -16,9 +16,9 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingReceiverPlugin.java
- * $Revision: 1.2 $
- * $Date: 2007-11-05 15:43:13 $
- * $Author: jzinky $
+ * $Revision: 1.3 $
+ * $Date: 2007-11-20 22:34:14 $
+ * $Author: rshapiro $
  *
  * =============================================================================
  */
@@ -85,8 +85,7 @@ public class PingBBReceiverPlugin extends AnnotatedSubscriptionsPlugin {
     }
 
     public boolean isMyPingQuery(PingQuery query) {
-        return agentId.equals(query.getReceiverAgent()) 
-        && pluginId.equals(query.getReceiverPlugin());
+        return pluginId.equals(query.getReceiverPlugin());
     }
 
     private String makeSenderKey(MessageAddress agent, String pluginId) {

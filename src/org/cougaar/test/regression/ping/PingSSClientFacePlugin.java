@@ -9,9 +9,14 @@ public class PingSSClientFacePlugin extends ServerSelectionClientFacePlugin {
     public boolean match(EventType type, UniqueObject object) {
         if (type == EventType.REQUEST && object instanceof PingQuery) {
             PingQuery query = (PingQuery) object;
-            return query.getReceiverAgent().equals(serverAddress);
+            return logicalServerAddress.equals(query.getReceiverAgent());
         }
         return false;
+    }
+    
+    public void remap(UniqueObject object) {
+        PingReply reply = (PingReply) object;
+        reply.setReceiverAgent(logicalServerAddress);
     }
 
 }

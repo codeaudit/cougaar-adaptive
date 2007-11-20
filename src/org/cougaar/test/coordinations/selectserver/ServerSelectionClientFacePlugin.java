@@ -1,5 +1,6 @@
 package org.cougaar.test.coordinations.selectserver;
 
+import java.util.List;
 import java.util.Set;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
@@ -22,17 +23,23 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
     private SimpleRelay clientRelay;
     
     @Cougaar.Arg(name="serverName", required=true)
-    public MessageAddress serverAddress;
+    public List<MessageAddress> serverAddresses;
+    
+    @Cougaar.Arg(name="logicalServerName", required=true)
+    public MessageAddress logicalServerAddress;
 
     public ServerSelectionClientFacePlugin() {
         super(new ServerSelection.Client());
     }
+    
+    abstract public void remap(UniqueObject object);
 
     // Relay changes from the other end of the coordination
     
     @Cougaar.Execute(on=Subscribe.ModType.ADD, when="isResponse")
     public void executeNewClientRelay(SimpleRelay serverRelay) {
         Envelope env = (Envelope) serverRelay.getQuery();
+        remap(env.getContents());
         env.publish(blackboard);
     }
     
@@ -40,6 +47,7 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
     public void executeModClientRelay(SimpleRelay serverRelay) {
         // Change to existing connection
         Envelope env = (Envelope) serverRelay.getQuery();
+        remap(env.getContents());
         env.publish(blackboard);
     }
 
@@ -70,7 +78,7 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
     private void ensureClientRelay(Envelope env) {
         if (clientRelay == null) {
             UID uid = uids.nextUID();
-            clientRelay = new SimpleRelaySource(uid, agentId, serverAddress, env);
+            clientRelay = new SimpleRelaySource(uid, agentId, serverAddresses.get(0), env);
             blackboard.publishAdd(clientRelay);
         } else {
             clientRelay.setQuery(env);

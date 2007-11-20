@@ -16,9 +16,9 @@
 *
 * Created : Aug 14, 2007
 * Workfile: PingQuery.java
-* $Revision: 1.2 $
-* $Date: 2007-11-05 15:43:13 $
-* $Author: jzinky $
+* $Revision: 1.3 $
+* $Date: 2007-11-20 22:34:14 $
+* $Author: rshapiro $
 *
 * =============================================================================
 */
@@ -83,5 +83,9 @@ public class PingQuery  extends UniqueObjectBase {
 
     public String getReceiverPlugin() {
         return receiverPlugin;
+    }
+
+    public void setReceiverAgent(MessageAddress receiverAgent) {
+        this.receiverAgent = receiverAgent;
     }
 }
