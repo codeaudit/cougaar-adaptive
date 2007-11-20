@@ -1,8 +1,8 @@
 package org.cougaar.test.coordinations.selectserver;
 
-import java.util.Collections;
 import java.util.Set;
 
+import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.relay.SimpleRelaySource;
@@ -53,9 +53,9 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
     }
     
     @Cougaar.Execute(on=Subscribe.ModType.CHANGE, when="isRequest")
-    public void executeChangedServerRelay(UniqueObject object) {
-        // XXX: Need the subscription to get the changeReports
-        Set<Object> changeReports = Collections.emptySet();
+    public void executeChangedServerRelay(UniqueObject object,
+                                          IncrementalSubscription sub) {
+        Set<?> changeReports = sub.getChangeReports(object);
         Envelope env = new Envelope(object, Envelope.Operation.CHANGE, changeReports);
         ensureClientRelay(env);
     }

@@ -18,14 +18,14 @@
  * =========================================================================
  * </rrl>
  *
- * $Id: ServerSelectionServerFacePlugin.java,v 1.2 2007-11-20 21:25:15 rshapiro Exp $
+ * $Id: ServerSelectionServerFacePlugin.java,v 1.3 2007-11-20 21:49:12 rshapiro Exp $
  *
  * ************************************************************************/
 package org.cougaar.test.coordinations.selectserver;
 
-import java.util.Collections;
 import java.util.Set;
 
+import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.relay.SimpleRelaySource;
@@ -76,9 +76,8 @@ abstract public class ServerSelectionServerFacePlugin extends FacePlugin<ServerS
     }
     
     @Cougaar.Execute(on=Subscribe.ModType.CHANGE, when="isResponse")
-    public void executeChangedServerRelay(UniqueObject object) {
-        // XXX: Need the subscription to get the changeReports
-        Set<Object> changeReports = Collections.emptySet();
+    public void executeChangedServerRelay(UniqueObject object, IncrementalSubscription sub) {
+        Set<?> changeReports = sub.getChangeReports(object);
         Envelope env = new Envelope(object, Envelope.Operation.CHANGE, changeReports);
         ensureServerRelay(env);
     }
