@@ -20,7 +20,9 @@ abstract public class ServerSelectionClientFacePlugin extends FacePlugin<ServerS
 implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
 
     private SimpleRelay clientRelay;
-    private SimpleRelay serverRelay;
+    
+    @Cougaar.Arg(name="serverName", required=true)
+    public MessageAddress serverAddress;
 
     public ServerSelectionClientFacePlugin() {
         super(new ServerSelection.Client());
@@ -30,8 +32,6 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
     
     @Cougaar.Execute(on=Subscribe.ModType.ADD, when="isResponse")
     public void executeNewClientRelay(SimpleRelay serverRelay) {
-        // New connection
-        this.serverRelay = serverRelay;
         Envelope env = (Envelope) serverRelay.getQuery();
         env.publish(blackboard);
     }
@@ -70,11 +70,11 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
     private void ensureClientRelay(Envelope env) {
         if (clientRelay == null) {
             UID uid = uids.nextUID();
-            MessageAddress sender = serverRelay.getSource();
-            clientRelay = new SimpleRelaySource(uid, agentId, sender, env);
+            clientRelay = new SimpleRelaySource(uid, agentId, serverAddress, env);
             blackboard.publishAdd(clientRelay);
         } else {
-            blackboard.publishChange(env);
+            clientRelay.setQuery(env);
+            blackboard.publishChange(clientRelay);
         }
     }
     

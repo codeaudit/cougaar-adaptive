@@ -18,7 +18,7 @@
  * =========================================================================
  * </rrl>
  *
- * $Id: ServerSelectionServerFacePlugin.java,v 1.1 2007-11-20 20:38:33 rshapiro Exp $
+ * $Id: ServerSelectionServerFacePlugin.java,v 1.2 2007-11-20 21:25:15 rshapiro Exp $
  *
  * ************************************************************************/
 package org.cougaar.test.coordinations.selectserver;
@@ -42,7 +42,7 @@ import org.cougaar.util.annotations.Subscribe;
 abstract public class ServerSelectionServerFacePlugin extends FacePlugin<ServerSelection.Server>
     implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
 
-    private SimpleRelay clientRelay;
+    protected MessageAddress clientAddress;
     private SimpleRelay serverRelay;
    
     public ServerSelectionServerFacePlugin() {
@@ -54,7 +54,7 @@ abstract public class ServerSelectionServerFacePlugin extends FacePlugin<ServerS
     @Cougaar.Execute(on=Subscribe.ModType.ADD, when="isRequest")
     public void executeNewClientRelay(SimpleRelay clientRelay) {
         // New connection
-        this.clientRelay = clientRelay;
+        this.clientAddress = clientRelay.getSource();
         Envelope env = (Envelope) clientRelay.getQuery();
         env.publish(blackboard);
     }
@@ -92,11 +92,11 @@ abstract public class ServerSelectionServerFacePlugin extends FacePlugin<ServerS
     private void ensureServerRelay(Envelope env) {
         if (serverRelay == null) {
             UID uid = uids.nextUID();
-            MessageAddress sender = clientRelay.getSource();
-            serverRelay = new SimpleRelaySource(uid, agentId, sender, env);
+            serverRelay = new SimpleRelaySource(uid, agentId, clientAddress, env);
             blackboard.publishAdd(serverRelay);
         } else {
-            blackboard.publishChange(env);
+            serverRelay.setQuery(env);
+            blackboard.publishChange(serverRelay);
         }
     }
     
