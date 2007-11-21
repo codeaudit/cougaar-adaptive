@@ -19,7 +19,6 @@ import org.cougaar.core.qos.metrics.Constants;
 import org.cougaar.core.qos.metrics.Metric;
 import org.cougaar.core.qos.metrics.MetricNotificationQualifier;
 import org.cougaar.core.qos.metrics.MetricsService;
-import org.cougaar.core.qos.metrics.StandardVariableEvaluator;
 import org.cougaar.core.service.LoggingService;
 
 /**
@@ -37,6 +36,16 @@ public class FirstUpPolicy implements SelectionPolicy,Constants {
     }
 
      public MessageAddress select(List<MessageAddress> servers) {
+         for (MessageAddress server : servers) {
+             Callback callback = serverMetrics.get(server);
+             if(callback == null) {
+                 log.info("new server added, so no metric" + server);
+                 continue;
+             }
+             if (callback.getMetric().getCredibility() > 0.2) {
+                 return server;
+             }
+         }
        return null;
     }
      
@@ -64,7 +73,10 @@ public class FirstUpPolicy implements SelectionPolicy,Constants {
         Metric current;
         Object subscription_uid;
         MetricsService metricService;
-      
+         
+        public Metric getMetric () {
+            return current;
+        }
 
         Callback(String path, MetricsService svc) {
             this.path = path;
