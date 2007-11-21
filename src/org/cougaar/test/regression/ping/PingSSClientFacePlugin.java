@@ -14,7 +14,7 @@ public class PingSSClientFacePlugin extends ServerSelectionClientFacePlugin {
         return false;
     }
     
-    public void remap(UniqueObject object) {
+    public void remapResponse(UniqueObject object) {
         PingReply reply = (PingReply) object;
         reply.setReceiverAgent(logicalServerAddress);
     }

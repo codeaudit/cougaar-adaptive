@@ -15,4 +15,8 @@ public class PingSSServerFacePlugin extends ServerSelectionServerFacePlugin {
         return false;
     }
 
+    public void remapRequest(UniqueObject object) {
+        // No remap necessary        
+    }
+
 }

@@ -18,7 +18,7 @@
  * =========================================================================
  * </rrl>
  *
- * $Id: ServerSelectionServerFacePlugin.java,v 1.3 2007-11-20 21:49:12 rshapiro Exp $
+ * $Id: ServerSelectionServerFacePlugin.java,v 1.4 2007-11-21 18:23:07 jzinky Exp $
  *
  * ************************************************************************/
 package org.cougaar.test.coordinations.selectserver;
@@ -49,6 +49,12 @@ abstract public class ServerSelectionServerFacePlugin extends FacePlugin<ServerS
         super(new ServerSelection.Server());
     }
     
+    /**
+     * Hook for changing the Request before before sending it
+     * to the server. This is usually used to change the Server address 
+     * from a logical to physical address
+     */
+    abstract public void remapRequest(UniqueObject object);
     // Relay changes from the other end of the coordination
     
     @Cougaar.Execute(on=Subscribe.ModType.ADD, when="isRequest")
@@ -56,6 +62,7 @@ abstract public class ServerSelectionServerFacePlugin extends FacePlugin<ServerS
         // New connection
         this.clientAddress = clientRelay.getSource();
         Envelope env = (Envelope) clientRelay.getQuery();
+        remapRequest(env.getContents());
         env.publish(blackboard);
     }
     
@@ -63,6 +70,7 @@ abstract public class ServerSelectionServerFacePlugin extends FacePlugin<ServerS
     public void executeModClientRelay(SimpleRelay clientRelay) {
         // Change to existing connection
         Envelope env = (Envelope) clientRelay.getQuery();
+        remapRequest(env.getContents());
         env.publish(blackboard);
     }
     

@@ -11,7 +11,7 @@ Example regression test society
 			<argument name="defaultWorkerTimeout" value="10001000" />
 			<argument name="defaultNodeTimeout" value="100001000" />
 			<argument name="csvFileName" value="test.csv" />
-			<argument name="collectionLength" value="15000" />
+			<argument name="collectionLength" value="15000100" />
 			<argument name="steadyStateWait" value="1000" />
 		</component>
 		<component class="org.cougaar.test.regression.RegressionAggregatorPlugin">
@@ -33,6 +33,7 @@ Example regression test society
 				<argument name="preambleCount" value="50" />
 			</component>
 			 <component class="org.cougaar.test.regression.ping.PingSSClientFacePlugin">
+			    <argument name="selectionPolicy" value="FIRST"/>
 			    <argument name="logicalServerName" value="Server"/>
                 <argument name="serverName" value="Server1"/>
                 <argument name="serverName" value="Server2"/>

@@ -1,6 +1,8 @@
 package org.cougaar.test.coordinations.selectserver;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
@@ -20,26 +22,48 @@ import org.cougaar.util.annotations.Subscribe;
 abstract public class ServerSelectionClientFacePlugin extends FacePlugin<ServerSelection.Client>
 implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
 
-    private SimpleRelay clientRelay;
+    private Map<MessageAddress,SimpleRelay> clientRelays = 
+        new HashMap<MessageAddress,SimpleRelay>();
     
     @Cougaar.Arg(name="serverName", required=true)
     public List<MessageAddress> serverAddresses;
     
     @Cougaar.Arg(name="logicalServerName", required=true)
     public MessageAddress logicalServerAddress;
+    
+    @Cougaar.Arg(name="selectionPolicy", defaultValue="ROUND_ROBIN")
+    public String selectionPolicyString;
+    public SelectionPolicyName selectionPolicyName;
+    private SelectionPolicy selectionPolicy;
 
     public ServerSelectionClientFacePlugin() {
         super(new ServerSelection.Client());
     }
     
-    abstract public void remap(UniqueObject object);
-
-    // Relay changes from the other end of the coordination
+    /**
+     * Hook for changing the Reply before before sending it
+     * to the client. This is usually used to change the Server address 
+     * from a logical to physical address
+     */
+     abstract public void remapResponse(UniqueObject object);
+     
+     protected void setupSubscriptions() {
+         super.setupSubscriptions();
+         selectionPolicyName=Enum.valueOf(SelectionPolicyName.class,selectionPolicyString);
+         selectionPolicy=SelectionPolicyName.getPolicy(selectionPolicyName);
+         if (selectionPolicy != null) {
+             selectionPolicy.setup(getServiceBroker());
+         } else {
+             log.error("No Selection Policy for " + selectionPolicyString);
+         }
+     }    
+     
+     // Relay changes from the other end of the coordination
     
     @Cougaar.Execute(on=Subscribe.ModType.ADD, when="isResponse")
     public void executeNewClientRelay(SimpleRelay serverRelay) {
         Envelope env = (Envelope) serverRelay.getQuery();
-        remap(env.getContents());
+        remapResponse(env.getContents());
         env.publish(blackboard);
     }
     
@@ -47,7 +71,7 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
     public void executeModClientRelay(SimpleRelay serverRelay) {
         // Change to existing connection
         Envelope env = (Envelope) serverRelay.getQuery();
-        remap(env.getContents());
+        remapResponse(env.getContents());
         env.publish(blackboard);
     }
 
@@ -57,7 +81,7 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
     @Cougaar.Execute(on=Subscribe.ModType.ADD, when="isRequest")
     public void executeNewServerRelay(UniqueObject object) {
         Envelope env = new Envelope(object, Envelope.Operation.ADD);
-        ensureClientRelay(env);
+        forwardRequest(env);
     }
     
     @Cougaar.Execute(on=Subscribe.ModType.CHANGE, when="isRequest")
@@ -65,20 +89,40 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
                                           IncrementalSubscription sub) {
         Set<?> changeReports = sub.getChangeReports(object);
         Envelope env = new Envelope(object, Envelope.Operation.CHANGE, changeReports);
-        ensureClientRelay(env);
+        forwardRequest(env);
     }
     
     @Cougaar.Execute(on=Subscribe.ModType.REMOVE, when="isRequest")
     public void executeRemovedServerRelay(UniqueObject object) {
         Envelope env = new Envelope(object, Envelope.Operation.REMOVE);
-        ensureClientRelay(env);
+        forwardRequest(env);
     }
     
-    
-    private void ensureClientRelay(Envelope env) {
+    private void forwardRequest(Envelope env){
+        if (selectionPolicy == null) {
+            log.error("Attempted to forward Request with No Selection Policy=" + 
+                      selectionPolicyString);
+            return;
+        } 
+        MessageAddress serverPhysicalAddress = selectionPolicy.select(serverAddresses);
+        if (serverPhysicalAddress== null) {
+            if (log.isInfoEnabled()) 
+                log.info("No valid Physical Server. Retry Later");
+            //TODO  schedule retry task
+            return;
+        }
+
+        sendRequest(serverPhysicalAddress,env);
+    }
+        
+    private void sendRequest(MessageAddress server, Envelope env) {
+        SimpleRelay clientRelay = clientRelays.get(server);
         if (clientRelay == null) {
             UID uid = uids.nextUID();
-            clientRelay = new SimpleRelaySource(uid, agentId, serverAddresses.get(0), env);
+            clientRelay = new SimpleRelaySource(uid, agentId, server, null);
+            clientRelays.put(server,clientRelay);
+            // TODO relay connection should not have envelope?
+            clientRelay.setQuery(env);
             blackboard.publishAdd(clientRelay);
         } else {
             clientRelay.setQuery(env);
