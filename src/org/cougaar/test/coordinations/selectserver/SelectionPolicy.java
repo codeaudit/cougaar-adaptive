@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.cougaar.core.component.ServiceBroker;
 import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.core.service.LoggingService;
 
 /**
  * Policy for choosing among multiple servers.
@@ -21,10 +22,10 @@ public interface SelectionPolicy {
      */
     public SelectionPolicyName getPolicy();
     
-    /**
-     * Setup Policy state
-     */
-    public void setup(ServiceBroker sb);
+
+    public void setup(ServiceBroker sb, 
+                      LoggingService log, 
+                      List<MessageAddress> servers);
     
    /**
     * Select a server from a list of servers based on the policy

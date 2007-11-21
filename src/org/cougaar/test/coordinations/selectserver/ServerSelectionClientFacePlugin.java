@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.cougaar.core.agent.service.alarm.Alarm;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.relay.SimpleRelay;
@@ -36,6 +37,8 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
     public SelectionPolicyName selectionPolicyName;
     private SelectionPolicy selectionPolicy;
 
+    private Alarm retryTimer;
+
     public ServerSelectionClientFacePlugin() {
         super(new ServerSelection.Client());
     }
@@ -52,7 +55,7 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
          selectionPolicyName=Enum.valueOf(SelectionPolicyName.class,selectionPolicyString);
          selectionPolicy=SelectionPolicyName.getPolicy(selectionPolicyName);
          if (selectionPolicy != null) {
-             selectionPolicy.setup(getServiceBroker());
+             selectionPolicy.setup(getServiceBroker(), log, serverAddresses);
          } else {
              log.error("No Selection Policy for " + selectionPolicyString);
          }
@@ -81,7 +84,7 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
     @Cougaar.Execute(on=Subscribe.ModType.ADD, when="isRequest")
     public void executeNewServerRelay(UniqueObject object) {
         Envelope env = new Envelope(object, Envelope.Operation.ADD);
-        forwardRequest(env);
+        forwardRequest(env, 1);
     }
     
     @Cougaar.Execute(on=Subscribe.ModType.CHANGE, when="isRequest")
@@ -89,16 +92,16 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
                                           IncrementalSubscription sub) {
         Set<?> changeReports = sub.getChangeReports(object);
         Envelope env = new Envelope(object, Envelope.Operation.CHANGE, changeReports);
-        forwardRequest(env);
+        forwardRequest(env, 1);
     }
     
     @Cougaar.Execute(on=Subscribe.ModType.REMOVE, when="isRequest")
     public void executeRemovedServerRelay(UniqueObject object) {
         Envelope env = new Envelope(object, Envelope.Operation.REMOVE);
-        forwardRequest(env);
+        forwardRequest(env, 1);
     }
     
-    private void forwardRequest(Envelope env){
+    private void forwardRequest(Envelope env, int retryCount){
         if (selectionPolicy == null) {
             log.error("Attempted to forward Request with No Selection Policy=" + 
                       selectionPolicyString);
@@ -108,7 +111,7 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
         if (serverPhysicalAddress== null) {
             if (log.isInfoEnabled()) 
                 log.info("No valid Physical Server. Retry Later");
-            //TODO  schedule retry task
+            retryTimer=executeLater(5000, new retryForward(env, retryCount));
             return;
         }
 
@@ -129,6 +132,22 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
             blackboard.publishChange(clientRelay);
         }
     }
+    
+    private final class retryForward implements Runnable {
+        private Envelope env;
+        private int retryCount;
+        
+        public retryForward(Envelope env, int retryCount) {
+            this.env=env;
+            this.retryCount=retryCount;
+        }
+
+        public void run() {
+            retryTimer=null;
+            forwardRequest(env,retryCount+1);
+        }
+    }
+  
     
     public boolean isResponse(SimpleRelay relay) {
         return agentId.equals(relay.getTarget()) && (relay.getQuery() instanceof Envelope);

@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.cougaar.core.component.ServiceBroker;
 import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.core.service.LoggingService;
 
 /**
  *
@@ -30,7 +31,7 @@ public class RandomPolicy implements SelectionPolicy {
         }
     }
 
-    public void setup(ServiceBroker sb) {
+    public void setup(ServiceBroker sb, LoggingService log, List<MessageAddress> servers) {
         //Stateless
     }
 }

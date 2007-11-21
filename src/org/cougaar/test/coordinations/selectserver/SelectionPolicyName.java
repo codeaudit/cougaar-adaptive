@@ -20,7 +20,7 @@ public enum SelectionPolicyName {
         switch (selectionPolicyName) {
             case RANDOM: return new RandomPolicy();
             case ROUND_ROBIN: return new RoundRobinPolicy();
-            case FIRST_UP: return new FirstPolicy();
+            case FIRST_UP: return new FirstUpPolicy();
             case CLOSEST: return new FirstPolicy();
             case FIRST: return new FirstPolicy();
             default: return null;

@@ -15,29 +15,18 @@ import org.cougaar.core.service.LoggingService;
 /**
  *
  */
-public class RoundRobinPolicy implements SelectionPolicy {
+public class FirstUpPolicy implements SelectionPolicy {
     
-    private int lastIndex;
 
     public SelectionPolicyName getPolicy() {
-        return SelectionPolicyName.ROUND_ROBIN;
+        return SelectionPolicyName.FIRST_UP;
     }
 
      public MessageAddress select(List<MessageAddress> servers) {
-         int size = servers.size();
-         if (size > 1) {
-             lastIndex = (lastIndex + 1) % size;
-             return servers.get(lastIndex);
-         } else if (size == 1){
-             lastIndex=0;
-             return servers.get(lastIndex);
-         } else {
-             return null;
-         }
+       return null;
     }
      
    public void setup(ServiceBroker sb, LoggingService log, List<MessageAddress> servers) {
-       lastIndex=0;
     }
 
 }
