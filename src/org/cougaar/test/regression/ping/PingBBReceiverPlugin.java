@@ -16,9 +16,9 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingReceiverPlugin.java
- * $Revision: 1.3 $
- * $Date: 2007-11-20 22:34:14 $
- * $Author: rshapiro $
+ * $Revision: 1.4 $
+ * $Date: 2007-11-21 19:36:59 $
+ * $Author: jzinky $
  *
  * =============================================================================
  */
@@ -46,16 +46,15 @@ public class PingBBReceiverPlugin extends AnnotatedSubscriptionsPlugin {
     @Cougaar.Arg(name = "pluginId", defaultValue = "a", description = "Receiver Plugin Id")
     public String pluginId;
 
-    @Cougaar.Execute(on = Subscribe.ModType.ADD, when = "isMyPingQuery")
+    @Cougaar.Execute(on = {Subscribe.ModType.ADD, Subscribe.ModType.CHANGE}, when = "isMyPingQuery")
     public void executeNewQueryRelay(PingQuery query) {
         String senderPluginId = query.getSenderPlugin();
         MessageAddress senderAgentId = query.getSenderAgent();
         String senderKey = makeSenderKey(senderAgentId, senderPluginId);
-        PingReply receiverRelay = returnRelays.get(senderKey);
-        if (receiverRelay == null) {
+        PingReply reply = returnRelays.get(senderKey);
+        if (reply == null) {
             // originator is relative to the original query.
-            PingReply reply =
-                    new PingReply(uids,
+            reply = new PingReply(uids,
                                   query.getCount(),
                                   senderAgentId,
                                   senderPluginId,
@@ -64,25 +63,13 @@ public class PingBBReceiverPlugin extends AnnotatedSubscriptionsPlugin {
             returnRelays.put(senderKey, reply);
             blackboard.publishAdd(reply);
         } else {
-            log.error("Multiple request from same sender=" + senderKey);
-        }
-    }
-
-    @Cougaar.Execute(on = Subscribe.ModType.CHANGE, when = "isMyPingQuery")
-    public void executeQuery(PingQuery query) {
-        String senderPluginId = query.getSenderPlugin();
-        MessageAddress senderAgentId = query.getSenderAgent();
-        String senderKey = makeSenderKey(senderAgentId, senderPluginId);
-        PingReply reply = returnRelays.get(senderKey);
-        if (reply != null) {
             int count = query.getCount();
             reply.setCount(count);
             Collection<?> changes = Collections.singleton(count);
-            blackboard.publishChange(reply, changes);
-        } else {
-            log.error("No return reply for query from sender=" + senderKey);
+            blackboard.publishChange(reply, changes);            
         }
     }
+
 
     public boolean isMyPingQuery(PingQuery query) {
         return pluginId.equals(query.getReceiverPlugin());

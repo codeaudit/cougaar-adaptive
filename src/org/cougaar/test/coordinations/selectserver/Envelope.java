@@ -18,7 +18,7 @@
  * =========================================================================
  * </rrl>
  *
- * $Id: Envelope.java,v 1.1 2007-11-20 20:38:33 rshapiro Exp $
+ * $Id: Envelope.java,v 1.2 2007-11-21 19:37:00 jzinky Exp $
  *
  * ************************************************************************/
 package org.cougaar.test.coordinations.selectserver;
@@ -72,6 +72,10 @@ public class Envelope implements Serializable {
                 break;
                 
             case CHANGE:
+                //If the Contents is not already on the blackboard,
+                // when using publishChange, the Contents will not appear on the tasks servlet.
+                // when using publihAdd, the old Contents will be found and written over.
+                // TODO: Need a way to detect if the contents is already on the blackboard. 
                 blackboard.publishChange(contents, changeReports);
                 break;
                 

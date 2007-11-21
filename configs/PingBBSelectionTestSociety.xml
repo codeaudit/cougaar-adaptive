@@ -33,7 +33,7 @@ Example regression test society
 				<argument name="preambleCount" value="50" />
 			</component>
 			 <component class="org.cougaar.test.regression.ping.PingSSClientFacePlugin">
-			    <argument name="selectionPolicy" value="FIRST"/>
+			    <argument name="selectionPolicy" value="ROUND_ROBIN"/>
 			    <argument name="logicalServerName" value="Server"/>
                 <argument name="serverName" value="Server1"/>
                 <argument name="serverName" value="Server2"/>
