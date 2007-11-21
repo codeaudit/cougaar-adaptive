@@ -37,6 +37,7 @@ Example regression test society
 			    <argument name="logicalServerName" value="Server"/>
                 <argument name="serverName" value="Server1"/>
                 <argument name="serverName" value="Server2"/>
+                <argument name="serverName" value="Server3"/>
             </component>
 		    <component class="org.cougaar.test.regression.ping.PingBBTesterPlugin">
 		    	<argument name="workerId" value="source1"/>
@@ -53,6 +54,17 @@ Example regression test society
 	   </agent>
 	   
 	    <agent name="Server2">
+            <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+              <argument name="pluginId" value="Snk1"/>
+            </component>
+            <component class="org.cougaar.test.regression.ping.PingSSServerFacePlugin">
+            </component>
+       </agent>
+       
+    </node> 
+    
+    <node name="Node2">      
+       <agent name="Server3">
             <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
               <argument name="pluginId" value="Snk1"/>
             </component>
