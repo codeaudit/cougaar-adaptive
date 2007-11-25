@@ -24,78 +24,73 @@ import org.cougaar.core.service.LoggingService;
 /**
  * Select the first server that is up in the list.
  */
-public class FirstUpPolicy implements SelectionPolicy,Constants {
-    
-
+public class FirstUpPolicy implements SelectionPolicy, Constants {
     private MetricsService metricsService;
     private LoggingService log;
-    private Map<MessageAddress,Callback> serverMetrics = new HashMap<MessageAddress,Callback>();
+    private final Map<MessageAddress, Callback> serverMetrics =
+            new HashMap<MessageAddress, Callback>();
 
-    public SelectionPolicyName getPolicy() {
-        return SelectionPolicyName.FIRST_UP;
-    }
+    public void setup(ServiceBroker sb, LoggingService log, List<MessageAddress> servers) {
+        // get metrics service
+        this.log = log;
+        try {
+            metricsService = sb.getService(this, MetricsService.class, null);
+        } catch (Exception e) {
+            log.error("First Up Policy Unable to get MetricsService");
+        }
+        NodeIdentificationService nis = sb.getService(this, NodeIdentificationService.class, null);
+        MessageAddress nodeAddr = nis.getMessageAddress();
 
-     public MessageAddress select(List<MessageAddress> servers) {
-         for (MessageAddress server : servers) {
-             Callback callback = serverMetrics.get(server);
-             if(callback == null) {
-                 log.info("new server added, so no metric" + server);
-                 continue;
-             }
-             if (callback.getMetric().getCredibility() > 0.2) {
-                 return server;
-             }
-         }
-       return null;
-    }
-     
-   public void setup(ServiceBroker sb, LoggingService log, List<MessageAddress> servers) {
-       // get metrics service
-       this.log=log;
-       try {
-       metricsService = sb.getService(this, MetricsService.class, null);
-       } catch (Exception e) {
-         log.error("First Up Policy Unable to get MetricsService");
-       }
-       NodeIdentificationService nis = sb.getService(this, NodeIdentificationService.class, null);
-       MessageAddress nodeAddr = nis.getMessageAddress();
-  
-       for (MessageAddress server : servers) {
-           String path="Node("+nodeAddr+")"+PATH_SEPR+"Destination("+ server.getAddress() + ")"+PATH_SEPR+"CapacityMax";
-           log.info(path);
-           serverMetrics.put(server, new Callback(path,metricsService));
-       }
-       
-   }
-   
-   private class Callback implements Observer {
-        String path;
-        Metric current;
-        Object subscription_uid;
-        MetricsService metricService;
-         
-        public Metric getMetric () {
-            return current;
+        for (MessageAddress server : servers) {
+            String path =
+                    "Node(" + nodeAddr + ")" + PATH_SEPR + "Destination(" + server.getAddress()
+                            + ")" + PATH_SEPR + "CapacityMax";
+            log.info(path);
+            serverMetrics.put(server, new Callback(path));
         }
 
-        Callback(String path, MetricsService svc) {
+    }
+
+    public MessageAddress select(List<MessageAddress> servers) {
+        for (MessageAddress server : servers) {
+            Callback callback = serverMetrics.get(server);
+            if (callback == null) {
+                log.info("new server added, so no metric" + server);
+                continue;
+            }
+            if (callback.getMetric().getCredibility() > 0.2) {
+                return server;
+            }
+        }
+        return null;
+    }
+    
+    private class Callback implements Observer {
+        String path;
+        Metric metric;
+        Object subscription_uid;
+
+        Callback(String path) {
             this.path = path;
-            this.metricService=svc;
             MetricNotificationQualifier qualifier = null;
-            subscription_uid = metricService.subscribeToValue(path, this, qualifier);
+            subscription_uid = metricsService.subscribeToValue(path, this, qualifier);
+        }
+
+        Metric getMetric() {
+            return metric;
         }
 
         public void update(Observable ignore, Object value) {
-            if (value != null) {
-                this.current = (Metric) value;
-                log.info(path+"="+value);
+            if (value instanceof Metric) {
+                this.metric = (Metric) value;
+                log.info(path + "=" + value);
             } else {
-                log.warn("got null value for path"+path);
+                log.warn("got null or bogus value for path" + path);
             }
         }
 
         void unsubscribe() {
-            metricService.unsubscribeToValue(subscription_uid);
+            metricsService.unsubscribeToValue(subscription_uid);
         }
     }
 

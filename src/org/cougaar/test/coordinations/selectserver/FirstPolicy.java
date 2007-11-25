@@ -8,28 +8,14 @@ package org.cougaar.test.coordinations.selectserver;
 
 import java.util.List;
 
-import org.cougaar.core.component.ServiceBroker;
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.service.LoggingService;
 
 /**
- *
+ * This trivial policy simply selects the first server.  Useful
+ * for deterministic regression tests.
  */
-public class FirstPolicy implements SelectionPolicy {
-
-    public SelectionPolicyName getPolicy() {
-        return SelectionPolicyName.FIRST_UP;
-    }
-
+public class FirstPolicy extends AbstractSelectionPolicy {
     public MessageAddress select(List<MessageAddress> servers) {
-        int size = servers.size();
-        if (size >= 1) {
-            return servers.get(0);
-        } else {
-            return null;
-        }
-    }
-
-    public void setup(ServiceBroker sb, LoggingService log, List<MessageAddress> servers) {
+        return servers.isEmpty() ? null : servers.get(0);
     }
 }

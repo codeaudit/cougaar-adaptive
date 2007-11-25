@@ -8,36 +8,27 @@ package org.cougaar.test.coordinations.selectserver;
 
 import java.util.List;
 
-import org.cougaar.core.component.ServiceBroker;
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.service.LoggingService;
 
 /**
- *
+ * This policy walks through the servers in order.
  */
-public class RoundRobinPolicy implements SelectionPolicy {
-    
-    private int lastIndex;
+public class RoundRobinPolicy extends AbstractSelectionPolicy {
 
-    public SelectionPolicyName getPolicy() {
-        return SelectionPolicyName.ROUND_ROBIN;
+    private int lastIndex = 0;
+
+    public MessageAddress select(List<MessageAddress> servers) {
+        int size = servers.size();
+        if (size > 1) {
+            lastIndex = (lastIndex + 1) % size;
+            return servers.get(lastIndex);
+        } else if (size == 1) {
+            lastIndex = 0;
+            return servers.get(lastIndex);
+        } else {
+            return null;
+        }
     }
 
-     public MessageAddress select(List<MessageAddress> servers) {
-         int size = servers.size();
-         if (size > 1) {
-             lastIndex = (lastIndex + 1) % size;
-             return servers.get(lastIndex);
-         } else if (size == 1){
-             lastIndex=0;
-             return servers.get(lastIndex);
-         } else {
-             return null;
-         }
-    }
-     
-   public void setup(ServiceBroker sb, LoggingService log, List<MessageAddress> servers) {
-       lastIndex=0;
-    }
 
 }

@@ -17,15 +17,7 @@ import org.cougaar.core.service.LoggingService;
  * The policy may be stateful or use external services
  */
 public interface SelectionPolicy {
-    /**
-     *  Identifier for this policy    
-     */
-    public SelectionPolicyName getPolicy();
-    
-
-    public void setup(ServiceBroker sb, 
-                      LoggingService log, 
-                      List<MessageAddress> servers);
+    public void setup(ServiceBroker sb, LoggingService log, List<MessageAddress> servers);
     
    /**
     * Select a server from a list of servers based on the policy

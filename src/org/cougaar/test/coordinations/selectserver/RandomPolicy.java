@@ -8,19 +8,12 @@ package org.cougaar.test.coordinations.selectserver;
 
 import java.util.List;
 
-import org.cougaar.core.component.ServiceBroker;
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.service.LoggingService;
 
 /**
- *
+ * This policy selects a server at random.
  */
-public class RandomPolicy implements SelectionPolicy {
-
-    public SelectionPolicyName getPolicy() {
-        return SelectionPolicyName.RANDOM;
-    }
-
+public class RandomPolicy extends AbstractSelectionPolicy {
     public MessageAddress select(List<MessageAddress> servers) {
         int size = servers.size();
         if (size >= 1) {
@@ -29,9 +22,5 @@ public class RandomPolicy implements SelectionPolicy {
         } else {
             return null;
         }
-    }
-
-    public void setup(ServiceBroker sb, LoggingService log, List<MessageAddress> servers) {
-        //Stateless
     }
 }

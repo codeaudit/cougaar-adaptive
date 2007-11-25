@@ -33,8 +33,7 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
     public MessageAddress logicalServerAddress;
     
     @Cougaar.Arg(name="selectionPolicy", defaultValue="ROUND_ROBIN")
-    public String selectionPolicyString;
-    public SelectionPolicyName selectionPolicyName;
+    public SelectionPolicyFactory selectionPolicyFactory;
     private SelectionPolicy selectionPolicy;
 
     private Alarm retryTimer;
@@ -52,13 +51,8 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
      
      protected void setupSubscriptions() {
          super.setupSubscriptions();
-         selectionPolicyName=Enum.valueOf(SelectionPolicyName.class,selectionPolicyString);
-         selectionPolicy=SelectionPolicyName.getPolicy(selectionPolicyName);
-         if (selectionPolicy != null) {
-             selectionPolicy.setup(getServiceBroker(), log, serverAddresses);
-         } else {
-             log.error("No Selection Policy for " + selectionPolicyString);
-         }
+         selectionPolicy = selectionPolicyFactory.makePolicy();
+         selectionPolicy.setup(getServiceBroker(), log, serverAddresses);
      }    
      
      // Relay changes from the other end of the coordination
@@ -104,14 +98,14 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
     private void forwardRequest(Envelope env, int retryCount){
         if (selectionPolicy == null) {
             log.error("Attempted to forward Request with No Selection Policy=" + 
-                      selectionPolicyString);
+                      selectionPolicyFactory.name());
             return;
         } 
         MessageAddress serverPhysicalAddress = selectionPolicy.select(serverAddresses);
         if (serverPhysicalAddress== null) {
             if (log.isInfoEnabled()) 
                 log.info("No valid Physical Server. Retry Later");
-            retryTimer=executeLater(5000, new retryForward(env, retryCount));
+            retryTimer=executeLater(5000, new RetryForward(env, retryCount));
             return;
         }
 
@@ -133,11 +127,11 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
         }
     }
     
-    private final class retryForward implements Runnable {
+    private final class RetryForward implements Runnable {
         private Envelope env;
         private int retryCount;
         
-        public retryForward(Envelope env, int retryCount) {
+        public RetryForward(Envelope env, int retryCount) {
             this.env=env;
             this.retryCount=retryCount;
         }
