@@ -29,7 +29,7 @@ public class ClosestPolicy extends MetricBasedPolicy {
                 continue;
             }
             double credibility = metric.getCredibility();
-            if (credibility <= SYS_DEFAULT_CREDIBILITY) {
+            if (credibility < SYS_DEFAULT_CREDIBILITY) {
                 // Value is present but not sufficiently credible
                 continue;
             }
