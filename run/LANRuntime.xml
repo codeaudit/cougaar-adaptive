@@ -1,0 +1,27 @@
+<?xml version='1.0'?>
+
+<!--
+	This file contains Lan runtime System Properties.
+-->
+<runtime>
+
+	<!-- Set infrastructure to LAN runtime, see doc/OnlineManual/Templates.html -->
+	<vm_parameter name="-Dorg.cougaar.society.xsl.param.template"
+		value="lan" />
+	<!-- Set Name Servicer host address -->
+	<vm_parameter name="-Dorg.cougaar.name.server"
+		value="NameServer@localhost:8888" />
+	<!-- Enable task servlet -->
+	<vm_parameter name="-Dorg.cougaar.society.xsl.param.planning"
+		value="true" />
+	<!-- Stop printing "+-" into log -->
+	<vm_parameter name="-Dorg.cougaar.core.agent.quiet" 
+	    value="true" />
+	<vm_parameter name="-Dorg.cougaar.core.agent.heartbeat"
+		value="false" />
+
+	<!-- Optional log4j config file -->
+	<vm_parameter name="-Dorg.cougaar.core.logging.config.filename"
+		value="logging.props" />
+
+</runtime>
