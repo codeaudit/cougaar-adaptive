@@ -34,6 +34,7 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
     
     @Cougaar.Arg(name="selectionPolicy", defaultValue="ROUND_ROBIN")
     public SelectionPolicyFactory selectionPolicyFactory;
+    
     private SelectionPolicy selectionPolicy;
 
     @SuppressWarnings("unused") // will be used later
@@ -128,6 +129,14 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
         }
     }
     
+    public boolean isResponse(SimpleRelay relay) {
+        return agentId.equals(relay.getTarget()) && (relay.getQuery() instanceof Envelope);
+    }
+    
+    public boolean isRequest(UniqueObject event) {
+        return match(ServerSelection.EventType.REQUEST, event);
+    }
+    
     private final class RetryForward implements Runnable {
         private Envelope env;
         private int retryCount;
@@ -143,13 +152,5 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
         }
     }
   
-    
-    public boolean isResponse(SimpleRelay relay) {
-        return agentId.equals(relay.getTarget()) && (relay.getQuery() instanceof Envelope);
-    }
-    
-    public boolean isRequest(UniqueObject event) {
-        return match(ServerSelection.EventType.REQUEST, event);
-    }
 }
 
