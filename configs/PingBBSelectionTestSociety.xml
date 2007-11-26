@@ -65,11 +65,11 @@
 			</component>
 			<component
 				class="org.cougaar.test.regression.ping.PingSSClientFacePlugin">
-				<argument name="selectionPolicy" value="FIRST_UP" />
+				<argument name="selectionPolicy" value="CLOSEST" />
 				<argument name="logicalServerName" value="Server" />
+				<argument name="serverName" value="Server3" />
 				<argument name="serverName" value="Server1" />
 				<argument name="serverName" value="Server2" />
-				<argument name="serverName" value="Server3" />
 			</component>
 			<component
 				class="org.cougaar.test.regression.ping.PingBBTesterPlugin">
