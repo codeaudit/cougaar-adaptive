@@ -9,7 +9,8 @@ package org.cougaar.test.coordinations.selectserver;
 import org.cougaar.core.component.Service;
 
 /**
- *  Simple service to create a {@link SelectionPolicy} on demand.
+ * Simple service api to create a {@link SelectionPolicy} on demand.  We don't
+ * use this a true SOA service, since the extent is plugin-specific.
  */
 public interface SelectionPolicyFactoryService extends Service {
     public SelectionPolicy makePolicy();

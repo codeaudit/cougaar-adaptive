@@ -36,6 +36,7 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
     public SelectionPolicyFactory selectionPolicyFactory;
     private SelectionPolicy selectionPolicy;
 
+    @SuppressWarnings("unused") // will be used later
     private Alarm retryTimer;
 
     public ServerSelectionClientFacePlugin() {
@@ -105,7 +106,7 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
         if (serverPhysicalAddress== null) {
             if (log.isInfoEnabled()) 
                 log.info("No valid Physical Server. Retry Later");
-            retryTimer=executeLater(5000, new RetryForward(env, retryCount));
+            retryTimer = executeLater(5000, new RetryForward(env, retryCount));
             return;
         }
 
@@ -137,7 +138,7 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
         }
 
         public void run() {
-            retryTimer=null;
+            retryTimer = null;
             forwardRequest(env,retryCount+1);
         }
     }

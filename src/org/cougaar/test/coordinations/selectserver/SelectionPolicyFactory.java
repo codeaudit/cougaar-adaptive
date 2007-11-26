@@ -7,13 +7,8 @@
 package org.cougaar.test.coordinations.selectserver;
 
 /**
- * For now we use an enum to create the policy instance, ie, by treating each
- * enum constant as a factory. Not clear this buys anything vis-a-vis using
- * classnames directly, or creating a service in proper SOA fashion, or using
- * string keys.
- * 
- * I would be more inclined to load a component that advertises
- * {@link SelectionPolicyFactoryService}.
+ * An enumeration of possible {@link SelectionPolicy} factories, ie,
+ * objects whose job is to create policy objects.
  * 
  */
 public enum SelectionPolicyFactory implements SelectionPolicyFactoryService {
@@ -34,8 +29,7 @@ public enum SelectionPolicyFactory implements SelectionPolicyFactoryService {
     },
     CLOSEST {
         public SelectionPolicy makePolicy() {
-            // FIXME: We need a real implementation of this
-            return new FirstPolicy();
+            return new ClosestPolicy();
         }
     }, 
     
