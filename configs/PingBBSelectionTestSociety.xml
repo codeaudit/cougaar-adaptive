@@ -5,7 +5,7 @@
 -->
 <society>
 	<node name="Node1">
-	<!-- An optional society monitor servlet, which is based on framesets -->
+		<!-- An optional society monitor servlet, which is based on framesets -->
 		<component
 			class='org.cougaar.core.qos.frame.topology.TopologyFrameUpdaterPlugin'>
 			<argument name="frame-set-files"
@@ -21,17 +21,34 @@
 			<argument>/frames</argument>
 		</component>
 
-        <component
-            class="org.cougaar.test.regression.RegressionAggregatorPlugin">
-            <argument name="workerCount" value="1" />
-            <argument name="maxIdleTime" value="600010" />
-        </component>
-        <component
-            class="org.cougaar.test.sequencer.StoNNodeFacePlugin">
-            <argument name="sequencerName" value="Sequencer" />
-        </component>
+		<component
+			class="org.cougaar.test.regression.RegressionAggregatorPlugin">
+			<argument name="workerCount" value="1" />
+			<argument name="maxIdleTime" value="600010" />
+		</component>
+		<component
+			class="org.cougaar.test.sequencer.StoNNodeFacePlugin">
+			<argument name="sequencerName" value="Sequencer" />
+		</component>
 
-        <agent name="Sequencer">
+		<component
+			class="org.cougaar.core.qos.rss.ConfigFinderDataFeedComponent"
+			insertionpoint="Node.AgentManager.Agent.MetricsServices.Component">
+			<argument name="name" value="sites" />
+			<argument name="url" value="file:sites.conf" />
+		</component>
+
+		<component class="org.cougaar.core.qos.metrics.FeedLoader"
+			insertionpoint="Node.AgentManager.Agent.MetricsServices.Component">
+			<argument name="name" value="dynamic-sites" />
+			<argument name="class"
+				value="org.cougaar.qos.qrs.PollUrlDataFeed" />
+			<argument name="args"
+				value="-url file:metric_values.conf -poll 5000" />
+		</component>
+
+
+		<agent name="Sequencer">
 			<component
 				class="org.cougaar.test.regression.ping.PingSequencerPlugin">
 				<argument name="suiteName" value="Ping BB Bundled" />
