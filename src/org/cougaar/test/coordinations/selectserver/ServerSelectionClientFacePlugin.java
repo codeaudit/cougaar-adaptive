@@ -47,7 +47,7 @@ implements ServerSelection.Matcher<Face<ServerSelection.EventType>> {
     /**
      * Hook for changing the Reply before before sending it
      * to the client. This is usually used to change the Server address 
-     * from a logical to physical address
+     * from a physical address back to the logical address
      */
      abstract public void remapResponse(UniqueObject object);
      

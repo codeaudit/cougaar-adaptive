@@ -37,7 +37,7 @@ abstract class MetricBasedPolicy implements SelectionPolicy, Constants {
         try {
             metricsService = sb.getService(this, MetricsService.class, null);
         } catch (Exception e) {
-            log.error("First Up Policy Unable to get MetricsService");
+            log.error("Metric Based Policy Unable to get MetricsService");
         }
         NodeIdentificationService nis = sb.getService(this, NodeIdentificationService.class, null);
         MessageAddress nodeAddr = nis.getMessageAddress();
