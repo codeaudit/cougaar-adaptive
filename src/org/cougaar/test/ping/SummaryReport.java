@@ -16,20 +16,19 @@
 *
 * Created : Aug 15, 2007
 * Workfile: SummaryReport.java
-* $Revision: 1.2 $
-* $Date: 2008-02-26 18:08:00 $
+* $Revision: 1.1 $
+* $Date: 2008-02-26 21:10:05 $
 * $Author: jzinky $
 *
 * =============================================================================
 */
  
-package org.cougaar.test.ping.regression;
+package org.cougaar.test.ping;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.cougaar.test.ping.Anova;
 import org.cougaar.test.sequencer.ReportBase;
 
 public class SummaryReport extends ReportBase {

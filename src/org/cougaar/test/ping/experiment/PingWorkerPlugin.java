@@ -16,14 +16,14 @@
 *
 * Created : Aug 14, 2007
 * Workfile: PingWorkerPlugin.java
-* $Revision: 1.4 $
+* $Revision: 1.1 $
 * $Date: 2008-02-26 21:10:05 $
 * $Author: jzinky $
 *
 * =============================================================================
 */
  
-package org.cougaar.test.ping.regression;
+package org.cougaar.test.ping.experiment;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,13 +38,13 @@ import org.cougaar.test.ping.SummaryReport;
 import org.cougaar.test.sequencer.Context;
 import org.cougaar.test.sequencer.Report;
 import org.cougaar.test.sequencer.ReportBase;
-import org.cougaar.test.sequencer.regression.AbstractRegressionTesterPlugin;
-import org.cougaar.test.sequencer.regression.RegressionStep;
+import org.cougaar.test.sequencer.experiment.ExperimentStep;
+import org.cougaar.test.sequencer.experiment.ExperimentWorkerPlugin;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.util.annotations.Cougaar;
 import org.cougaar.util.annotations.Subscribe;
 
-public class PingTesterPlugin extends AbstractRegressionTesterPlugin<Report> {
+public class PingWorkerPlugin extends ExperimentWorkerPlugin implements PingSteps {
     private StopRequest stopRequest;
     private StartRequest startRequest;
     private Map<String, Anova> initialStatistics, finalStatistics;
@@ -53,55 +53,35 @@ public class PingTesterPlugin extends AbstractRegressionTesterPlugin<Report> {
     
     @Cougaar.Arg(name="pingerCount", required=true)
     public int pingerCount;
-
-    protected void doStartTest(Context context) {
-        startRequest = new StartRequest(uids.nextUID());
-        blackboard.publishAdd(startRequest);
-        //defer until all Start requests have returned
-    }
-
-    public void doneStartTest(Report report) {
-         failed = startRequest.isFailed();
-         super.doneStartTest(report);
-     }
-
-    protected void doStartSteadyStateCollection(Context context) {
-        // query blackboard for all ping queries
-        // snapshot the statistics
-        // store the statistics for later processing
-        initialStatistics = gatherStatistics();
-        super.doStartSteadyStateCollection(context);
-    }
-
-    protected void doEndSteadyStateCollection(Context context) {
-        finalStatistics = gatherStatistics();
-        super.doEndSteadyStateCollection(context);
-    }
-
-    protected void doEndTest(Context context) {
-        blackboard.publishRemove(startRequest);
-        stopRequest = new StopRequest(uids.nextUID());
-        blackboard.publishAdd(stopRequest);
-        //defer until all Stop requests have returned
-    }
     
-    public void doneEndTest(Report report) {
-        failed = stopRequest.isFailed();
-        super.doneEndTest(report);
-    }
-
-    protected void doSummary(Context context) {
-        if (log.isInfoEnabled()) {
-            log.info("Do Summary context="+context);
+    protected void doStep(ExperimentStep step, Context context) {
+        if (START_TEST == step) { 
+            startRequest = new StartRequest(uids.nextUID());
+            blackboard.publishAdd(startRequest);
+            // defer until all start requests have returned
+        } else if (START_STEADY_STATE == step) {
+           initialStatistics = gatherStatistics();
+            stepCompeleted(step, makeReport(step));    
+        } else if (END_STEADY_STATE == step) {
+            finalStatistics = gatherStatistics();
+            stepCompeleted(step, makeReport(step)); 
+        } else if (END_TEST == step) {
+            blackboard.publishRemove(startRequest);
+            stopRequest = new StopRequest(uids.nextUID());
+            blackboard.publishAdd(stopRequest);
+            // defer until all Stop requests have returned
+        } else if (SUMMARY_TEST == step) {
+            Report report = new SummaryReport(workerId, reason, initialStatistics, finalStatistics);
+            stepCompeleted(SUMMARY_TEST, report);
+        } else {
+            stepCompeleted(step, new ReportBase(workerId, true, reason));
         }
-        Report report = new SummaryReport(workerId, reason,initialStatistics, finalStatistics);
-        doneSummary(report);
-    }
-
-    protected void doShutdown(Context context) {
-        super.doShutdown(context);
+        
     }
     
+    // query blackboard for all ping queries
+    // snapshot the statistics
+    // store the statistics for later processing
     protected Map<String, Anova> gatherStatistics() {
         Map<String, Anova> statistics = new HashMap<String, Anova>();
         @SuppressWarnings("unchecked")
@@ -120,21 +100,23 @@ public class PingTesterPlugin extends AbstractRegressionTesterPlugin<Report> {
         return statistics;
     }
     
-    protected Report makeReport(RegressionStep step) {
+    protected Report makeReport(ExperimentStep step) {
         return new ReportBase(workerId,!failed,reason);
     }
     
     @Cougaar.Execute(on={Subscribe.ModType.ADD, Subscribe.ModType.CHANGE})
     public void executeStartRequest(StartRequest start) {
         if (start.equals(startRequest) && (startRequest.getRunners() == pingerCount)) {
-            doneStartTest(makeReport(RegressionStep.START_TEST));
+            failed = startRequest.isFailed();
+            stepCompeleted(START_TEST, makeReport(START_TEST));
         }
     }
     
     @Cougaar.Execute(on={Subscribe.ModType.ADD, Subscribe.ModType.CHANGE})
     public void executeStopRequest(StopRequest stop) {
         if (stop.equals(stopRequest) && (stopRequest.getRunners() == pingerCount)) {
-            doneEndTest(makeReport(RegressionStep.END_TEST));
+            failed = stopRequest.isFailed();
+            stepCompeleted(END_TEST, makeReport(END_TEST));
         }
     }
     /**

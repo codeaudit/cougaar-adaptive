@@ -16,8 +16,8 @@
 *
 * Created : Aug 9, 2007
 * Workfile: AbstractRegressionTesterPlugin.java
-* $Revision: 1.1 $
-* $Date: 2008-02-26 18:23:40 $
+* $Revision: 1.2 $
+* $Date: 2008-02-26 21:10:06 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -31,6 +31,8 @@ import org.cougaar.test.sequencer.WorkerPlugin;
 
 abstract public class AbstractRegressionTesterPlugin<R extends Report>
     extends WorkerPlugin<RegressionStep, R, Context> {
+    
+    abstract protected R makeReport(RegressionStep step);
     
     @Override
     protected void doStep(RegressionStep step, Context context) {

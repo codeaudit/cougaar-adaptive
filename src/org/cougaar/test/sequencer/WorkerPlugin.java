@@ -16,9 +16,9 @@
  *
  * Created : Aug 8, 2007
  * Workfile: Tester.java
- * $Revision: 1.1 $
- * $Date: 2007-10-19 15:01:52 $
- * $Author: rshapiro $
+ * $Revision: 1.2 $
+ * $Date: 2008-02-26 21:10:06 $
+ * $Author: jzinky $
  *
  * =============================================================================
  */
@@ -37,7 +37,6 @@ abstract public class WorkerPlugin<S extends Step, R extends Report, C extends C
     public String workerId;
 
     abstract protected void doStep(S step, C context);
-    abstract protected R makeReport(S step);
     
     protected void stepCompeleted(S step, R report) {
         sequencerService.done(workerId, step, report);
