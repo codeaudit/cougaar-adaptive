@@ -16,7 +16,7 @@
 
 		<agent name="Sequencer">
 		<component
-			class="org.cougaar.test.regression.ping.PingSequencerPlugin">
+			class="org.cougaar.test.ping.regression.PingSequencerPlugin">
 			<argument name="suiteName" value="Two Node Ping" />
 			<argument name="nodeCount" value="2" />
 			<argument name="defaultWorkerTimeout" value="10001" />
@@ -39,14 +39,14 @@
 
 		<agent name="source1">
 			<component
-				class="org.cougaar.test.regression.ping.PingSenderPlugin">
+				class="org.cougaar.test.ping.PingSenderPlugin">
 				<argument name="pluginId" value="A"/>
 				<argument name="targetAgent" value="sink" />
 				<argument name="targetPlugin" value="Z"/>
 				<argument name="preambleCount" value="50" />
 			</component>
 			<component
-				class="org.cougaar.test.regression.ping.PingTesterPlugin">
+				class="org.cougaar.test.ping.regression.PingTesterPlugin">
 				<argument name="workerId" value="source1" />
 				<argument name="pingerCount" value="1" />
 			</component>
@@ -54,14 +54,14 @@
 
 		<agent name="source2">
 			<component
-				class="org.cougaar.test.regression.ping.PingSenderPlugin">
+				class="org.cougaar.test.ping.PingSenderPlugin">
 				<argument name="pluginId" value="A"/>
 				<argument name="targetAgent" value="sink" />
 				<argument name="targetPlugin" value="Z"/>
 				<argument name="preambleCount" value="50" />
 			</component>
 			<component
-				class="org.cougaar.test.regression.ping.PingTesterPlugin">
+				class="org.cougaar.test.ping.regression.PingTesterPlugin">
 				<argument name="workerId" value="source2" />
 				<argument name="pingerCount" value="1" />
 			</component>
@@ -69,14 +69,14 @@
 
 		<agent name="source3">
 			<component
-				class="org.cougaar.test.regression.ping.PingSenderPlugin">
+				class="org.cougaar.test.ping.PingSenderPlugin">
 				<argument name="pluginId" value="A"/>
 				<argument name="targetAgent" value="sink" />
 				<argument name="targetPlugin" value="Z"/>
 				<argument name="preambleCount" value="50" />
 			</component>
 			<component
-				class="org.cougaar.test.regression.ping.PingSenderPlugin">
+				class="org.cougaar.test.ping.PingSenderPlugin">
 				<argument name="pluginId" value="B"/>
 				<argument name="targetAgent" value="sink" />
 				<argument name="targetPlugin" value="Y"/>
@@ -84,7 +84,7 @@
 			</component>
 			
 			<component
-				class="org.cougaar.test.regression.ping.PingTesterPlugin">
+				class="org.cougaar.test.ping.regression.PingTesterPlugin">
 				<argument name="workerId" value="source3" />
 				<argument name="pingerCount" value="2" />
 			</component>
@@ -103,14 +103,14 @@
 
 		<agent name="source4">
 			<component
-				class="org.cougaar.test.regression.ping.PingSenderPlugin">
+				class="org.cougaar.test.ping.PingSenderPlugin">
 				<argument name="pluginId" value="A"/>
 				<argument name="targetAgent" value="sink" />
 				<argument name="targetPlugin" value="Z"/>
 				<argument name="preambleCount" value="50" />
 			</component>
 			<component
-				class="org.cougaar.test.regression.ping.PingTesterPlugin">
+				class="org.cougaar.test.ping.regression.PingTesterPlugin">
 				<argument name="workerId" value="source4" />
 				<argument name="pingerCount" value="1" />
 			</component>
@@ -118,11 +118,11 @@
 		
 		<agent name="sink">
 			<component
-				class="org.cougaar.test.regression.ping.PingReceiverPlugin">
+				class="org.cougaar.test.ping.PingReceiverPlugin">
 				<argument name="pluginId" value="Z"/>
 			</component>
 			<component
-				class="org.cougaar.test.regression.ping.PingReceiverPlugin">
+				class="org.cougaar.test.ping.PingReceiverPlugin">
 				<argument name="pluginId" value="Y"/>
 			</component>
 		</agent>

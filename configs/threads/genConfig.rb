@@ -15,7 +15,7 @@ def societyConfig(x)
   <node name="#{@nodeName}">
     <vm_parameter name='-Dorg.cougaar.society.xsl.param.pluginThreadPool' value='#{x}'/>
 
-    <component class="org.cougaar.test.regression.ping.PingSequencerPlugin">
+    <component class="org.cougaar.test.ping.regression.PingSequencerPlugin">
       <argument name="suiteName" value="#{@societyName} #{x}" />
       <argument name="nodeCount" value="1" />
       <argument name="defaultWorkerTimeout" value="#{workerTimeout}" />
@@ -35,7 +35,7 @@ def societyConfig(x)
     </agent>
 
     <agent name="BBtester">
-      <component class="org.cougaar.test.regression.ping.PingBBTesterPlugin">
+      <component class="org.cougaar.test.ping.regression.PingBBTesterPlugin">
          <argument name="workerId" value="source1"/>
          <argument name="pingerCount" value="5"/>
        </component>
@@ -51,13 +51,13 @@ def pingerConfig(j)
  1.upto(j) { |n| 
     result << %{
       <!--Pinger #{n} -->
-      <component class="org.cougaar.test.regression.ping.PingBBSenderPlugin">
+      <component class="org.cougaar.test.ping.PingBBSenderPlugin">
         <argument name="pluginId" value="Src#{n}"/>
         <argument name="targetAgent" value="BBtester"/>
         <argument name="targetPlugin" value="Snk#{n}"/>
         <argument name="preambleCount" value="3" />
       </component>
-      <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+      <component class="org.cougaar.test.ping.PingBBReceiverPlugin">
         <argument name="pluginId" value="Snk#{n}"/>
       </component>}
   }

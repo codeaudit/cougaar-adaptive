@@ -4,7 +4,7 @@ singleNode: Test Society for 4 pingers on Single Node
 -->
 <society>
   <node name="Node1">
-    <component class="org.cougaar.test.regression.ping.PingSequencerPlugin">
+    <component class="org.cougaar.test.ping.regression.PingSequencerPlugin">
       <argument name="suiteName" value="singleNode 4" />
       <argument name="nodeCount" value="1" />
       <argument name="defaultWorkerTimeout" value="5200" />
@@ -26,12 +26,12 @@ singleNode: Test Society for 4 pingers on Single Node
     
       <!--Pinger 1 -->
     <agent name="Src1">
-      <component class="org.cougaar.test.regression.ping.PingTesterPlugin">
+      <component class="org.cougaar.test.ping.regression.PingTesterPlugin">
          <argument name="workerId" value="Src1"/>
          <argument name="pingerCount" value="1"/>
        </component>
 
-      <component class="org.cougaar.test.regression.ping.PingSenderPlugin">
+      <component class="org.cougaar.test.ping.PingSenderPlugin">
         <argument name="pluginId" value="1"/>
         <argument name="targetAgent" value="Snk1"/>
         <argument name="targetPlugin" value="1"/>
@@ -39,18 +39,18 @@ singleNode: Test Society for 4 pingers on Single Node
       </component>
     </agent>
     <agent name="Snk1">
-      <component class="org.cougaar.test.regression.ping.PingReceiverPlugin">
+      <component class="org.cougaar.test.ping.PingReceiverPlugin">
         <argument name="pluginId" value="1"/>
       </component>
     </agent>
       <!--Pinger 2 -->
     <agent name="Src2">
-      <component class="org.cougaar.test.regression.ping.PingTesterPlugin">
+      <component class="org.cougaar.test.ping.regression.PingTesterPlugin">
          <argument name="workerId" value="Src2"/>
          <argument name="pingerCount" value="1"/>
        </component>
 
-      <component class="org.cougaar.test.regression.ping.PingSenderPlugin">
+      <component class="org.cougaar.test.ping.PingSenderPlugin">
         <argument name="pluginId" value="1"/>
         <argument name="targetAgent" value="Snk2"/>
         <argument name="targetPlugin" value="1"/>
@@ -58,18 +58,18 @@ singleNode: Test Society for 4 pingers on Single Node
       </component>
     </agent>
     <agent name="Snk2">
-      <component class="org.cougaar.test.regression.ping.PingReceiverPlugin">
+      <component class="org.cougaar.test.ping.PingReceiverPlugin">
         <argument name="pluginId" value="1"/>
       </component>
     </agent>
       <!--Pinger 3 -->
     <agent name="Src3">
-      <component class="org.cougaar.test.regression.ping.PingTesterPlugin">
+      <component class="org.cougaar.test.ping.regression.PingTesterPlugin">
          <argument name="workerId" value="Src3"/>
          <argument name="pingerCount" value="1"/>
        </component>
 
-      <component class="org.cougaar.test.regression.ping.PingSenderPlugin">
+      <component class="org.cougaar.test.ping.PingSenderPlugin">
         <argument name="pluginId" value="1"/>
         <argument name="targetAgent" value="Snk3"/>
         <argument name="targetPlugin" value="1"/>
@@ -77,18 +77,18 @@ singleNode: Test Society for 4 pingers on Single Node
       </component>
     </agent>
     <agent name="Snk3">
-      <component class="org.cougaar.test.regression.ping.PingReceiverPlugin">
+      <component class="org.cougaar.test.ping.PingReceiverPlugin">
         <argument name="pluginId" value="1"/>
       </component>
     </agent>
       <!--Pinger 4 -->
     <agent name="Src4">
-      <component class="org.cougaar.test.regression.ping.PingTesterPlugin">
+      <component class="org.cougaar.test.ping.regression.PingTesterPlugin">
          <argument name="workerId" value="Src4"/>
          <argument name="pingerCount" value="1"/>
        </component>
 
-      <component class="org.cougaar.test.regression.ping.PingSenderPlugin">
+      <component class="org.cougaar.test.ping.PingSenderPlugin">
         <argument name="pluginId" value="1"/>
         <argument name="targetAgent" value="Snk4"/>
         <argument name="targetPlugin" value="1"/>
@@ -96,7 +96,7 @@ singleNode: Test Society for 4 pingers on Single Node
       </component>
     </agent>
     <agent name="Snk4">
-      <component class="org.cougaar.test.regression.ping.PingReceiverPlugin">
+      <component class="org.cougaar.test.ping.PingReceiverPlugin">
         <argument name="pluginId" value="1"/>
       </component>
     </agent>

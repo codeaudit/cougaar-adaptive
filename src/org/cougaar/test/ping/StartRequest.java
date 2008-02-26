@@ -15,23 +15,22 @@
 * =============================================================================
 *
 * Created : Aug 14, 2007
-* Workfile: StopRequest.java
+* Workfile: StartRequest.java
 * $Revision: 1.1 $
-* $Date: 2007-10-19 15:01:52 $
-* $Author: rshapiro $
+* $Date: 2008-02-26 15:31:56 $
+* $Author: jzinky $
 *
 * =============================================================================
 */
  
-package org.cougaar.test.regression.ping;
+package org.cougaar.test.ping;
 
 import org.cougaar.core.util.UID;
 
 
-public class StopRequest extends RunRequest {
+public class StartRequest extends RunRequest {
 
-    public StopRequest(UID uid) {
+    public StartRequest(UID uid) {
         super(uid);
-        // TODO Auto-generated constructor stub
     }
 }

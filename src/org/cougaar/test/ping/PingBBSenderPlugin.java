@@ -16,14 +16,14 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingSenderPlugin.java
- * $Revision: 1.2 $
- * $Date: 2007-11-05 15:43:13 $
+ * $Revision: 1.1 $
+ * $Date: 2008-02-26 15:31:56 $
  * $Author: jzinky $
  *
  * =============================================================================
  */
 
-package org.cougaar.test.regression.ping;
+package org.cougaar.test.ping;
 
 import java.util.Collection;
 import java.util.Collections;

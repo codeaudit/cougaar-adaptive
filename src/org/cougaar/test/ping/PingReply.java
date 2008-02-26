@@ -16,14 +16,14 @@
 *
 * Created : Aug 14, 2007
 * Workfile: PingReply.java
-* $Revision: 1.3 $
-* $Date: 2007-11-20 22:34:14 $
-* $Author: rshapiro $
+* $Revision: 1.1 $
+* $Date: 2008-02-26 15:31:56 $
+* $Author: jzinky $
 *
 * =============================================================================
 */
  
-package org.cougaar.test.regression.ping;
+package org.cougaar.test.ping;
 
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.service.UIDService;

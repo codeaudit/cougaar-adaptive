@@ -17,13 +17,13 @@
 * Created : Aug 14, 2007
 * Workfile: RunRequest.java
 * $Revision: 1.1 $
-* $Date: 2007-10-19 15:01:52 $
-* $Author: rshapiro $
+* $Date: 2008-02-26 15:31:56 $
+* $Author: jzinky $
 *
 * =============================================================================
 */
  
-package org.cougaar.test.regression.ping;
+package org.cougaar.test.ping;
 
 import org.cougaar.core.util.UID;
 import org.cougaar.core.util.UniqueObjectBase;

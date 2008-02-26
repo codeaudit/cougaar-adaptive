@@ -13,7 +13,7 @@ def societyConfig(x)
 -->
 <society>
   <node name="#{@nodeName}">
-    <component class="org.cougaar.test.regression.ping.PingSequencerPlugin">
+    <component class="org.cougaar.test.ping.regression.PingSequencerPlugin">
       <argument name="suiteName" value="#{@societyName} #{x}" />
       <argument name="nodeCount" value="1" />
       <argument name="defaultWorkerTimeout" value="#{workerTimeout}" />
@@ -33,18 +33,18 @@ def societyConfig(x)
     </agent>
 
     <agent name="BBBundleSender">
-      <component class="org.cougaar.test.regression.ping.PingBBTesterPlugin">
+      <component class="org.cougaar.test.ping.regression.PingBBTesterPlugin">
          <argument name="workerId" value="source1"/>
          <argument name="pingerCount" value="#{x}"/>
        </component>
-	   <component class="org.cougaar.test.regression.ping.BundleQueryFacePlugin">
+	   <component class="org.cougaar.test.ping.BundleQueryFacePlugin">
           <argument name="followerAgent" value="BBBundleReceiver"/>
        </component>
        #{pingerSenderConfig(x)}
     </agent>
     
     <agent name="BBBundleReceiver">
-       <component class="org.cougaar.test.regression.ping.BundleReplyFacePlugin">
+       <component class="org.cougaar.test.ping.BundleReplyFacePlugin">
           <argument name="leaderAgent" value="BBBundleSender"/>
        </component>
       #{pingerReceiverConfig(x)}
@@ -59,7 +59,7 @@ def pingerSenderConfig(j)
  1.upto(j) { |n| 
     result << %{
       <!--Sender #{n} -->
-      <component class="org.cougaar.test.regression.ping.PingBBSenderPlugin">
+      <component class="org.cougaar.test.ping.PingBBSenderPlugin">
         <argument name="pluginId" value="Src#{n}"/>
         <argument name="targetAgent" value="BBBundleReceiver"/>
         <argument name="targetPlugin" value="Snk#{n}"/>
@@ -74,7 +74,7 @@ def pingerReceiverConfig(j)
  1.upto(j) { |n| 
     result << %{
       <!--Receiver #{n} -->
-    <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+    <component class="org.cougaar.test.ping.PingBBReceiverPlugin">
         <argument name="pluginId" value="Snk#{n}"/>
       </component>}
   }

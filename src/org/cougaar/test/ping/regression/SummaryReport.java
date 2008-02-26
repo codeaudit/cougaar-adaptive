@@ -17,17 +17,19 @@
 * Created : Aug 15, 2007
 * Workfile: SummaryReport.java
 * $Revision: 1.1 $
-* $Date: 2007-10-19 15:01:52 $
-* $Author: rshapiro $
+* $Date: 2008-02-26 15:31:57 $
+* $Author: jzinky $
 *
 * =============================================================================
 */
  
-package org.cougaar.test.regression.ping;
+package org.cougaar.test.ping.regression;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.cougaar.test.ping.Anova;
 
 public class SummaryReport extends AnovaReport {
     private List<Anova> rawStats;

@@ -4,7 +4,7 @@ BBBundle: Test Society for 20 pingers on a single agents blackboard
 -->
 <society>
   <node name="Node1">
-    <component class="org.cougaar.test.regression.ping.PingSequencerPlugin">
+    <component class="org.cougaar.test.ping.regression.PingSequencerPlugin">
       <argument name="suiteName" value="BBBundle 20" />
       <argument name="nodeCount" value="1" />
       <argument name="defaultWorkerTimeout" value="2000" />
@@ -24,149 +24,149 @@ BBBundle: Test Society for 20 pingers on a single agents blackboard
     </agent>
 
     <agent name="BBBundleSender">
-      <component class="org.cougaar.test.regression.ping.PingBBTesterPlugin">
+      <component class="org.cougaar.test.ping.regression.PingBBTesterPlugin">
          <argument name="workerId" value="source1"/>
          <argument name="pingerCount" value="20"/>
        </component>
-	   <component class="org.cougaar.test.regression.ping.BundleQueryFacePlugin">
+	   <component class="org.cougaar.test.ping.BundleQueryFacePlugin">
           <argument name="followerAgent" value="BBBundleReceiver"/>
        </component>
        
       <!--Sender 1 -->
-      <component class="org.cougaar.test.regression.ping.PingBBSenderPlugin">
+      <component class="org.cougaar.test.ping.PingBBSenderPlugin">
         <argument name="pluginId" value="Src1"/>
         <argument name="targetAgent" value="BBBundleReceiver"/>
         <argument name="targetPlugin" value="Snk1"/>
         <argument name="preambleCount" value="3" />
       </component>
       <!--Sender 2 -->
-      <component class="org.cougaar.test.regression.ping.PingBBSenderPlugin">
+      <component class="org.cougaar.test.ping.PingBBSenderPlugin">
         <argument name="pluginId" value="Src2"/>
         <argument name="targetAgent" value="BBBundleReceiver"/>
         <argument name="targetPlugin" value="Snk2"/>
         <argument name="preambleCount" value="3" />
       </component>
       <!--Sender 3 -->
-      <component class="org.cougaar.test.regression.ping.PingBBSenderPlugin">
+      <component class="org.cougaar.test.ping.PingBBSenderPlugin">
         <argument name="pluginId" value="Src3"/>
         <argument name="targetAgent" value="BBBundleReceiver"/>
         <argument name="targetPlugin" value="Snk3"/>
         <argument name="preambleCount" value="3" />
       </component>
       <!--Sender 4 -->
-      <component class="org.cougaar.test.regression.ping.PingBBSenderPlugin">
+      <component class="org.cougaar.test.ping.PingBBSenderPlugin">
         <argument name="pluginId" value="Src4"/>
         <argument name="targetAgent" value="BBBundleReceiver"/>
         <argument name="targetPlugin" value="Snk4"/>
         <argument name="preambleCount" value="3" />
       </component>
       <!--Sender 5 -->
-      <component class="org.cougaar.test.regression.ping.PingBBSenderPlugin">
+      <component class="org.cougaar.test.ping.PingBBSenderPlugin">
         <argument name="pluginId" value="Src5"/>
         <argument name="targetAgent" value="BBBundleReceiver"/>
         <argument name="targetPlugin" value="Snk5"/>
         <argument name="preambleCount" value="3" />
       </component>
       <!--Sender 6 -->
-      <component class="org.cougaar.test.regression.ping.PingBBSenderPlugin">
+      <component class="org.cougaar.test.ping.PingBBSenderPlugin">
         <argument name="pluginId" value="Src6"/>
         <argument name="targetAgent" value="BBBundleReceiver"/>
         <argument name="targetPlugin" value="Snk6"/>
         <argument name="preambleCount" value="3" />
       </component>
       <!--Sender 7 -->
-      <component class="org.cougaar.test.regression.ping.PingBBSenderPlugin">
+      <component class="org.cougaar.test.ping.PingBBSenderPlugin">
         <argument name="pluginId" value="Src7"/>
         <argument name="targetAgent" value="BBBundleReceiver"/>
         <argument name="targetPlugin" value="Snk7"/>
         <argument name="preambleCount" value="3" />
       </component>
       <!--Sender 8 -->
-      <component class="org.cougaar.test.regression.ping.PingBBSenderPlugin">
+      <component class="org.cougaar.test.ping.PingBBSenderPlugin">
         <argument name="pluginId" value="Src8"/>
         <argument name="targetAgent" value="BBBundleReceiver"/>
         <argument name="targetPlugin" value="Snk8"/>
         <argument name="preambleCount" value="3" />
       </component>
       <!--Sender 9 -->
-      <component class="org.cougaar.test.regression.ping.PingBBSenderPlugin">
+      <component class="org.cougaar.test.ping.PingBBSenderPlugin">
         <argument name="pluginId" value="Src9"/>
         <argument name="targetAgent" value="BBBundleReceiver"/>
         <argument name="targetPlugin" value="Snk9"/>
         <argument name="preambleCount" value="3" />
       </component>
       <!--Sender 10 -->
-      <component class="org.cougaar.test.regression.ping.PingBBSenderPlugin">
+      <component class="org.cougaar.test.ping.PingBBSenderPlugin">
         <argument name="pluginId" value="Src10"/>
         <argument name="targetAgent" value="BBBundleReceiver"/>
         <argument name="targetPlugin" value="Snk10"/>
         <argument name="preambleCount" value="3" />
       </component>
       <!--Sender 11 -->
-      <component class="org.cougaar.test.regression.ping.PingBBSenderPlugin">
+      <component class="org.cougaar.test.ping.PingBBSenderPlugin">
         <argument name="pluginId" value="Src11"/>
         <argument name="targetAgent" value="BBBundleReceiver"/>
         <argument name="targetPlugin" value="Snk11"/>
         <argument name="preambleCount" value="3" />
       </component>
       <!--Sender 12 -->
-      <component class="org.cougaar.test.regression.ping.PingBBSenderPlugin">
+      <component class="org.cougaar.test.ping.PingBBSenderPlugin">
         <argument name="pluginId" value="Src12"/>
         <argument name="targetAgent" value="BBBundleReceiver"/>
         <argument name="targetPlugin" value="Snk12"/>
         <argument name="preambleCount" value="3" />
       </component>
       <!--Sender 13 -->
-      <component class="org.cougaar.test.regression.ping.PingBBSenderPlugin">
+      <component class="org.cougaar.test.ping.PingBBSenderPlugin">
         <argument name="pluginId" value="Src13"/>
         <argument name="targetAgent" value="BBBundleReceiver"/>
         <argument name="targetPlugin" value="Snk13"/>
         <argument name="preambleCount" value="3" />
       </component>
       <!--Sender 14 -->
-      <component class="org.cougaar.test.regression.ping.PingBBSenderPlugin">
+      <component class="org.cougaar.test.ping.PingBBSenderPlugin">
         <argument name="pluginId" value="Src14"/>
         <argument name="targetAgent" value="BBBundleReceiver"/>
         <argument name="targetPlugin" value="Snk14"/>
         <argument name="preambleCount" value="3" />
       </component>
       <!--Sender 15 -->
-      <component class="org.cougaar.test.regression.ping.PingBBSenderPlugin">
+      <component class="org.cougaar.test.ping.PingBBSenderPlugin">
         <argument name="pluginId" value="Src15"/>
         <argument name="targetAgent" value="BBBundleReceiver"/>
         <argument name="targetPlugin" value="Snk15"/>
         <argument name="preambleCount" value="3" />
       </component>
       <!--Sender 16 -->
-      <component class="org.cougaar.test.regression.ping.PingBBSenderPlugin">
+      <component class="org.cougaar.test.ping.PingBBSenderPlugin">
         <argument name="pluginId" value="Src16"/>
         <argument name="targetAgent" value="BBBundleReceiver"/>
         <argument name="targetPlugin" value="Snk16"/>
         <argument name="preambleCount" value="3" />
       </component>
       <!--Sender 17 -->
-      <component class="org.cougaar.test.regression.ping.PingBBSenderPlugin">
+      <component class="org.cougaar.test.ping.PingBBSenderPlugin">
         <argument name="pluginId" value="Src17"/>
         <argument name="targetAgent" value="BBBundleReceiver"/>
         <argument name="targetPlugin" value="Snk17"/>
         <argument name="preambleCount" value="3" />
       </component>
       <!--Sender 18 -->
-      <component class="org.cougaar.test.regression.ping.PingBBSenderPlugin">
+      <component class="org.cougaar.test.ping.PingBBSenderPlugin">
         <argument name="pluginId" value="Src18"/>
         <argument name="targetAgent" value="BBBundleReceiver"/>
         <argument name="targetPlugin" value="Snk18"/>
         <argument name="preambleCount" value="3" />
       </component>
       <!--Sender 19 -->
-      <component class="org.cougaar.test.regression.ping.PingBBSenderPlugin">
+      <component class="org.cougaar.test.ping.PingBBSenderPlugin">
         <argument name="pluginId" value="Src19"/>
         <argument name="targetAgent" value="BBBundleReceiver"/>
         <argument name="targetPlugin" value="Snk19"/>
         <argument name="preambleCount" value="3" />
       </component>
       <!--Sender 20 -->
-      <component class="org.cougaar.test.regression.ping.PingBBSenderPlugin">
+      <component class="org.cougaar.test.ping.PingBBSenderPlugin">
         <argument name="pluginId" value="Src20"/>
         <argument name="targetAgent" value="BBBundleReceiver"/>
         <argument name="targetPlugin" value="Snk20"/>
@@ -175,88 +175,88 @@ BBBundle: Test Society for 20 pingers on a single agents blackboard
     </agent>
     
     <agent name="BBBundleReceiver">
-       <component class="org.cougaar.test.regression.ping.BundleReplyFacePlugin">
+       <component class="org.cougaar.test.ping.BundleReplyFacePlugin">
           <argument name="leaderAgent" value="BBBundleSender"/>
        </component>
       
       <!--Receiver 1 -->
-    <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+    <component class="org.cougaar.test.ping.PingBBReceiverPlugin">
         <argument name="pluginId" value="Snk1"/>
       </component>
       <!--Receiver 2 -->
-    <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+    <component class="org.cougaar.test.ping.PingBBReceiverPlugin">
         <argument name="pluginId" value="Snk2"/>
       </component>
       <!--Receiver 3 -->
-    <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+    <component class="org.cougaar.test.ping.PingBBReceiverPlugin">
         <argument name="pluginId" value="Snk3"/>
       </component>
       <!--Receiver 4 -->
-    <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+    <component class="org.cougaar.test.ping.PingBBReceiverPlugin">
         <argument name="pluginId" value="Snk4"/>
       </component>
       <!--Receiver 5 -->
-    <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+    <component class="org.cougaar.test.ping.PingBBReceiverPlugin">
         <argument name="pluginId" value="Snk5"/>
       </component>
       <!--Receiver 6 -->
-    <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+    <component class="org.cougaar.test.ping.PingBBReceiverPlugin">
         <argument name="pluginId" value="Snk6"/>
       </component>
       <!--Receiver 7 -->
-    <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+    <component class="org.cougaar.test.ping.PingBBReceiverPlugin">
         <argument name="pluginId" value="Snk7"/>
       </component>
       <!--Receiver 8 -->
-    <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+    <component class="org.cougaar.test.ping.PingBBReceiverPlugin">
         <argument name="pluginId" value="Snk8"/>
       </component>
       <!--Receiver 9 -->
-    <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+    <component class="org.cougaar.test.ping.PingBBReceiverPlugin">
         <argument name="pluginId" value="Snk9"/>
       </component>
       <!--Receiver 10 -->
-    <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+    <component class="org.cougaar.test.ping.PingBBReceiverPlugin">
         <argument name="pluginId" value="Snk10"/>
       </component>
       <!--Receiver 11 -->
-    <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+    <component class="org.cougaar.test.ping.PingBBReceiverPlugin">
         <argument name="pluginId" value="Snk11"/>
       </component>
       <!--Receiver 12 -->
-    <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+    <component class="org.cougaar.test.ping.PingBBReceiverPlugin">
         <argument name="pluginId" value="Snk12"/>
       </component>
       <!--Receiver 13 -->
-    <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+    <component class="org.cougaar.test.ping.PingBBReceiverPlugin">
         <argument name="pluginId" value="Snk13"/>
       </component>
       <!--Receiver 14 -->
-    <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+    <component class="org.cougaar.test.ping.PingBBReceiverPlugin">
         <argument name="pluginId" value="Snk14"/>
       </component>
       <!--Receiver 15 -->
-    <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+    <component class="org.cougaar.test.ping.PingBBReceiverPlugin">
         <argument name="pluginId" value="Snk15"/>
       </component>
       <!--Receiver 16 -->
-    <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+    <component class="org.cougaar.test.ping.PingBBReceiverPlugin">
         <argument name="pluginId" value="Snk16"/>
       </component>
       <!--Receiver 17 -->
-    <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+    <component class="org.cougaar.test.ping.PingBBReceiverPlugin">
         <argument name="pluginId" value="Snk17"/>
       </component>
       <!--Receiver 18 -->
-    <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+    <component class="org.cougaar.test.ping.PingBBReceiverPlugin">
         <argument name="pluginId" value="Snk18"/>
       </component>
       <!--Receiver 19 -->
-    <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+    <component class="org.cougaar.test.ping.PingBBReceiverPlugin">
         <argument name="pluginId" value="Snk19"/>
       </component>
       <!--Receiver 20 -->
-    <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+    <component class="org.cougaar.test.ping.PingBBReceiverPlugin">
         <argument name="pluginId" value="Snk20"/>
       </component>
     </agent>

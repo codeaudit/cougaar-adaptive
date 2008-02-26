@@ -13,7 +13,7 @@ def societyConfig(x)
 -->
 <society>
   <node name="#{@nodeName}">
-    <component class="org.cougaar.test.regression.ping.PingSequencerPlugin">
+    <component class="org.cougaar.test.ping.regression.PingSequencerPlugin">
       <argument name="suiteName" value="#{@societyName} #{x}" />
       <argument name="nodeCount" value="1" />
       <argument name="defaultWorkerTimeout" value="#{workerTimeout}" />
@@ -47,12 +47,12 @@ def pingerConfig(j)
     result << %{
       <!--Pinger #{n} -->
     <agent name="#{src}">
-      <component class="org.cougaar.test.regression.ping.PingTesterPlugin">
+      <component class="org.cougaar.test.ping.regression.PingTesterPlugin">
          <argument name="workerId" value="#{src}"/>
          <argument name="pingerCount" value="1"/>
        </component>
 
-      <component class="org.cougaar.test.regression.ping.PingSenderPlugin">
+      <component class="org.cougaar.test.ping.PingSenderPlugin">
         <argument name="pluginId" value="1"/>
         <argument name="targetAgent" value="#{snk}"/>
         <argument name="targetPlugin" value="1"/>
@@ -60,7 +60,7 @@ def pingerConfig(j)
       </component>
     </agent>
     <agent name="#{snk}">
-      <component class="org.cougaar.test.regression.ping.PingReceiverPlugin">
+      <component class="org.cougaar.test.ping.PingReceiverPlugin">
         <argument name="pluginId" value="1"/>
       </component>
     </agent>}

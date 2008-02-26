@@ -17,19 +17,23 @@
 * Created : Aug 14, 2007
 * Workfile: PingTesterPlugin.java
 * $Revision: 1.1 $
-* $Date: 2007-10-19 15:01:52 $
-* $Author: rshapiro $
+* $Date: 2008-02-26 15:31:57 $
+* $Author: jzinky $
 *
 * =============================================================================
 */
  
-package org.cougaar.test.regression.ping;
+package org.cougaar.test.ping.regression;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.cougaar.core.relay.SimpleRelay;
+import org.cougaar.test.ping.Anova;
+import org.cougaar.test.ping.PingQuery;
+import org.cougaar.test.ping.StartRequest;
+import org.cougaar.test.ping.StopRequest;
 import org.cougaar.test.regression.AbstractRegressionTesterPlugin;
 import org.cougaar.test.regression.RegressionContext;
 import org.cougaar.test.regression.RegressionStep;

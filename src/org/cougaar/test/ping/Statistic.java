@@ -15,22 +15,21 @@
 * =============================================================================
 *
 * Created : Aug 14, 2007
-* Workfile: StartRequest.java
+* Workfile: Statistic.java
 * $Revision: 1.1 $
-* $Date: 2007-10-19 15:01:52 $
-* $Author: rshapiro $
+* $Date: 2008-02-26 15:31:56 $
+* $Author: jzinky $
 *
 * =============================================================================
 */
  
-package org.cougaar.test.regression.ping;
+package org.cougaar.test.ping;
 
-import org.cougaar.core.util.UID;
+import java.io.Serializable;
 
-
-public class StartRequest extends RunRequest {
-
-    public StartRequest(UID uid) {
-        super(uid);
-    }
+public interface Statistic<T extends Statistic<?>> extends Cloneable, Serializable {
+    public void newValue(long value);
+    public void reset();
+    public T delta(T s);
+    public T clone() throws CloneNotSupportedException;
 }

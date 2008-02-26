@@ -50,7 +50,7 @@
 
 		<agent name="Sequencer">
 			<component
-				class="org.cougaar.test.regression.ping.PingSequencerPlugin">
+				class="org.cougaar.test.ping.regression.PingSequencerPlugin">
 				<argument name="suiteName" value="Ping BB Bundled" />
 				<argument name="nodeCount" value="1" />
 				<argument name="defaultWorkerTimeout" value="10001000" />
@@ -74,14 +74,14 @@
 
 		<agent name="Client">
 			<component
-				class="org.cougaar.test.regression.ping.PingBBSenderPlugin">
+				class="org.cougaar.test.ping.PingBBSenderPlugin">
 				<argument name="pluginId" value="Src1" />
 				<argument name="targetAgent" value="Server" />
 				<argument name="targetPlugin" value="Snk1" />
 				<argument name="preambleCount" value="50" />
 			</component>
 			<component
-				class="org.cougaar.test.regression.ping.PingSSClientFacePlugin">
+				class="org.cougaar.test.ping.PingSSClientFacePlugin">
 				<argument name="selectionPolicy" value="CLOSEST" />
 				<argument name="logicalServerName" value="Server" />
 				<argument name="serverName" value="Server3" />
@@ -89,7 +89,7 @@
 				<argument name="serverName" value="Server2" />
 			</component>
 			<component
-				class="org.cougaar.test.regression.ping.PingBBTesterPlugin">
+				class="org.cougaar.test.ping.regression.PingBBTesterPlugin">
 				<argument name="workerId" value="source1" />
 				<argument name="pingerCount" value="1" />
 			</component>
@@ -97,21 +97,21 @@
 
 		<agent name="Server1">
 			<component
-				class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+				class="org.cougaar.test.ping.PingBBReceiverPlugin">
 				<argument name="pluginId" value="Snk1" />
 			</component>
 			<component
-				class="org.cougaar.test.regression.ping.PingSSServerFacePlugin">
+				class="org.cougaar.test.ping.PingSSServerFacePlugin">
 			</component>
 		</agent>
 
 		<agent name="Server2">
 			<component
-				class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+				class="org.cougaar.test.ping.PingBBReceiverPlugin">
 				<argument name="pluginId" value="Snk1" />
 			</component>
 			<component
-				class="org.cougaar.test.regression.ping.PingSSServerFacePlugin">
+				class="org.cougaar.test.ping.PingSSServerFacePlugin">
 			</component>
 		</agent>
 
@@ -120,11 +120,11 @@
 	<node name="Node2">
 		<agent name="Server3">
 			<component
-				class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+				class="org.cougaar.test.ping.PingBBReceiverPlugin">
 				<argument name="pluginId" value="Snk1" />
 			</component>
 			<component
-				class="org.cougaar.test.regression.ping.PingSSServerFacePlugin">
+				class="org.cougaar.test.ping.PingSSServerFacePlugin">
 			</component>
 		</agent>
 

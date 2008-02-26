@@ -15,21 +15,23 @@
 * =============================================================================
 *
 * Created : Aug 14, 2007
-* Workfile: Statistic.java
+* Workfile: StopRequest.java
 * $Revision: 1.1 $
-* $Date: 2007-10-19 15:01:52 $
-* $Author: rshapiro $
+* $Date: 2008-02-26 15:31:56 $
+* $Author: jzinky $
 *
 * =============================================================================
 */
  
-package org.cougaar.test.regression.ping;
+package org.cougaar.test.ping;
 
-import java.io.Serializable;
+import org.cougaar.core.util.UID;
 
-public interface Statistic<T extends Statistic<?>> extends Cloneable, Serializable {
-    public void newValue(long value);
-    public void reset();
-    public T delta(T s);
-    public T clone() throws CloneNotSupportedException;
+
+public class StopRequest extends RunRequest {
+
+    public StopRequest(UID uid) {
+        super(uid);
+        // TODO Auto-generated constructor stub
+    }
 }

@@ -5,7 +5,7 @@ Example regression test society
 -->
 <society>
 	<node name="Node1">
-		<component class="org.cougaar.test.regression.ping.PingSequencerPlugin">
+		<component class="org.cougaar.test.ping.regression.PingSequencerPlugin">
 			<argument name="suiteName" value="Ping Star 2" />
 			<argument name="nodeCount" value="1" />
 			<argument name="defaultWorkerTimeout" value="10001" />
@@ -26,29 +26,29 @@ Example regression test society
 		</agent>
 		
 		<agent name="source1">
-			<component class="org.cougaar.test.regression.ping.PingSenderPlugin">
+			<component class="org.cougaar.test.ping.PingSenderPlugin">
 				<argument name="pluginId" value="A"/>
 				<argument name="targetAgent" value="sink1"/>
 				<argument name="preambleCount" value="50" />
 			</component>
 			<!-- 
-			<component class="org.cougaar.test.regression.ping.PingSenderPlugin">
+			<component class="org.cougaar.test.ping.PingSenderPlugin">
 				<argument name="pluginId" value="B"/>
 				<argument name="targetAgent" value="sink2"/>
 				<argument name="preambleCount" value="50" />
 		    </component>
 		     -->
-		    <component class="org.cougaar.test.regression.ping.PingTesterPlugin">
+		    <component class="org.cougaar.test.ping.regression.PingTesterPlugin">
 		    	<argument name="workerId" value="source1"/>
 		    	<argument name="pingerCount" value="1"/>
 			</component>
 		</agent>
 		<agent name="sink1">
-			<component class="org.cougaar.test.regression.ping.PingReceiverPlugin">
+			<component class="org.cougaar.test.ping.PingReceiverPlugin">
 		    </component>
 		</agent>
 		<agent name="sink2">
-			<component class="org.cougaar.test.regression.ping.PingReceiverPlugin">
+			<component class="org.cougaar.test.ping.PingReceiverPlugin">
 		    </component>
 		</agent>
 	</node>

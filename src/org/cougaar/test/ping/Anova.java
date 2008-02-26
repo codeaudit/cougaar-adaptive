@@ -17,13 +17,13 @@
  * Created : Aug 14, 2007
  * Workfile: Anova.java
  * $Revision: 1.1 $
- * $Date: 2007-10-19 15:01:52 $
- * $Author: rshapiro $
+ * $Date: 2008-02-26 15:31:56 $
+ * $Author: jzinky $
  *
  * =============================================================================
  */
 
-package org.cougaar.test.regression.ping;
+package org.cougaar.test.ping;
 
 public class Anova implements Statistic<Anova> {
     private String name;

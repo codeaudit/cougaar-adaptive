@@ -4,7 +4,7 @@ BBBundle: Test Society for 1 pingers on a single agents blackboard
 -->
 <society>
   <node name="Node1">
-    <component class="org.cougaar.test.regression.ping.PingSequencerPlugin">
+    <component class="org.cougaar.test.ping.regression.PingSequencerPlugin">
       <argument name="suiteName" value="BBBundle 1" />
       <argument name="nodeCount" value="1" />
       <argument name="defaultWorkerTimeout" value="1050" />
@@ -24,16 +24,16 @@ BBBundle: Test Society for 1 pingers on a single agents blackboard
     </agent>
 
     <agent name="BBBundleSender">
-      <component class="org.cougaar.test.regression.ping.PingBBTesterPlugin">
+      <component class="org.cougaar.test.ping.regression.PingBBTesterPlugin">
          <argument name="workerId" value="source1"/>
          <argument name="pingerCount" value="1"/>
        </component>
-	   <component class="org.cougaar.test.regression.ping.BundleQueryFacePlugin">
+	   <component class="org.cougaar.test.ping.BundleQueryFacePlugin">
           <argument name="followerAgent" value="BBBundleReceiver"/>
        </component>
        
       <!--Sender 1 -->
-      <component class="org.cougaar.test.regression.ping.PingBBSenderPlugin">
+      <component class="org.cougaar.test.ping.PingBBSenderPlugin">
         <argument name="pluginId" value="Src1"/>
         <argument name="targetAgent" value="BBBundleReceiver"/>
         <argument name="targetPlugin" value="Snk1"/>
@@ -42,12 +42,12 @@ BBBundle: Test Society for 1 pingers on a single agents blackboard
     </agent>
     
     <agent name="BBBundleReceiver">
-       <component class="org.cougaar.test.regression.ping.BundleReplyFacePlugin">
+       <component class="org.cougaar.test.ping.BundleReplyFacePlugin">
           <argument name="leaderAgent" value="BBBundleSender"/>
        </component>
       
       <!--Receiver 1 -->
-    <component class="org.cougaar.test.regression.ping.PingBBReceiverPlugin">
+    <component class="org.cougaar.test.ping.PingBBReceiverPlugin">
         <argument name="pluginId" value="Snk1"/>
       </component>
     </agent>

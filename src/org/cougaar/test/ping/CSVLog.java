@@ -17,14 +17,14 @@
  * Created : Aug 24, 2007
  * Workfile: CSVLog.java
  * $Revision: 1.1 $
- * $Date: 2007-10-19 15:01:52 $
- * $Author: rshapiro $
+ * $Date: 2008-02-26 15:31:56 $
+ * $Author: jzinky $
  *
  * =============================================================================
  */
 
 //Manages a CVS File in the run directory
-package org.cougaar.test.regression.ping;
+package org.cougaar.test.ping;
 
 import java.io.File;
 import java.io.FileOutputStream;

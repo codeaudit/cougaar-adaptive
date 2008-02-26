@@ -17,18 +17,20 @@
 * Created : Sep 28, 2007
 * Workfile: PingBBTesterPlugin.java
 * $Revision: 1.1 $
-* $Date: 2007-10-19 15:01:52 $
-* $Author: rshapiro $
+* $Date: 2008-02-26 15:31:57 $
+* $Author: jzinky $
 *
 * =============================================================================
 */
  
-package org.cougaar.test.regression.ping;
+package org.cougaar.test.ping.regression;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.cougaar.test.ping.Anova;
+import org.cougaar.test.ping.PingQuery;
 import org.cougaar.util.UnaryPredicate;
 
 public class PingBBTesterPlugin extends PingTesterPlugin {

@@ -17,18 +17,20 @@
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
  * $Revision: 1.1 $
- * $Date: 2007-10-19 15:01:52 $
- * $Author: rshapiro $
+ * $Date: 2008-02-26 15:31:57 $
+ * $Author: jzinky $
  *
  * =============================================================================
  */
 
-package org.cougaar.test.regression.ping;
+package org.cougaar.test.ping.regression;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
+import org.cougaar.test.ping.Anova;
+import org.cougaar.test.ping.CSVLog;
 import org.cougaar.test.regression.AbstractRegressionSequencerPlugin;
 import org.cougaar.test.regression.RegressionStep;
 import org.cougaar.test.sequencer.SocietyCompletionEvent;

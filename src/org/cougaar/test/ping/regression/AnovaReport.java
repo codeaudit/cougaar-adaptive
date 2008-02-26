@@ -17,13 +17,13 @@
 * Created : Aug 15, 2007
 * Workfile: AnovaReport.java
 * $Revision: 1.1 $
-* $Date: 2007-10-19 15:01:52 $
-* $Author: rshapiro $
+* $Date: 2008-02-26 15:31:57 $
+* $Author: jzinky $
 *
 * =============================================================================
 */
  
-package org.cougaar.test.regression.ping;
+package org.cougaar.test.ping.regression;
 
 import org.cougaar.test.regression.RegressionReport;
 

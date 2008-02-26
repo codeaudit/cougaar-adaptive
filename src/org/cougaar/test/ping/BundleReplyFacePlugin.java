@@ -4,7 +4,7 @@
  *
  */
 
-package org.cougaar.test.regression.ping;
+package org.cougaar.test.ping;
 
 import org.cougaar.core.util.UniqueObject;
 import org.cougaar.test.coordinations.sweep.bundled.BundledSweepFollowerFacePlugin;
