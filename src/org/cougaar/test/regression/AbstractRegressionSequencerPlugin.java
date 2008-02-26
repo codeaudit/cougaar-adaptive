@@ -16,9 +16,9 @@
  *
  * Created : Aug 9, 2007
  * Workfile: RegressioNodeSequencerPlugin.java
- * $Revision: 1.2 $
- * $Date: 2007-10-19 15:34:24 $
- * $Author: rshapiro $
+ * $Revision: 1.3 $
+ * $Date: 2008-02-26 18:08:00 $
+ * $Author: jzinky $
  *
  * =============================================================================
  */
@@ -28,21 +28,24 @@ package org.cougaar.test.regression;
 import java.util.Map;
 import java.util.Set;
 
+import org.cougaar.test.sequencer.Context;
+import org.cougaar.test.sequencer.ContextBase;
+import org.cougaar.test.sequencer.Report;
 import org.cougaar.test.sequencer.SequencerPlugin;
 import org.cougaar.test.sequencer.SocietyCompletionEvent;
 import org.cougaar.util.annotations.Cougaar;
 
-abstract public class AbstractRegressionSequencerPlugin<R extends RegressionReport>
+abstract public class AbstractRegressionSequencerPlugin<R extends Report>
     extends
-        SequencerPlugin<RegressionStep, R, RegressionContext> {
+        SequencerPlugin<RegressionStep, R, Context> {
 
     @Cougaar.Arg(name = "suiteName", defaultValue = "", description = "Name for suite of tests")
     public String suiteName;
     
     boolean hasAttemptedToShutdown = false;
 
-    protected RegressionContext makeContext(RegressionStep step, boolean hasFailed, int workerTimeout) {
-        return new RegressionContext(workerTimeout, hasFailed);
+    protected Context makeContext(RegressionStep step, boolean hasFailed, int workerTimeout) {
+        return new ContextBase(workerTimeout, hasFailed);
     }
 
     protected RegressionStep getFirstStep() {

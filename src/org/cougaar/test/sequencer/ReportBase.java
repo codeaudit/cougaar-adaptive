@@ -14,30 +14,30 @@
 *
 * =============================================================================
 *
-* Created : Aug 15, 2007
-* Workfile: AnovaReport.java
+* Created : Sep 11, 2007
+* Workfile: RegressionReportBase.java
 * $Revision: 1.1 $
-* $Date: 2008-02-26 15:31:57 $
+* $Date: 2008-02-26 18:08:00 $
 * $Author: jzinky $
 *
 * =============================================================================
 */
  
-package org.cougaar.test.ping.regression;
+package org.cougaar.test.sequencer;
 
-import org.cougaar.test.regression.RegressionReport;
 
-public class AnovaReport implements RegressionReport {
+
+public class ReportBase implements Report {
     private boolean successful;
     private String reason;
     private final String worker;
-          
-    public AnovaReport(String worker, boolean success, String reason) {
+    
+    public ReportBase( String worker, boolean success, String reason) {
         this.worker = worker;
         this.successful = success;
-        this.reason = reason;
+        this.reason=reason; 
     }
-  
+
     public boolean isSuccessful() {
         return successful;
     }
@@ -48,6 +48,7 @@ public class AnovaReport implements RegressionReport {
     public String getReason() {
         return reason;
     }
+    
     public void setReason(String reason) {
         this.reason = reason;
     }

@@ -16,20 +16,22 @@
 *
 * Created : Aug 15, 2007
 * Workfile: RegressionTesterPlugin.java
-* $Revision: 1.1 $
-* $Date: 2007-10-19 15:01:53 $
-* $Author: rshapiro $
+* $Revision: 1.2 $
+* $Date: 2008-02-26 18:08:00 $
+* $Author: jzinky $
 *
 * =============================================================================
 */
  
 package org.cougaar.test.regression;
 
+import org.cougaar.test.sequencer.Report;
+import org.cougaar.test.sequencer.ReportBase;
 import org.cougaar.util.annotations.Cougaar;
 
 
 // Used for testing, domain tester plugins should extend AbstractRegressionTesterPlugin
-public class RegressionTesterPlugin extends AbstractRegressionTesterPlugin<RegressionReportBase> {
+public class RegressionTesterPlugin extends AbstractRegressionTesterPlugin<Report> {
     
     @Cougaar.Arg(name = "failStep", required=false)
     public RegressionStep failStep;
@@ -44,7 +46,7 @@ public class RegressionTesterPlugin extends AbstractRegressionTesterPlugin<Regre
     public String reason;
   
    
-    protected RegressionReportBase makeReport(RegressionStep step) {
+    protected Report makeReport(RegressionStep step) {
         if (delayStep == step) {
             // nasty delay holding thread
             try {
@@ -53,7 +55,7 @@ public class RegressionTesterPlugin extends AbstractRegressionTesterPlugin<Regre
                 // ignore
             }
         }
-        return new RegressionReportBase(workerId, step != failStep, reason);
+        return new ReportBase(workerId, step != failStep, reason);
     }
 
 }

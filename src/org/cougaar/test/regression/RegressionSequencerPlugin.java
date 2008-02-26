@@ -16,9 +16,9 @@
 *
 * Created : Sep 13, 2007
 * Workfile: RegressionSequencerPlugin.java
-* $Revision: 1.1 $
-* $Date: 2007-10-19 15:01:53 $
-* $Author: rshapiro $
+* $Revision: 1.2 $
+* $Date: 2008-02-26 18:08:00 $
+* $Author: jzinky $
 *
 * =============================================================================
 */
@@ -28,10 +28,13 @@ package org.cougaar.test.regression;
 import java.util.Collections;
 import java.util.Set;
 
-public class RegressionSequencerPlugin extends AbstractRegressionSequencerPlugin<RegressionReportBase> {
+import org.cougaar.test.sequencer.Report;
+import org.cougaar.test.sequencer.ReportBase;
+
+public class RegressionSequencerPlugin extends AbstractRegressionSequencerPlugin<Report> {
     
-    protected Set<RegressionReportBase> makeNodeTimoutFailureReport(RegressionStep step, String reason) {
-        RegressionReportBase report = new RegressionReportBase(agentId.getAddress(), false, reason);
+    protected Set<Report> makeNodeTimoutFailureReport(RegressionStep step, String reason) {
+        Report report = new ReportBase(agentId.getAddress(), false, reason);
         return Collections.singleton(report);
     }
 }

@@ -16,9 +16,9 @@
  *
  * Created : Sep 11, 2007
  * Workfile: RegressionAggregatorPlugin.java
- * $Revision: 1.1 $
- * $Date: 2007-10-19 15:01:53 $
- * $Author: rshapiro $
+ * $Revision: 1.2 $
+ * $Date: 2008-02-26 18:08:00 $
+ * $Author: jzinky $
  *
  * =============================================================================
  */
@@ -26,9 +26,12 @@
 package org.cougaar.test.regression;
 
 import org.cougaar.core.agent.service.alarm.Alarm;
+import org.cougaar.test.sequencer.Context;
 import org.cougaar.test.sequencer.NodeAggregatorPlugin;
 import org.cougaar.test.sequencer.NodeCompletionEvent;
 import org.cougaar.test.sequencer.NodeRequest;
+import org.cougaar.test.sequencer.Report;
+import org.cougaar.test.sequencer.ReportBase;
 import org.cougaar.util.annotations.Cougaar;
 import org.cougaar.util.annotations.Subscribe;
 /**
@@ -37,17 +40,17 @@ import org.cougaar.util.annotations.Subscribe;
  */
 public class RegressionAggregatorPlugin
     extends
-        NodeAggregatorPlugin<RegressionStep, RegressionReport, RegressionContext> {
+        NodeAggregatorPlugin<RegressionStep, Report, Context> {
 
     @Cougaar.Arg(name = "maxIdleTime", defaultValue = "120000", // two minutes
                  description="Timeout for max time between steps. The Node will Crash when this timeout is exceeded") 
     public int maxIdleTime;
 
-    private RegressionContext shutdownContext;
+    private Context shutdownContext;
     private Alarm deadManAlarm;
     
-    protected RegressionReport makeWorkerTimoutFailureReport(RegressionStep step, String reason) {
-        return new RegressionReportBase(nodeId,false,reason);
+    protected Report makeWorkerTimoutFailureReport(RegressionStep step, String reason) {
+        return new ReportBase(nodeId,false,reason);
     }
     
     protected void setupSubscriptions() {
@@ -56,7 +59,7 @@ public class RegressionAggregatorPlugin
     }
         
     @Cougaar.Execute(on = Subscribe.ModType.ADD)
-    public void executeCompletionEvent(NodeRequest<RegressionStep, RegressionContext> event) {
+    public void executeCompletionEvent(NodeRequest<RegressionStep, Context> event) {
         RegressionStep step = event.getStep();
         deadManAlarm=restartDeadManTimer(deadManAlarm, maxIdleTime);
         switch (step) {
@@ -67,7 +70,7 @@ public class RegressionAggregatorPlugin
     }
 
     @Cougaar.Execute(on = Subscribe.ModType.ADD)
-    public void executeCompletionEvent(NodeCompletionEvent<RegressionStep, RegressionReport> event) {
+    public void executeCompletionEvent(NodeCompletionEvent<RegressionStep, Report> event) {
 
         switch (event.getStep()) {
             case SHUTDOWN:

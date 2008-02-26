@@ -15,17 +15,37 @@
 * =============================================================================
 *
 * Created : Aug 9, 2007
-* Workfile: RegressionReport.java
+* Workfile: RegressionCondition.java
 * $Revision: 1.1 $
-* $Date: 2007-10-19 15:01:53 $
-* $Author: rshapiro $
+* $Date: 2008-02-26 18:08:00 $
+* $Author: jzinky $
 *
 * =============================================================================
 */
  
-package org.cougaar.test.regression;
+package org.cougaar.test.sequencer;
 
-import org.cougaar.test.sequencer.Report;
 
-public interface RegressionReport extends Report {
+public class ContextBase implements Context {
+    private final int workerTimout;
+    private final boolean failed;
+
+    public ContextBase(int workerTimeout, boolean failed) {
+        super();
+        this.workerTimout = workerTimeout;
+        this.failed = failed;
+    }
+
+    public int getWorkerTimeout() {
+        return workerTimout;
+    }
+
+    public boolean hasFailed() {
+        return failed;
+    }
+    
+    public String toString() {
+        return "Context: hasFailed="+failed+" workerTimeout="+workerTimout;
+    }
+    
 }

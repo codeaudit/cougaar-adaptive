@@ -16,8 +16,8 @@
 *
 * Created : Aug 14, 2007
 * Workfile: PingTesterPlugin.java
-* $Revision: 1.1 $
-* $Date: 2008-02-26 15:31:57 $
+* $Revision: 1.2 $
+* $Date: 2008-02-26 18:08:00 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -35,13 +35,15 @@ import org.cougaar.test.ping.PingQuery;
 import org.cougaar.test.ping.StartRequest;
 import org.cougaar.test.ping.StopRequest;
 import org.cougaar.test.regression.AbstractRegressionTesterPlugin;
-import org.cougaar.test.regression.RegressionContext;
 import org.cougaar.test.regression.RegressionStep;
+import org.cougaar.test.sequencer.Context;
+import org.cougaar.test.sequencer.Report;
+import org.cougaar.test.sequencer.ReportBase;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.util.annotations.Cougaar;
 import org.cougaar.util.annotations.Subscribe;
 
-public class PingTesterPlugin extends AbstractRegressionTesterPlugin<AnovaReport> {
+public class PingTesterPlugin extends AbstractRegressionTesterPlugin<Report> {
     private StopRequest stopRequest;
     private StartRequest startRequest;
     private Map<String, Anova> initialStatistics, finalStatistics;
@@ -51,18 +53,18 @@ public class PingTesterPlugin extends AbstractRegressionTesterPlugin<AnovaReport
     @Cougaar.Arg(name="pingerCount", required=true)
     public int pingerCount;
 
-    protected void doStartTest(RegressionContext context) {
+    protected void doStartTest(Context context) {
         startRequest = new StartRequest(uids.nextUID());
         blackboard.publishAdd(startRequest);
         //defer until all Start requests have returned
     }
 
-    public void doneStartTest(AnovaReport report) {
+    public void doneStartTest(Report report) {
          failed = startRequest.isFailed();
          super.doneStartTest(report);
      }
 
-    protected void doStartSteadyStateCollection(RegressionContext context) {
+    protected void doStartSteadyStateCollection(Context context) {
         // query blackboard for all ping queries
         // snapshot the statistics
         // store the statistics for later processing
@@ -70,32 +72,32 @@ public class PingTesterPlugin extends AbstractRegressionTesterPlugin<AnovaReport
         super.doStartSteadyStateCollection(context);
     }
 
-    protected void doEndSteadyStateCollection(RegressionContext context) {
+    protected void doEndSteadyStateCollection(Context context) {
         finalStatistics = gatherStatistics();
         super.doEndSteadyStateCollection(context);
     }
 
-    protected void doEndTest(RegressionContext context) {
+    protected void doEndTest(Context context) {
         blackboard.publishRemove(startRequest);
         stopRequest = new StopRequest(uids.nextUID());
         blackboard.publishAdd(stopRequest);
         //defer until all Stop requests have returned
     }
     
-    public void doneEndTest(AnovaReport report) {
+    public void doneEndTest(Report report) {
         failed = stopRequest.isFailed();
         super.doneEndTest(report);
     }
 
-    protected void doSummary(RegressionContext context) {
+    protected void doSummary(Context context) {
         if (log.isInfoEnabled()) {
             log.info("Do Summary context="+context);
         }
-        AnovaReport report = new SummaryReport(workerId, reason,initialStatistics, finalStatistics);
+        Report report = new SummaryReport(workerId, reason,initialStatistics, finalStatistics);
         doneSummary(report);
     }
 
-    protected void doShutdown(RegressionContext context) {
+    protected void doShutdown(Context context) {
         super.doShutdown(context);
     }
     
@@ -117,8 +119,8 @@ public class PingTesterPlugin extends AbstractRegressionTesterPlugin<AnovaReport
         return statistics;
     }
     
-    protected AnovaReport makeReport(RegressionStep step) {
-        return new AnovaReport(workerId,!failed,reason);
+    protected Report makeReport(RegressionStep step) {
+        return new ReportBase(workerId,!failed,reason);
     }
     
     @Cougaar.Execute(on={Subscribe.ModType.ADD, Subscribe.ModType.CHANGE})

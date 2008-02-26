@@ -16,22 +16,24 @@
 *
 * Created : Aug 9, 2007
 * Workfile: AbstractRegressionTesterPlugin.java
-* $Revision: 1.1 $
-* $Date: 2007-10-19 15:01:53 $
-* $Author: rshapiro $
+* $Revision: 1.2 $
+* $Date: 2008-02-26 18:08:00 $
+* $Author: jzinky $
 *
 * =============================================================================
 */
  
 package org.cougaar.test.regression;
 
+import org.cougaar.test.sequencer.Context;
+import org.cougaar.test.sequencer.Report;
 import org.cougaar.test.sequencer.WorkerPlugin;
 
-abstract public class AbstractRegressionTesterPlugin<R extends RegressionReport>
-    extends WorkerPlugin<RegressionStep, R, RegressionContext> {
+abstract public class AbstractRegressionTesterPlugin<R extends Report>
+    extends WorkerPlugin<RegressionStep, R, Context> {
     
     @Override
-    protected void doStep(RegressionStep step, RegressionContext context) {
+    protected void doStep(RegressionStep step, Context context) {
         switch (step) {
             case START_TEST:
                 doStartTest(context);
@@ -60,21 +62,21 @@ abstract public class AbstractRegressionTesterPlugin<R extends RegressionReport>
     }
 
 
-    protected void doStartTest(RegressionContext context) {
+    protected void doStartTest(Context context) {
         if (log.isInfoEnabled()) {
             log.info(workerId+ ": Do Start Test: "+context);
         }
         doneStartTest(makeReport(RegressionStep.START_TEST));
     }
 
-    protected void doStartSteadyStateCollection(RegressionContext context) {
+    protected void doStartSteadyStateCollection(Context context) {
         if (log.isInfoEnabled()) {
             log.info(workerId+ ": Do Start Collection: "+context);
         }
         doneStartSteadyStateCollection(makeReport(RegressionStep.START_STEADY_STATE_COLLECTION));
     }
     
-    protected void doEndSteadyStateCollection(RegressionContext context) {
+    protected void doEndSteadyStateCollection(Context context) {
         if (log.isInfoEnabled()) {
             log.info(workerId+ ": Do End Collection: "+context);
         }
@@ -82,21 +84,21 @@ abstract public class AbstractRegressionTesterPlugin<R extends RegressionReport>
     }
     
 
-    protected void doEndTest(RegressionContext context) {
+    protected void doEndTest(Context context) {
         if (log.isInfoEnabled()) {
             log.info(workerId+ ": Do End Test: "+context);
         }
         doneEndTest(makeReport(RegressionStep.END_TEST));
     }
 
-    protected void doSummary(RegressionContext context) {
+    protected void doSummary(Context context) {
         if (log.isInfoEnabled()) {
             log.info(workerId+ ": Do Summary: "+context);
         }
         doneSummary(makeReport(RegressionStep.SUMMARY));
     }
     
-    protected void doShutdown(RegressionContext context) {
+    protected void doShutdown(Context context) {
         if (log.isInfoEnabled()) {
             log.info(workerId+ ": Do Shutdown: "+context);
         }

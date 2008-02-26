@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.1 $
- * $Date: 2008-02-26 15:31:57 $
+ * $Revision: 1.2 $
+ * $Date: 2008-02-26 18:08:00 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -33,6 +33,7 @@ import org.cougaar.test.ping.Anova;
 import org.cougaar.test.ping.CSVLog;
 import org.cougaar.test.regression.AbstractRegressionSequencerPlugin;
 import org.cougaar.test.regression.RegressionStep;
+import org.cougaar.test.sequencer.Report;
 import org.cougaar.test.sequencer.SocietyCompletionEvent;
 import org.cougaar.util.annotations.Cougaar;
 import org.cougaar.util.annotations.Subscribe;
@@ -41,7 +42,7 @@ import org.cougaar.util.annotations.Subscribe;
  * Ping-specific RegressionSequncer
  */
 public class PingSequencerPlugin 
-    extends AbstractRegressionSequencerPlugin<SummaryReport> {
+    extends AbstractRegressionSequencerPlugin<Report> {
 
     @Cougaar.Arg(name="collectionLength", defaultValue="3000",
                       description="Milliseconds to run collection")
@@ -58,7 +59,7 @@ public class PingSequencerPlugin
 
     // Override to defer some steps
     @Cougaar.Execute(on=Subscribe.ModType.ADD)
-    public void executeSocietyCompletion(SocietyCompletionEvent<RegressionStep, SummaryReport> event) {
+    public void executeSocietyCompletion(SocietyCompletionEvent<RegressionStep, Report> event) {
         if (!event.isSuccessful()) {
             sequenceFailed(event);
             return;
@@ -83,18 +84,20 @@ public class PingSequencerPlugin
         }
     }
 
-    private void processStats(Collection<Set<SummaryReport>> reportsCollection) {
+    private void processStats(Collection<Set<Report>> reportsCollection) {
         Anova summary = new Anova("Throughput");
 
-        for (Set<SummaryReport> reports : reportsCollection) {
-            for (SummaryReport report : reports) {
+        for (Set<Report> reports : reportsCollection) {
+            for (Report report : reports) {
                 if (!report.isSuccessful()) {
                     log.error("Summary step was successful, but unsuccessful report" + report);
                 }
                 log.info(report.toString());
-                for (Anova stat : report.getRawStats()) {
-                    long itemsPerSecond = Math.round(stat.itemPerSec());
-                    summary.newValue(itemsPerSecond);
+                if (report instanceof SummaryReport) {
+                    for (Anova stat : ((SummaryReport) report).getRawStats()) {
+                        long itemsPerSecond = Math.round(stat.itemPerSec());
+                        summary.newValue(itemsPerSecond);
+                    }
                 }
             }
         }
@@ -115,8 +118,8 @@ public class PingSequencerPlugin
         }
     }
     
-    protected Set<SummaryReport> makeNodeTimoutFailureReport(RegressionStep step, String reason) {
-        SummaryReport report = new SummaryReport(agentId.getAddress(), reason);
+    protected Set<Report> makeNodeTimoutFailureReport(RegressionStep step, String reason) {
+        Report report = new SummaryReport(agentId.getAddress(), reason);
         return Collections.singleton(report);
     }
 }
