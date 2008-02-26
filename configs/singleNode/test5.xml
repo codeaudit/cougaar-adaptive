@@ -13,7 +13,7 @@ singleNode: Test Society for 5 pingers on Single Node
       <argument name="collectionLength" value="20000" />
       <argument name="steadyStateWait" value="1000" />
     </component>
-    <component class="org.cougaar.test.regression.RegressionAggregatorPlugin">
+    <component class="org.cougaar.test.sequencer.regression.RegressionAggregatorPlugin">
       <argument name="workerCount" value="5" />
       <argument name="maxIdleTime" value="30500" />
     </component>

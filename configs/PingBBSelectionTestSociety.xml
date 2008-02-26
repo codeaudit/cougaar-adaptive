@@ -22,7 +22,7 @@
 		</component>
 
 		<component
-			class="org.cougaar.test.regression.RegressionAggregatorPlugin">
+			class="org.cougaar.test.sequencer.regression.RegressionAggregatorPlugin">
 			<argument name="workerCount" value="1" />
 			<argument name="maxIdleTime" value="600010" />
 		</component>

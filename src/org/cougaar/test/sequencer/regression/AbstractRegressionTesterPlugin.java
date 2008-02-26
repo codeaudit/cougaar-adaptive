@@ -16,14 +16,14 @@
 *
 * Created : Aug 9, 2007
 * Workfile: AbstractRegressionTesterPlugin.java
-* $Revision: 1.2 $
-* $Date: 2008-02-26 18:08:00 $
+* $Revision: 1.1 $
+* $Date: 2008-02-26 18:23:40 $
 * $Author: jzinky $
 *
 * =============================================================================
 */
  
-package org.cougaar.test.regression;
+package org.cougaar.test.sequencer.regression;
 
 import org.cougaar.test.sequencer.Context;
 import org.cougaar.test.sequencer.Report;

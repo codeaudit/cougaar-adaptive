@@ -16,14 +16,14 @@
  *
  * Created : Aug 9, 2007
  * Workfile: RegressioNodeSequencerPlugin.java
- * $Revision: 1.3 $
- * $Date: 2008-02-26 18:08:00 $
+ * $Revision: 1.1 $
+ * $Date: 2008-02-26 18:23:40 $
  * $Author: jzinky $
  *
  * =============================================================================
  */
 
-package org.cougaar.test.regression;
+package org.cougaar.test.sequencer.regression;
 
 import java.util.Map;
 import java.util.Set;

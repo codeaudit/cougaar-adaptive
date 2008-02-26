@@ -6,7 +6,7 @@ Example regression test society
 <society>
 	<node name="Node1">
 		<component
-			class="org.cougaar.test.regression.RegressionAggregatorPlugin">
+			class="org.cougaar.test.sequencer.regression.RegressionAggregatorPlugin">
 			<argument name="workerCount" value="3" /> 
 			<argument name="maxIdleTime" value="600100" />
 		</component>
@@ -24,7 +24,7 @@ Example regression test society
 		
 		<agent name="Sequencer">
 		<component
-			class="org.cougaar.test.regression.RegressionSequencerPlugin">
+			class="org.cougaar.test.sequencer.regression.RegressionSequencerPlugin">
 			<argument name="suiteName" value="RegressionTest" />
 			<argument name="defaultWorkerTimeout" value="10100" />
 			<argument name="defaultNodeTimeout" value="100100" />
@@ -37,20 +37,20 @@ Example regression test society
 		
 		<agent name="AgentA">
 			<component
-				class="org.cougaar.test.regression.RegressionTesterPlugin">
+				class="org.cougaar.test.sequencer.regression.RegressionTesterPlugin">
 				<argument name="workerId" value="A" />
 				<argument name="failStep-NOT" value="SUMMARY"/>
 				<argument name="reason" value="Bad things happen"/>
 			</component>
 			<component
-				class="org.cougaar.test.regression.RegressionTesterPlugin">
+				class="org.cougaar.test.sequencer.regression.RegressionTesterPlugin">
 				<argument name="workerId" value="B" />
 					<argument name="delayStep-NOT" value="SUMMARY"/>
 					<argument name="delayTime" value="15100"/>
 					<argument name="reason" value="Never finished"/>
 			</component>
 			<component
-				class="org.cougaar.test.regression.RegressionTesterPlugin">
+				class="org.cougaar.test.sequencer.regression.RegressionTesterPlugin">
 				<argument name="workerId" value="C" />
 				<argument name="reason" value="Good things happen" />
 			</component>

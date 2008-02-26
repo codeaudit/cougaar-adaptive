@@ -23,7 +23,7 @@ def societyConfig(x)
       <argument name="collectionLength" value="15000" />
       <argument name="steadyStateWait" value="1000" />
     </component>
-    <component class="org.cougaar.test.regression.RegressionAggregatorPlugin">
+    <component class="org.cougaar.test.sequencer.regression.RegressionAggregatorPlugin">
       <argument name="workerCount" value="1" />
       <argument name="maxIdleTime" value="#{idleTimeout}" />
     </component>

@@ -5,7 +5,7 @@
 -->
 <society>
 	<node name="Node1">
-		<component class="org.cougaar.test.regression.RegressionAggregatorPlugin">
+		<component class="org.cougaar.test.sequencer.regression.RegressionAggregatorPlugin">
 			<argument name="workerCount" value="3" />
 			<argument name="maxIdleTime" value="600010" />
 		</component>
@@ -92,7 +92,7 @@
 	</node>
 
 	<node name="Node2">
-		<component class="org.cougaar.test.regression.RegressionAggregatorPlugin">
+		<component class="org.cougaar.test.sequencer.regression.RegressionAggregatorPlugin">
 			<argument name="workerCount" value="1" />
 			<argument name="maxIdleTime" value="600010" />
 		</component>
