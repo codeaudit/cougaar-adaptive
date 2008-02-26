@@ -16,8 +16,8 @@
  *
  * Created : Aug 9, 2007
  * Workfile: RegressioNodeSequencerPlugin.java
- * $Revision: 1.1 $
- * $Date: 2008-02-26 21:10:05 $
+ * $Revision: 1.2 $
+ * $Date: 2008-02-26 21:32:04 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -51,10 +51,6 @@ abstract public class AbstractExperimentSequencerPlugin<R extends Report>
     protected ExperimentStep getFirstStep() {
         return SOCIETY_READY;
     }
-
-//    protected RegressionStep getNextStep(RegressionStep step) {
-//        
-//    }
 
     // This is run only after all steps (including Shutdown Step) have been successfully run
     // Since the Sequencer can run in an agent, it does not have permission to run ncs.shutdown();

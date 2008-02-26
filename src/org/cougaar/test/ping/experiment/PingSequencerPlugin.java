@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.1 $
- * $Date: 2008-02-26 21:10:05 $
+ * $Revision: 1.2 $
+ * $Date: 2008-02-26 21:32:04 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -80,20 +80,26 @@ public class PingSequencerPlugin
     }
     
     protected ExperimentStep getNextStep(ExperimentStep step) {
+        ExperimentStep nextStep;
         if (SOCIETY_READY == step) {
-            return START_TEST;
+            nextStep = START_TEST;
         } else if (START_TEST == step) { 
-           return START_STEADY_STATE;
+            nextStep = START_STEADY_STATE;
         } else if (START_STEADY_STATE == step) {
-           return END_STEADY_STATE;    
+            nextStep = END_STEADY_STATE;    
         } else if (END_STEADY_STATE == step) {
-            return END_TEST;
+            nextStep = END_TEST;
         } else if (END_TEST == step) {
-            return SUMMARY_TEST;
+            nextStep = SUMMARY_TEST;
         } else if (SUMMARY_TEST == step) {
-            return SHUTDOWN;
+            nextStep = SHUTDOWN;
+        } else {
+            nextStep = null;
         }
-        return null;
+        if (log.isInfoEnabled()) {
+            log.info("Finished Step=" + step + " Next step=" + nextStep);
+        }
+        return nextStep;
     }
 
     private void processStats(Collection<Set<Report>> reportsCollection) {

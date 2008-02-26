@@ -17,7 +17,7 @@
  * Created : Sep 11, 2007
  * Workfile: RegressionAggregatorPlugin.java
  * $Revision: 1.1 $
- * $Date: 2008-02-26 21:10:05 $
+ * $Date: 2008-02-26 21:32:04 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -36,9 +36,9 @@ import org.cougaar.util.annotations.Cougaar;
 import org.cougaar.util.annotations.Subscribe;
 /**
  * Handles node termination based on the status held in the
- * {@link RegressionStep#SHUTDOWN} Context.
+ * {@link ExperimentSteps#SHUTDOWN} Context.
  */
-public class RegressionAggregatorPlugin
+public class ExperimentAggregatorPlugin
     extends NodeAggregatorPlugin<ExperimentStep, Report, Context>
     implements ExperimentSteps {
 
