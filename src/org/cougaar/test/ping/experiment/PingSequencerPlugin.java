@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.2 $
- * $Date: 2008-02-26 21:32:04 $
+ * $Revision: 1.3 $
+ * $Date: 2008-02-27 18:06:38 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -33,11 +33,9 @@ import org.cougaar.test.ping.Anova;
 import org.cougaar.test.ping.CSVLog;
 import org.cougaar.test.ping.SummaryReport;
 import org.cougaar.test.sequencer.Report;
-import org.cougaar.test.sequencer.SocietyCompletionEvent;
 import org.cougaar.test.sequencer.experiment.AbstractExperimentSequencerPlugin;
 import org.cougaar.test.sequencer.experiment.ExperimentStep;
 import org.cougaar.util.annotations.Cougaar;
-import org.cougaar.util.annotations.Subscribe;
 
 /**
  * Ping-specific RegressionSequncer
@@ -51,56 +49,32 @@ public class PingSequencerPlugin
     public long collectionLengthMillis; 
     
     @Cougaar.Arg(name="steadyStateWait", defaultValue="3000",
-                      description="MilliSeconds to wait after test has started, before starting collection")
+                      description="MilliSeconds to wait after test has started," +
+                      		" before starting collection")
     public long steadyStateWaitMillis; 
     
     @Cougaar.Arg(name="csvFileName", defaultValue="",
                       description="File name to append results, default directory is run")
-    public String csvFileName; 
+    public String csvFileName;
 
+    private final StepRunnable summaryWork = new StepRunnable() {
+        public void run() {
+            processStats(getEvent().getReports().values());
+        }
+    }; 
 
-    // Override to defer some steps
-    @Cougaar.Execute(on=Subscribe.ModType.ADD)
-    public void executeSocietyCompletion(SocietyCompletionEvent<ExperimentStep, Report> event) {
-        if (!event.isSuccessful()) {
-            sequenceFailed(event);
-            return;
-        }
-        ExperimentStep step = event.getStep();
-        if (step == START_TEST) {
-            deferSocietyCompletion(event, steadyStateWaitMillis);
-        } else if (step == START_STEADY_STATE) {
-            deferSocietyCompletion(event, collectionLengthMillis);
-        } else if (step == SUMMARY_TEST) {
-            processStats(event.getReports().values());
-            resumeSocietyCompletion(event);
-        } else {
-            resumeSocietyCompletion(event);
-        }
+    public void load() {
+        super.load();
+        addStep(SOCIETY_READY);
+        addStep(START_TEST, steadyStateWaitMillis);
+        addStep(START_STEADY_STATE, collectionLengthMillis);
+        addStep(END_STEADY_STATE);
+        addStep(END_TEST);
+        addStep(SUMMARY_TEST, summaryWork);
+        addStep(SHUTDOWN);
+        logExperimentDescription();
     }
     
-    protected ExperimentStep getNextStep(ExperimentStep step) {
-        ExperimentStep nextStep;
-        if (SOCIETY_READY == step) {
-            nextStep = START_TEST;
-        } else if (START_TEST == step) { 
-            nextStep = START_STEADY_STATE;
-        } else if (START_STEADY_STATE == step) {
-            nextStep = END_STEADY_STATE;    
-        } else if (END_STEADY_STATE == step) {
-            nextStep = END_TEST;
-        } else if (END_TEST == step) {
-            nextStep = SUMMARY_TEST;
-        } else if (SUMMARY_TEST == step) {
-            nextStep = SHUTDOWN;
-        } else {
-            nextStep = null;
-        }
-        if (log.isInfoEnabled()) {
-            log.info("Finished Step=" + step + " Next step=" + nextStep);
-        }
-        return nextStep;
-    }
 
     private void processStats(Collection<Set<Report>> reportsCollection) {
         Anova summary = new Anova("Throughput");
@@ -140,4 +114,6 @@ public class PingSequencerPlugin
         Report report = new SummaryReport(agentId.getAddress(), reason);
         return Collections.singleton(report);
     }
+    
+    
 }

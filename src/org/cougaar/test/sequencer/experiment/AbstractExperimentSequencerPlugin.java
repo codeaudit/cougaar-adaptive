@@ -16,8 +16,8 @@
  *
  * Created : Aug 9, 2007
  * Workfile: RegressioNodeSequencerPlugin.java
- * $Revision: 1.2 $
- * $Date: 2008-02-26 21:32:04 $
+ * $Revision: 1.3 $
+ * $Date: 2008-02-27 18:06:38 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -34,6 +34,7 @@ import org.cougaar.test.sequencer.Report;
 import org.cougaar.test.sequencer.SequencerPlugin;
 import org.cougaar.test.sequencer.SocietyCompletionEvent;
 import org.cougaar.util.annotations.Cougaar;
+import org.cougaar.util.annotations.Subscribe;
 
 abstract public class AbstractExperimentSequencerPlugin<R extends Report>
     extends SequencerPlugin<ExperimentStep, R, Context>
@@ -43,13 +44,66 @@ abstract public class AbstractExperimentSequencerPlugin<R extends Report>
     public String suiteName;
     
     boolean hasAttemptedToShutdown = false;
+    
+    private ExperimentDescriptor<ExperimentStep, R> experimentDescriptor = 
+        new ExperimentDescriptor<ExperimentStep, R>();
 
+    public void addStep(ExperimentStep step, long millis, StepBody<ExperimentStep, R> body) {
+        experimentDescriptor.addStep(step, millis, body);
+    }
+    
+    public void addStep(ExperimentStep step, long millis) {
+        addStep(step, millis, null);
+    }
+    
+    public void addStep(ExperimentStep step, StepBody<ExperimentStep, R> body) {
+        addStep(step, 0, body);
+    }
+    
+    public void addStep(ExperimentStep step) {
+        addStep(step, 0, null);
+    }
+    
+    public void logExperimentDescription() {
+        experimentDescriptor.logDescription(log);
+    }
+    
     protected Context makeContext(ExperimentStep step, boolean hasFailed, int workerTimeout) {
         return new ContextBase(workerTimeout, hasFailed);
     }
 
     protected ExperimentStep getFirstStep() {
-        return SOCIETY_READY;
+        return experimentDescriptor.initializeExperiment();
+    }
+    
+    protected ExperimentStep getNextStep(ExperimentStep step) {
+        ExperimentStep nextStep = experimentDescriptor.getNextStep();
+        log.info("Done step " +step+ " Next step is " + nextStep);
+        return nextStep;
+    }
+    
+    @Cougaar.Execute(on = Subscribe.ModType.ADD)
+    public void executeSocietyCompletion(SocietyCompletionEvent<ExperimentStep, R> event) {
+        if (!event.isSuccessful()) {
+            sequenceFailed(event);
+            return;
+        }
+        
+        experimentDescriptor.runCurrentBody(event);
+        
+        // Sanity check
+        ExperimentStep eventStep = event.getStep();
+        ExperimentStep descriptorStep = experimentDescriptor.getCurrentStep();
+        if (!eventStep.equals(descriptorStep)) {
+            log.shout("Event has step " +eventStep+ " but descriptor has step " +descriptorStep);
+        }
+        
+        long deferMillis = experimentDescriptor.getCurrentDelay();
+        if (deferMillis > 0) {
+            deferSocietyCompletion(event, deferMillis);
+        } else {
+            resumeSocietyCompletion(event);
+        }
     }
 
     // This is run only after all steps (including Shutdown Step) have been successfully run
@@ -94,6 +148,11 @@ abstract public class AbstractExperimentSequencerPlugin<R extends Report>
             publishNodeRequestStep(ExperimentSteps.SHUTDOWN);
         }
     }
-
+    
+    /**
+     * Typedef
+     */
+    abstract public class StepRunnable extends StepBody<ExperimentStep, R> {
+    }
    
 }

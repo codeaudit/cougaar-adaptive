@@ -16,9 +16,9 @@
 *
 * Created : Aug 13, 2007
 * Workfile: NodeLocalSequencerPlugin.java
-* $Revision: 1.1 $
-* $Date: 2007-10-19 15:01:52 $
-* $Author: rshapiro $
+* $Revision: 1.2 $
+* $Date: 2008-02-27 18:06:38 $
+* $Author: jzinky $
 *
 * =============================================================================
 */
@@ -174,7 +174,7 @@ abstract public class SequencerPlugin<S extends Step, R extends Report, C extend
     }
     
 
-    protected void deferSocietyCompletion(final SocietyCompletionEvent<S, R> event, long delay) {
+    public void deferSocietyCompletion(final SocietyCompletionEvent<S, R> event, long delay) {
         executeLater(delay, new Runnable() {
             public void run() {
                 resumeSocietyCompletion(event);
@@ -182,7 +182,7 @@ abstract public class SequencerPlugin<S extends Step, R extends Report, C extend
         });
     }
     
-    protected void resumeSocietyCompletion(SocietyCompletionEvent<S, R> event) {
+    public void resumeSocietyCompletion(SocietyCompletionEvent<S, R> event) {
         if (event.isSuccessful()) {
             S step = event.getStep();
             S nextStep = getNextStep(step);

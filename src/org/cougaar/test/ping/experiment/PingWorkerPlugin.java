@@ -16,8 +16,8 @@
 *
 * Created : Aug 14, 2007
 * Workfile: PingWorkerPlugin.java
-* $Revision: 1.1 $
-* $Date: 2008-02-26 21:10:05 $
+* $Revision: 1.2 $
+* $Date: 2008-02-27 18:06:38 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -55,22 +55,22 @@ public class PingWorkerPlugin extends ExperimentWorkerPlugin implements PingStep
     public int pingerCount;
     
     protected void doStep(ExperimentStep step, Context context) {
-        if (START_TEST == step) { 
+        if (START_TEST.equals(step)) { 
             startRequest = new StartRequest(uids.nextUID());
             blackboard.publishAdd(startRequest);
             // defer until all start requests have returned
-        } else if (START_STEADY_STATE == step) {
+        } else if (START_STEADY_STATE.equals(step)) {
            initialStatistics = gatherStatistics();
             stepCompeleted(step, makeReport(step));    
-        } else if (END_STEADY_STATE == step) {
+        } else if (END_STEADY_STATE.equals(step)) {
             finalStatistics = gatherStatistics();
             stepCompeleted(step, makeReport(step)); 
-        } else if (END_TEST == step) {
+        } else if (END_TEST.equals(step)) {
             blackboard.publishRemove(startRequest);
             stopRequest = new StopRequest(uids.nextUID());
             blackboard.publishAdd(stopRequest);
             // defer until all Stop requests have returned
-        } else if (SUMMARY_TEST == step) {
+        } else if (SUMMARY_TEST.equals(step)) {
             Report report = new SummaryReport(workerId, reason, initialStatistics, finalStatistics);
             stepCompeleted(SUMMARY_TEST, report);
         } else {

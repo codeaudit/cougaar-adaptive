@@ -10,7 +10,7 @@ import org.cougaar.test.sequencer.Step;
 
 
 /**
- *
+ * A named step in an experiment.
  */
 public class ExperimentStep implements Step {
     private final String name;
@@ -25,5 +25,13 @@ public class ExperimentStep implements Step {
     
     public String toString() {
         return name;
+    }
+    
+    public boolean equals(Object x) {
+        return x instanceof ExperimentStep && ((ExperimentStep) x).name.equals(name);
+    }
+    
+    public int hashCode() {
+        return name.hashCode();
     }
 }
