@@ -1,0 +1,80 @@
+<?xml version='1.0'?>
+
+<!--
+	Example regression test society
+-->
+<society>
+	<node name="Node1">
+		<!-- An optional society monitor servlet, which is based on framesets -->
+		<component
+			class='org.cougaar.core.qos.frame.topology.TopologyFrameUpdaterPlugin'>
+			<argument name="frame-set-files"
+				value="org/cougaar/core/qos/frame/topology/cougaar-topology-protos.xml" />
+			<argument name="frame-set" value="societyTopology" />
+		</component>
+		<component
+			class='org.cougaar.core.qos.frame.topology.MonitorServletPlugin' />
+		<component
+			class='org.cougaar.core.qos.frame.FrameSetServicePlugin' />
+		<component
+			class='org.cougaar.core.qos.frame.FrameViewerServlet'>
+			<argument>/frames</argument>
+		</component>
+
+		<component
+			class="org.cougaar.test.sequencer.experiment.ExperimentAggregatorPlugin">
+			<argument name="workerCount" value="1" />
+			<argument name="maxIdleTime" value="600010" />
+		</component>
+		<component
+			class="org.cougaar.test.sequencer.StoNNodeFacePlugin">
+			<argument name="sequencerName" value="Sequencer" />
+		</component>
+
+		<component
+			class="org.cougaar.core.qos.rss.ConfigFinderDataFeedComponent"
+			insertionpoint="Node.AgentManager.Agent.MetricsServices.Component">
+			<argument name="name" value="sites" />
+			<argument name="url" value="file:sites.conf" />
+		</component>
+
+		<component class="org.cougaar.core.qos.metrics.FeedLoader"
+			insertionpoint="Node.AgentManager.Agent.MetricsServices.Component">
+			<argument name="name" value="dynamic-sites" />
+			<argument name="class"
+				value="org.cougaar.qos.qrs.PollUrlDataFeed" />
+			<argument name="args"
+				value="-url file:metric_values.conf -poll 5000" />
+		</component>
+
+
+		<agent name="Sequencer">
+			<component
+				class="org.cougaar.test.knode.experiment.KnodeSequencerPlugin">
+				<argument name="suiteName" value="Knode Test" />
+				<argument name="nodeCount" value="1" />
+				<argument name="defaultWorkerTimeout" value="10001000" />
+				<argument name="defaultNodeTimeout" value="100001000" />
+			</component>
+
+			<component
+				class="org.cougaar.test.sequencer.StoNSequencerFacePlugin">
+			</component>
+		</agent>
+
+		<agent name='NameServer'
+			class='org.cougaar.core.agent.SimpleAgent'>
+			<facet role='NameServer' />
+			<component class='org.cougaar.core.wp.server.Server'>
+			</component>
+		</agent>
+
+		<agent name="KnodeControlAgent">
+		<component
+				class="org.cougaar.test.knode.experiment.KnodeWorkerPlugin">
+				<argument name="workerId" value="KnodeController"/>
+				<argument name="knodeControllerHost" value="128.89.82.161" />
+			</component>
+		</agent>
+	</node>
+</society>
