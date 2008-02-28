@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.3 $
- * $Date: 2008-02-27 18:06:38 $
+ * $Revision: 1.4 $
+ * $Date: 2008-02-28 15:41:49 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -65,13 +65,13 @@ public class PingSequencerPlugin
 
     public void load() {
         super.load();
-        addStep(SOCIETY_READY);
-        addStep(START_TEST, steadyStateWaitMillis);
-        addStep(START_STEADY_STATE, collectionLengthMillis);
-        addStep(END_STEADY_STATE);
-        addStep(END_TEST);
-        addStep(SUMMARY_TEST, summaryWork);
-        addStep(SHUTDOWN);
+        addStep(SOCIETY_READY, 0, null);
+        addStep(START_TEST, steadyStateWaitMillis, null);
+        addStep(START_STEADY_STATE, collectionLengthMillis, null);
+        addStep(END_STEADY_STATE, 0, null);
+        addStep(END_TEST, 0, null);
+        addStep(SUMMARY_TEST, 0, summaryWork);
+        addStep(SHUTDOWN, 0, null);
         logExperimentDescription();
     }
     

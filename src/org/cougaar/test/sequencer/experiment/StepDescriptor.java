@@ -6,6 +6,8 @@
 
 package org.cougaar.test.sequencer.experiment;
 
+import java.util.Properties;
+
 import org.cougaar.test.sequencer.Report;
 import org.cougaar.test.sequencer.SocietyCompletionEvent;
 
@@ -27,11 +29,13 @@ public class StepDescriptor<S extends ExperimentStep, R extends Report> {
     private final S step;
     private final long deferMillis;
     private final StepBody<S, R> body;
+    private final Properties properties;
     
-    public StepDescriptor(S step, long millis, StepBody<S, R> body) {
+    public StepDescriptor(S step, long millis, StepBody<S, R> body, Properties properties) {
         this.step = step;
         this.deferMillis = millis;
         this.body = body;
+        this.properties = properties;
     }
     
     public S getStep() {
@@ -40,6 +44,10 @@ public class StepDescriptor<S extends ExperimentStep, R extends Report> {
 
     public long getDeferMillis() {
         return deferMillis;
+    }
+    
+    public Properties getProperties() {
+        return properties;
     }
     
     public boolean hasWork() {

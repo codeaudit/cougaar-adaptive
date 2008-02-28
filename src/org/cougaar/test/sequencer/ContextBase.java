@@ -16,8 +16,8 @@
 *
 * Created : Aug 9, 2007
 * Workfile: RegressionCondition.java
-* $Revision: 1.1 $
-* $Date: 2008-02-26 18:08:00 $
+* $Revision: 1.2 $
+* $Date: 2008-02-28 15:41:49 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -25,15 +25,22 @@
  
 package org.cougaar.test.sequencer;
 
+import java.util.Properties;
+
 
 public class ContextBase implements Context {
     private final int workerTimout;
     private final boolean failed;
+    private final Properties properties;
 
     public ContextBase(int workerTimeout, boolean failed) {
-        super();
+        this(workerTimeout, failed, new Properties());
+    }
+    
+    public ContextBase(int workerTimeout, boolean failed, Properties properties) {
         this.workerTimout = workerTimeout;
         this.failed = failed;
+        this.properties = properties;
     }
 
     public int getWorkerTimeout() {
@@ -44,8 +51,13 @@ public class ContextBase implements Context {
         return failed;
     }
     
+    public String getParameter(String key) {
+        return properties.getProperty(key);
+    }
+    
     public String toString() {
         return "Context: hasFailed="+failed+" workerTimeout="+workerTimout;
     }
+
     
 }

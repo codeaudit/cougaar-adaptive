@@ -16,9 +16,9 @@
  *
  * Created : Aug 8, 2007
  * Workfile: Condition.java
- * $Revision: 1.1 $
- * $Date: 2007-10-19 15:01:52 $
- * $Author: rshapiro $
+ * $Revision: 1.2 $
+ * $Date: 2008-02-28 15:41:49 $
+ * $Author: jzinky $
  *
  * =============================================================================
  */
@@ -30,4 +30,5 @@ import java.io.Serializable;
 public interface Context extends Serializable {
     public boolean hasFailed();
     public int getWorkerTimeout();
+    public String getParameter(String key);
 }

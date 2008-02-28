@@ -16,8 +16,8 @@
  *
  * Created : Aug 9, 2007
  * Workfile: RegressioNodeSequencerPlugin.java
- * $Revision: 1.3 $
- * $Date: 2008-02-27 18:06:38 $
+ * $Revision: 1.4 $
+ * $Date: 2008-02-28 15:41:49 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -26,6 +26,7 @@
 package org.cougaar.test.sequencer.experiment;
 
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.cougaar.test.sequencer.Context;
@@ -48,28 +49,23 @@ abstract public class AbstractExperimentSequencerPlugin<R extends Report>
     private ExperimentDescriptor<ExperimentStep, R> experimentDescriptor = 
         new ExperimentDescriptor<ExperimentStep, R>();
 
-    public void addStep(ExperimentStep step, long millis, StepBody<ExperimentStep, R> body) {
-        experimentDescriptor.addStep(step, millis, body);
+    public void addStep(ExperimentStep step, long millis, StepBody<ExperimentStep, R> body,
+                        String... properties) {
+        experimentDescriptor.addStep(step, millis, body, properties);
     }
-    
-    public void addStep(ExperimentStep step, long millis) {
-        addStep(step, millis, null);
-    }
-    
-    public void addStep(ExperimentStep step, StepBody<ExperimentStep, R> body) {
-        addStep(step, 0, body);
-    }
-    
-    public void addStep(ExperimentStep step) {
-        addStep(step, 0, null);
-    }
-    
+   
     public void logExperimentDescription() {
         experimentDescriptor.logDescription(log);
     }
     
     protected Context makeContext(ExperimentStep step, boolean hasFailed, int workerTimeout) {
-        return new ContextBase(workerTimeout, hasFailed);
+        ExperimentStep descriptorStep = experimentDescriptor.getCurrentStep();
+        if (!step.equals(descriptorStep)) {
+            log.shout("Event has step " +step+ " but descriptor has step " +descriptorStep);
+            // FIXME: should force a failure
+        }
+        Properties props = experimentDescriptor.getCurrentProperties();
+        return new ContextBase(workerTimeout, hasFailed, props);
     }
 
     protected ExperimentStep getFirstStep() {
@@ -96,6 +92,7 @@ abstract public class AbstractExperimentSequencerPlugin<R extends Report>
         ExperimentStep descriptorStep = experimentDescriptor.getCurrentStep();
         if (!eventStep.equals(descriptorStep)) {
             log.shout("Event has step " +eventStep+ " but descriptor has step " +descriptorStep);
+            // FIXME: should force a failure
         }
         
         long deferMillis = experimentDescriptor.getCurrentDelay();

@@ -8,6 +8,7 @@ package org.cougaar.test.sequencer.experiment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.test.sequencer.Report;
@@ -28,13 +29,27 @@ public class ExperimentDescriptor<S extends ExperimentStep, R extends Report> {
         steps = new ArrayList<StepDescriptor<S, R>>();
     }
     
-    public void addStep(S step, long millis, StepBody<S, R> body) {
-        StepDescriptor<S, R> descriptor = new StepDescriptor<S,R>(step, millis, body);
+    public void addStep(S step, long millis, StepBody<S, R> body, String... propertyPairs) {
+        Properties props = new Properties();
+        for (String propPair : propertyPairs) {
+            String[] pair = propPair.split("=");
+            if (pair.length == 2) {
+                props.setProperty(pair[0], pair[1]);
+            } else {
+                // TODO log it
+                System.err.println("Skipping \"" + propPair+ "\"");
+            }
+        }
+        StepDescriptor<S, R> descriptor = new StepDescriptor<S,R>(step, millis, body, props);
         steps.add(descriptor);
     }
     
     public StepDescriptor<S, R> getCurrentDescriptor() {
         return steps.get(index);
+    }
+    
+    public Properties getCurrentProperties() {
+        return getCurrentDescriptor().getProperties();
     }
     
     public long getCurrentDelay() {
