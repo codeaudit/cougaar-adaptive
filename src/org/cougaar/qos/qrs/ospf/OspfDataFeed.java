@@ -102,6 +102,7 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
     }
     
     private void pushResults(InetAddress dest, long linkMetric) {
+    	boolean foundOne = false;
         for (Map.Entry<SiteAddress, InetAddress> entry : siteToNeighbor.entrySet()) {
             SiteAddress site = entry.getKey();
             InetAddress neighbor = entry.getValue();
@@ -110,10 +111,12 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
                 DataValue value = new DataValue(transform.toMaxCapacity(linkMetric), CREDIBILITY);
                 log.info("Pushing feed key " +key+ " with value " + value);
                 newData(key, value, null);
-                return;
+                foundOne = true;
             }
         }
-        log.info("No site match for next hop " + dest);
+        if (!foundOne) {
+			log.info("No site match for next hop " + dest);
+		}
     }
 
     private static OID append(OID base, int suffix) {
@@ -213,7 +216,11 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
                 long destLong = SiteAddress.bytesToLongAddress(destBytes);
                 SiteAddress siteAddr = new SiteAddress(destLong, maskLong);
                 InetAddress nextHopNeighbor = nextMap.get(dest);
-                siteToNeighbor.put(siteAddr, nextHopNeighbor);
+                if (log.isInfoEnabled()) {
+					log.info("Site " + siteAddr + " -> " + " next hop "
+							+ nextHopNeighbor);
+				}
+				siteToNeighbor.put(siteAddr, nextHopNeighbor);
             }
             
             return maskStatus && nextStatus;
@@ -224,7 +231,10 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
             try {
                 InetAddress us = InetAddress.getLocalHost();
                 mySite = sites.lookup(us.getHostAddress());
-                return true;
+                if (log.isInfoEnabled()) {
+					log.info("We are " + us + " and our site is " + mySite);
+				}
+				return true;
             } catch (UnknownHostException e) {
                 log.error("Localhost is unknown");
                 return false;
