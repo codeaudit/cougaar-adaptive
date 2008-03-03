@@ -57,6 +57,7 @@ public class StepDescriptor<S extends ExperimentStep, R extends Report> {
     public void doWork(SocietyCompletionEvent<S, R> event) {
         if (body != null) {
             body.setEvent(event);
+            body.setProps(properties);
             body.run();
         }
     }

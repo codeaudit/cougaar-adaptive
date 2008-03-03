@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.1 $
- * $Date: 2008-02-29 22:11:44 $
+ * $Revision: 1.2 $
+ * $Date: 2008-03-03 22:30:20 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -27,6 +27,7 @@ package org.cougaar.test.knode.experiment;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Properties;
 import java.util.Set;
 
 import org.cougaar.test.ping.Anova;
@@ -60,7 +61,7 @@ public class KnodeDiffServSequencerPlugin
 
 	private final StepRunnable summaryWork = new StepRunnable() {
 		public void run() {
-			processStats(getEvent().getReports().values());
+			processStats(getEvent().getReports().values(), getProps());
 		}
 	}; 
 	
@@ -69,7 +70,7 @@ public class KnodeDiffServSequencerPlugin
         addStep(START_STEADY_STATE, collectionLengthMillis, null);
         addStep(END_STEADY_STATE, 0, null);
         addStep(END_TEST, 0, null);
-        addStep(SUMMARY_TEST, 0, summaryWork);
+        addStep(SUMMARY_TEST, 0, summaryWork, PING_RUN_PROPERTY+"="+runName);
  	}
 	
 	private void addRestartKnodeSteps() {
@@ -89,20 +90,20 @@ public class KnodeDiffServSequencerPlugin
     public void load() {
         super.load();
         addRestartKnodeSteps();
-        addPingSteps("1hop");
+        addPingSteps("5hops");
         addMoveLinkSteps("163","164");
-        addPingSteps("1hop");
+        addPingSteps("4hops");
         addMoveLinkSteps("164","165");
-        addPingSteps("1hop");
+        addPingSteps("3hops");
         addMoveLinkSteps("165","166");
-        addPingSteps("1hop");
+        addPingSteps("2hops");
         addMoveLinkSteps("166","167");
         addPingSteps("1hop");
         addStep(SHUTDOWN, 0, null);
         logExperimentDescription();
     }
     
-    private void processStats(Collection<Set<Report>> reportsCollection) {
+    private void processStats(Collection<Set<Report>> reportsCollection, Properties props) {
         Anova summary = new Anova("Throughput");
 
         for (Set<Report> reports : reportsCollection) {
@@ -113,7 +114,7 @@ public class KnodeDiffServSequencerPlugin
                 log.info(report.toString());
                 if (report instanceof SummaryReport) {
                     for (Anova stat : ((SummaryReport) report).getRawStats()) {
-                        long itemsPerSecond = Math.round(stat.itemPerSec());
+                        double itemsPerSecond = stat.itemPerSec();
                         summary.newValue(itemsPerSecond);
                     }
                 }
@@ -125,12 +126,13 @@ public class KnodeDiffServSequencerPlugin
                   +summary.average() + "/" + summary.max());
         if (!csvFileName.equals("")) {
             CSVLog csv=new CSVLog(csvFileName,
-                                  "Pingers, Ping/sec, Min, Avg, Max, Test", log);
+                                  "Pingers, Ping/sec, Min, Avg, Max, Run, Test", log);
             csv.field(summary.getValueCount());
             csv.field(summary.getSum());
             csv.field(summary.min());
             csv.field(summary.average());
             csv.field(summary.max());
+            csv.field(props.getProperty(PING_RUN_PROPERTY));
             csv.printLn(suiteName);
             csv.close();
         }

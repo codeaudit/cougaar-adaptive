@@ -16,8 +16,8 @@
  *
  * Created : Aug 9, 2007
  * Workfile: RegressioNodeSequencerPlugin.java
- * $Revision: 1.4 $
- * $Date: 2008-02-28 15:41:49 $
+ * $Revision: 1.5 $
+ * $Date: 2008-03-03 22:30:20 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -80,21 +80,19 @@ abstract public class AbstractExperimentSequencerPlugin<R extends Report>
     
     @Cougaar.Execute(on = Subscribe.ModType.ADD)
     public void executeSocietyCompletion(SocietyCompletionEvent<ExperimentStep, R> event) {
-        if (!event.isSuccessful()) {
-            sequenceFailed(event);
-            return;
-        }
-        
-        experimentDescriptor.runCurrentBody(event);
-        
         // Sanity check
         ExperimentStep eventStep = event.getStep();
         ExperimentStep descriptorStep = experimentDescriptor.getCurrentStep();
         if (!eventStep.equals(descriptorStep)) {
-            log.shout("Event has step " +eventStep+ " but descriptor has step " +descriptorStep);
-            // FIXME: should force a failure
+            log.error("Event has step " +eventStep+ " but descriptor has step " +descriptorStep);
+            sequenceFailed(event);
+            return;
         }
-        
+        if (!event.isSuccessful()) {
+            sequenceFailed(event);
+            return;
+        }
+        experimentDescriptor.runCurrentBody(event);
         long deferMillis = experimentDescriptor.getCurrentDelay();
         if (deferMillis > 0) {
             deferSocietyCompletion(event, deferMillis);

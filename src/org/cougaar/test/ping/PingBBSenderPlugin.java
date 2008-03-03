@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingSenderPlugin.java
- * $Revision: 1.1 $
- * $Date: 2008-02-26 15:31:56 $
+ * $Revision: 1.2 $
+ * $Date: 2008-03-03 22:30:21 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -113,6 +113,9 @@ public class PingBBSenderPlugin extends AnnotatedSubscriptionsPlugin {
                 stopRequest.forceFailed();
             blackboard.publishChange(stopRequest);
             blackboard.publishRemove(sendQuery);
+            // get ready for a restart
+            stopRequest=null;
+            startRequest=null;
             return;
         }
         // Do the next ping and note the change

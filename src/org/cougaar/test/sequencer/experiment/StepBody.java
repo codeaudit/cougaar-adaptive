@@ -6,6 +6,8 @@
 
 package org.cougaar.test.sequencer.experiment;
 
+import java.util.Properties;
+
 import org.cougaar.test.sequencer.Report;
 import org.cougaar.test.sequencer.SocietyCompletionEvent;
 
@@ -23,8 +25,17 @@ import org.cougaar.test.sequencer.SocietyCompletionEvent;
  */
 abstract public class StepBody<S extends ExperimentStep, R extends Report> implements Runnable {
     private SocietyCompletionEvent<S, R> event;
+    private Properties props;
 
-    public SocietyCompletionEvent<S, R> getEvent() {
+    public Properties getProps() {
+		return props;
+	}
+
+	public void setProps(Properties props) {
+		this.props = props;
+	}
+
+	public SocietyCompletionEvent<S, R> getEvent() {
         return event;
     }
 

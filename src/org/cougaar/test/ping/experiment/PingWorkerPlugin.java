@@ -16,8 +16,8 @@
 *
 * Created : Aug 14, 2007
 * Workfile: PingWorkerPlugin.java
-* $Revision: 1.2 $
-* $Date: 2008-02-27 18:06:38 $
+* $Revision: 1.3 $
+* $Date: 2008-03-03 22:30:20 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -67,6 +67,7 @@ public class PingWorkerPlugin extends ExperimentWorkerPlugin implements PingStep
             stepCompeleted(step, makeReport(step)); 
         } else if (END_TEST.equals(step)) {
             blackboard.publishRemove(startRequest);
+            startRequest=null;
             stopRequest = new StopRequest(uids.nextUID());
             blackboard.publishAdd(stopRequest);
             // defer until all Stop requests have returned
@@ -117,6 +118,9 @@ public class PingWorkerPlugin extends ExperimentWorkerPlugin implements PingStep
         if (stop.equals(stopRequest) && (stopRequest.getRunners() == pingerCount)) {
             failed = stopRequest.isFailed();
             stepCompeleted(END_TEST, makeReport(END_TEST));
+            // Get Ready for restart
+            blackboard.publishRemove(stopRequest);
+            stopRequest=null;
         }
     }
     /**

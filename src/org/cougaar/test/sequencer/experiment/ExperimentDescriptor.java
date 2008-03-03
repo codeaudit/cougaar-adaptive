@@ -7,7 +7,9 @@
 package org.cougaar.test.sequencer.experiment;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.cougaar.core.service.LoggingService;
@@ -44,24 +46,24 @@ public class ExperimentDescriptor<S extends ExperimentStep, R extends Report> {
         steps.add(descriptor);
     }
     
-    public StepDescriptor<S, R> getCurrentDescriptor() {
+    public StepDescriptor<S, R> getCurrentStepDescriptor() {
         return steps.get(index);
     }
     
     public Properties getCurrentProperties() {
-        return getCurrentDescriptor().getProperties();
+        return getCurrentStepDescriptor().getProperties();
     }
     
     public long getCurrentDelay() {
-        return getCurrentDescriptor().getDeferMillis();
+        return getCurrentStepDescriptor().getDeferMillis();
     }
     
     public void runCurrentBody(SocietyCompletionEvent<S, R> event) {
-        getCurrentDescriptor().doWork(event);
+        getCurrentStepDescriptor().doWork(event);
     }
     
     public S getCurrentStep() {
-        return getCurrentDescriptor().getStep();
+        return getCurrentStepDescriptor().getStep();
     }
     
     public S initializeExperiment() {
@@ -87,6 +89,9 @@ public class ExperimentDescriptor<S extends ExperimentStep, R extends Report> {
                 buf.append(step).append(", ").append(deferMillis);
                 if (hasWork) {
                     buf.append(" with work");
+                }
+                for (Map.Entry<Object, Object> entry : descriptor.getProperties().entrySet()) {
+                	buf.append(", ").append(entry.getKey()).append("=").append(entry.getValue());
                 }
                 buf.append('\n');
             }

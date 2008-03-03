@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: Anova.java
- * $Revision: 1.1 $
- * $Date: 2008-02-26 15:31:56 $
+ * $Revision: 1.2 $
+ * $Date: 2008-03-03 22:30:21 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -28,12 +28,12 @@ package org.cougaar.test.ping;
 public class Anova implements Statistic<Anova> {
     private String name;
     private int valueCount;
-    private long sum;
-    private long sumSq;
-    private long max = Long.MIN_VALUE;
-    private long min = Long.MAX_VALUE;
-    private long timeStamp = System.currentTimeMillis();
-    private long deltaT;
+    private double sum;
+    private double sumSq;
+    private double max = Long.MIN_VALUE;
+    private double min = Long.MAX_VALUE;
+    private double timeStamp = System.currentTimeMillis();
+    private double deltaT;
 
     public Anova() {
         reset();
@@ -45,9 +45,13 @@ public class Anova implements Statistic<Anova> {
     }
 
     public void newValue(long value) {
+    	newValue((double)value);
+    }
+    
+    public void newValue(double value){
         ++valueCount;
         sum += value;
-        sumSq += value ^ 2;
+        sumSq += value * value;
         max = Math.max(max, value);
         min = Math.min(min, value);
         timeStamp = System.currentTimeMillis();
@@ -69,39 +73,39 @@ public class Anova implements Statistic<Anova> {
         this.name = name;
     }
     
-    public long getSum() {
+ 
+    public double getSum() {
         return sum;
     }
-
     
-    public float itemPerSec() {
+    public double itemPerSec() {
         if (deltaT != 0) {
-            return 1000.0f * valueCount/deltaT;
+            return 1000.0 * valueCount/deltaT;
         } else {
             return -1f;
         }
     }
     
-    public float average(){
+    public double average(){
         if (valueCount != 0) {
-            return (float) sum / (float) valueCount;
+            return sum / valueCount;
         } else {
             return -1;
         }
     }
     
-    public float max() {
+    public double max() {
         return max;
     }
     
-    public float min() {
+    public double min() {
         return min;
     }
     
-    public float stdDev() {
+    public double stdDev() {
         if (valueCount !=0) {
             double avgSquared = Math.pow(average(), 2);
-            return (float) Math.sqrt(avgSquared - sumSq );
+            return  Math.sqrt(avgSquared - sumSq );
         }
         return 0;
     }
@@ -121,12 +125,12 @@ public class Anova implements Statistic<Anova> {
     
     public void reset() {
         valueCount = 0;
-        sum = 0l;
-        sumSq = 0l;
-        max = Long.MIN_VALUE;
-        min = Long.MAX_VALUE;
+        sum = 0.0;
+        sumSq = 0.0;
+        max = Double.MIN_VALUE;
+        min = Double.MAX_VALUE;
         timeStamp = System.currentTimeMillis();
-        deltaT =0;
+        deltaT =0.0;
 
     }
 

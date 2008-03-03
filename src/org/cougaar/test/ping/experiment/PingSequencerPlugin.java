@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.4 $
- * $Date: 2008-02-28 15:41:49 $
+ * $Revision: 1.5 $
+ * $Date: 2008-03-03 22:30:20 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -27,6 +27,7 @@ package org.cougaar.test.ping.experiment;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Properties;
 import java.util.Set;
 
 import org.cougaar.test.ping.Anova;
@@ -43,6 +44,7 @@ import org.cougaar.util.annotations.Cougaar;
 public class PingSequencerPlugin 
     extends AbstractExperimentSequencerPlugin<Report> 
     implements PingSteps {
+	private static final String RUN_NAME="run1";
 
     @Cougaar.Arg(name="collectionLength", defaultValue="3000",
                       description="Milliseconds to run collection")
@@ -59,7 +61,7 @@ public class PingSequencerPlugin
 
     private final StepRunnable summaryWork = new StepRunnable() {
         public void run() {
-            processStats(getEvent().getReports().values());
+            processStats(getEvent().getReports().values(),getProps());
         }
     }; 
 
@@ -70,13 +72,13 @@ public class PingSequencerPlugin
         addStep(START_STEADY_STATE, collectionLengthMillis, null);
         addStep(END_STEADY_STATE, 0, null);
         addStep(END_TEST, 0, null);
-        addStep(SUMMARY_TEST, 0, summaryWork);
+        addStep(SUMMARY_TEST, 0, summaryWork, PING_RUN_PROPERTY+"="+RUN_NAME);
         addStep(SHUTDOWN, 0, null);
         logExperimentDescription();
     }
     
 
-    private void processStats(Collection<Set<Report>> reportsCollection) {
+    private void processStats(Collection<Set<Report>> reportsCollection,Properties props) {
         Anova summary = new Anova("Throughput");
 
         for (Set<Report> reports : reportsCollection) {
@@ -99,12 +101,13 @@ public class PingSequencerPlugin
                   +summary.average() + "/" + summary.max());
         if (!csvFileName.equals("")) {
             CSVLog csv=new CSVLog(csvFileName,
-                                  "Pingers, Ping/sec, Min, Avg, Max, Test", log);
+                                  "Pingers, Ping/sec, Min, Avg, Max, Run, Test", log);
             csv.field(summary.getValueCount());
             csv.field(summary.getSum());
             csv.field(summary.min());
             csv.field(summary.average());
             csv.field(summary.max());
+            csv.field(props.getProperty(PING_RUN_PROPERTY));
             csv.printLn(suiteName);
             csv.close();
         }
