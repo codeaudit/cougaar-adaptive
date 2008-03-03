@@ -15,9 +15,9 @@
  * =============================================================================
  *
  * Created : Aug 9, 2007
- * Workfile: RegressioNodeSequencerPlugin.java
- * $Revision: 1.5 $
- * $Date: 2008-03-03 22:30:20 $
+ * Workfile: AbstractExperimentSequencerPlugin.java
+ * $Revision: 1.6 $
+ * $Date: 2008-03-03 22:48:09 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -108,13 +108,13 @@ abstract public class AbstractExperimentSequencerPlugin<R extends Report>
     protected void sequenceCompleted() {
         // Ran through all steps successfully, shutdown cleanly
         String status = failedDuringSequence ? "Failed" : "Successful";
-        log.shout("Regression suite " + suiteName + " " + status);
+        log.shout("Experiment " + suiteName + " " + status);
      }
 
     // This can be called after any step
     protected void sequenceFailed(SocietyCompletionEvent<ExperimentStep, R> evt) {
         StringBuffer msg = new StringBuffer();
-        msg.append("Regression suite ").append(suiteName).append(" FAILED at step ").append(evt.getStep());
+        msg.append("Experiment ").append(suiteName).append(" FAILED at step ").append(evt.getStep());
         Map<String, Set<R>> reportsMap = evt.getReports();
         if (!reportsMap.isEmpty()) {
             String seperator = " ";
@@ -138,7 +138,7 @@ abstract public class AbstractExperimentSequencerPlugin<R extends Report>
         if (hasAttemptedToShutdown) {
             log.warn("Already Attempted to Shutdown, so doing nothing more");
         } else {
-            log.warn("Attempting to shutdown the Regression society by skipping to Shutdown step");
+            log.warn("Attempting to shutdown the experiment society by skipping to Shutdown step");
             hasAttemptedToShutdown=true;
             publishNodeRequestStep(ExperimentSteps.SHUTDOWN);
         }
