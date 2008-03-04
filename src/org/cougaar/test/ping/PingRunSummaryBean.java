@@ -25,6 +25,8 @@
  */
 package org.cougaar.test.ping;
 
+import java.io.StringWriter;
+import java.text.DecimalFormat;
 import java.util.Properties;
 
 import org.cougaar.test.knode.experiment.KnodeDiffServSequencerPlugin;
@@ -73,10 +75,14 @@ public class PingRunSummaryBean {
 	}
 	
 	public String toString() {
-		return "Pingers=" + getPingers() +
-		" Pings/second=" + getSum()+
-		" Min/Avg/Max=" +getMin()+ "/" 
-		+getAvg() + "/" + getMax();
+		DecimalFormat fmt = new DecimalFormat("#0.00");
+		StringWriter writer = new StringWriter();
+		writer.append("Pingers=").append(fmt.format(getPingers()));
+		writer.append(" Pings/second=").append(fmt.format(getSum()));
+		writer.append(" Min/Avg/Max=").append(fmt.format(getMin()));
+		writer.append("/").append(fmt.format(getAvg()));
+		writer.append("/").append(fmt.format(getMax()));
+		return writer.toString();
 	}
 	
 }
