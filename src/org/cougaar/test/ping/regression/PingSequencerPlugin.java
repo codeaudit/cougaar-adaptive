@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.4 $
- * $Date: 2008-02-26 21:10:05 $
+ * $Revision: 1.5 $
+ * $Date: 2008-03-04 16:14:17 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -25,12 +25,15 @@
 
 package org.cougaar.test.ping.regression;
 
+import java.beans.IntrospectionException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
 import org.cougaar.test.ping.Anova;
-import org.cougaar.test.ping.CSVLog;
+import org.cougaar.test.ping.CsvWriter;
+import org.cougaar.test.ping.PingRunSummaryBean;
+import org.cougaar.test.ping.PingRunSummaryCsvFormat;
 import org.cougaar.test.ping.SummaryReport;
 import org.cougaar.test.sequencer.Report;
 import org.cougaar.test.sequencer.SocietyCompletionEvent;
@@ -102,20 +105,17 @@ public class PingSequencerPlugin
                 }
             }
         }
-        log.shout("Pingers=" + summary.getValueCount() +
-                  " Pings/second=" + summary.getSum()+
-                  " Min/Avg/Max=" +summary.min()+ "/" 
-                  +summary.average() + "/" + summary.max());
+        PingRunSummaryBean row = new PingRunSummaryBean(summary, null, suiteName);
+        log.shout(row.toString());
         if (!csvFileName.equals("")) {
-            CSVLog csv=new CSVLog(csvFileName,
-                                  "Pingers, Ping/sec, Min, Avg, Max, Test", log);
-            csv.field(summary.getValueCount());
-            csv.field(summary.getSum());
-            csv.field(summary.min());
-            csv.field(summary.average());
-            csv.field(summary.max());
-            csv.printLn(suiteName);
-            csv.close();
+        	try {
+				PingRunSummaryCsvFormat csvFormat = new PingRunSummaryCsvFormat();
+				CsvWriter<PingRunSummaryBean> writer = 
+					new CsvWriter<PingRunSummaryBean>(csvFormat, csvFileName, log);
+				writer.writeRow(row);
+			} catch (IntrospectionException e) {
+				log.error("Error writing a csv row", e);
+			}
         }
     }
     

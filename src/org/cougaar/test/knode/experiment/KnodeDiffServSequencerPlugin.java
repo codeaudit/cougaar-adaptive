@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.2 $
- * $Date: 2008-03-03 22:30:20 $
+ * $Revision: 1.3 $
+ * $Date: 2008-03-04 16:14:17 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -25,13 +25,16 @@
 
 package org.cougaar.test.knode.experiment;
 
+import java.beans.IntrospectionException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
 
 import org.cougaar.test.ping.Anova;
-import org.cougaar.test.ping.CSVLog;
+import org.cougaar.test.ping.CsvWriter;
+import org.cougaar.test.ping.PingRunSummaryBean;
+import org.cougaar.test.ping.PingRunSummaryCsvFormat;
 import org.cougaar.test.ping.SummaryReport;
 import org.cougaar.test.ping.experiment.PingSteps;
 import org.cougaar.test.sequencer.Report;
@@ -45,7 +48,8 @@ import org.cougaar.util.annotations.Cougaar;
 public class KnodeDiffServSequencerPlugin 
     extends AbstractExperimentSequencerPlugin<Report> 
     implements KnodeSteps,PingSteps {
-
+	
+	
 	@Cougaar.Arg(name="collectionLength", defaultValue="3000",
 			description="Milliseconds to run collection")
 			public long collectionLengthMillis; 
@@ -120,21 +124,17 @@ public class KnodeDiffServSequencerPlugin
                 }
             }
         }
-        log.shout("Pingers=" + summary.getValueCount() +
-                  " Pings/second=" + summary.getSum()+
-                  " Min/Avg/Max=" +summary.min()+ "/" 
-                  +summary.average() + "/" + summary.max());
+        PingRunSummaryBean row = new PingRunSummaryBean(summary, props, suiteName);
+        log.shout(row.toString());
         if (!csvFileName.equals("")) {
-            CSVLog csv=new CSVLog(csvFileName,
-                                  "Pingers, Ping/sec, Min, Avg, Max, Run, Test", log);
-            csv.field(summary.getValueCount());
-            csv.field(summary.getSum());
-            csv.field(summary.min());
-            csv.field(summary.average());
-            csv.field(summary.max());
-            csv.field(props.getProperty(PING_RUN_PROPERTY));
-            csv.printLn(suiteName);
-            csv.close();
+        	try {
+				PingRunSummaryCsvFormat csvFormat = new PingRunSummaryCsvFormat();
+				CsvWriter<PingRunSummaryBean> writer = 
+					new CsvWriter<PingRunSummaryBean>(csvFormat, csvFileName, log);
+				writer.writeRow(row);
+			} catch (IntrospectionException e) {
+				log.error("Error writing a csv row", e);
+			}
         }
     }
     
