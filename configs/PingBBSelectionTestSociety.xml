@@ -79,6 +79,7 @@
 				<argument name="targetAgent" value="Server" />
 				<argument name="targetPlugin" value="Snk1" />
 				<argument name="preambleCount" value="50" />
+				<argument name="waitTime" value="0" />
 			</component>
 			<component
 				class="org.cougaar.test.ping.PingSSClientFacePlugin">

@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingSenderPlugin.java
- * $Revision: 1.1 $
- * $Date: 2008-02-26 15:31:56 $
+ * $Revision: 1.2 $
+ * $Date: 2008-03-04 21:40:58 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -29,14 +29,14 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.plugin.AnnotatedSubscriptionsPlugin;
+import org.cougaar.core.plugin.TodoPlugin;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.relay.SimpleRelaySource;
 import org.cougaar.core.util.UID;
 import org.cougaar.util.annotations.Cougaar;
 import org.cougaar.util.annotations.Subscribe;
 
-public class PingSenderPlugin extends AnnotatedSubscriptionsPlugin {
+public class PingSenderPlugin extends TodoPlugin {
     @Cougaar.Arg(name = "preambleCount", defaultValue="10", 
                       description = "Number of pings to send before declaring the pinger has started")
     public int preambleCount;
@@ -50,7 +50,9 @@ public class PingSenderPlugin extends AnnotatedSubscriptionsPlugin {
     @Cougaar.Arg(name = "pluginId", defaultValue="a", description = "Sender Plugin Id")
     public String pluginId;
  
- 
+    @Cougaar.Arg(name = "waitTime", defaultValue = "0", description = "Time between pings")
+    public int waitTime;
+
     
     private long lastQueryTime;
     private SimpleRelay sendRelay;
@@ -86,7 +88,7 @@ public class PingSenderPlugin extends AnnotatedSubscriptionsPlugin {
     @Cougaar.Execute(on={Subscribe.ModType.ADD, Subscribe.ModType.CHANGE}, when="isMyPingReply")
     public void executePingResponse(SimpleRelay recvRelay) {
         PingReply reply = (PingReply) recvRelay.getQuery();
-        PingQuery query = (PingQuery) sendRelay.getQuery();
+        final PingQuery query = (PingQuery) sendRelay.getQuery();
 
         // Validate that the counts match
         if (reply.getCount() != query.getCount()) {
@@ -116,13 +118,27 @@ public class PingSenderPlugin extends AnnotatedSubscriptionsPlugin {
             blackboard.publishRemove(sendRelay);
             return;
         }
-        // Do the next ping and note the change
-        query.inc();
-        lastQueryTime = now;
-        Collection<?> changeList = Collections.singleton(query);
-        blackboard.publishChange(sendRelay, changeList);
+        // Do the next ping
+        if (waitTime == 0) {
+        	sendNextQuery(query);
+        }	else {
+        	Runnable work = new Runnable() {
+        		public void run() {
+        			sendNextQuery(query);
+        		}
+        	};
+        	executeLater(waitTime, work);
+        }
     }
-    
+
+	private void sendNextQuery(PingQuery sendQuery) {
+		sendQuery.inc();
+        lastQueryTime = System.nanoTime();
+        // Note the change in Query
+        Collection<?> changeList = Collections.singleton(sendQuery);
+        blackboard.publishChange(sendRelay, changeList);
+	}
+  
     public boolean isMyPingReply(SimpleRelay relay) {
          if (agentId.equals(relay.getTarget()) && 
                  targetAgent.equals(relay.getSource())) {

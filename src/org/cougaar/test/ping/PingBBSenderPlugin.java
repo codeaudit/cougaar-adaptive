@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingSenderPlugin.java
- * $Revision: 1.2 $
- * $Date: 2008-03-03 22:30:21 $
+ * $Revision: 1.3 $
+ * $Date: 2008-03-04 21:40:58 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -29,11 +29,11 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.plugin.AnnotatedSubscriptionsPlugin;
+import org.cougaar.core.plugin.TodoPlugin;
 import org.cougaar.util.annotations.Cougaar;
 import org.cougaar.util.annotations.Subscribe;
 
-public class PingBBSenderPlugin extends AnnotatedSubscriptionsPlugin {
+public class PingBBSenderPlugin extends TodoPlugin {
     @Cougaar.Arg(name = "preambleCount", defaultValue = "10", description = "Number of pings to send before declaring the pinger has started")
     public int preambleCount;
 
@@ -45,12 +45,16 @@ public class PingBBSenderPlugin extends AnnotatedSubscriptionsPlugin {
 
     @Cougaar.Arg(name = "pluginId", defaultValue = "a", description = "Sender Plugin Id")
     public String pluginId;
+    
+    @Cougaar.Arg(name = "waitTime", defaultValue = "0", description = "Time between pings")
+    public int waitTime;
 
     private long lastQueryTime;
     private PingQuery sendQuery;
     private RunRequest startRequest, stopRequest;
     private String sessionName;
     private boolean failed = false;
+
 
     public void load() {
         super.load();
@@ -118,12 +122,26 @@ public class PingBBSenderPlugin extends AnnotatedSubscriptionsPlugin {
             startRequest=null;
             return;
         }
-        // Do the next ping and note the change
-        sendQuery.inc();
-        lastQueryTime = now;
+        // Do the next ping
+        if (waitTime == 0) {
+        	sendNextQuery();
+        }	else {
+        	Runnable work = new Runnable() {
+        		public void run() {
+        			sendNextQuery();
+        		}
+        	};
+        	executeLater(waitTime, work);
+        }
+    }
+
+	private void sendNextQuery() {
+		sendQuery.inc();
+        lastQueryTime = System.nanoTime();
+        // Note the change in Query
         Collection<?> changeList = Collections.singleton(sendQuery.getCount());
         blackboard.publishChange(sendQuery, changeList);
-    }
+	}
 
     public boolean isMyPingReply(PingReply reply) {
         return agentId.equals(reply.getSenderAgent())

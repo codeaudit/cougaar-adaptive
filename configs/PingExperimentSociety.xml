@@ -30,6 +30,7 @@ Example experiment test society
 				<argument name="pluginId" value="A"/>
 				<argument name="targetAgent" value="sink1"/>
 				<argument name="preambleCount" value="50" />
+				<argument name="waitTime" value="0" />
 			</component>
 			<!-- 
 			<component class="org.cougaar.test.ping.PingSenderPlugin">
