@@ -29,9 +29,11 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.cougaar.qos.qrs.Constants;
 import org.cougaar.qos.qrs.DataValue;
@@ -101,12 +103,12 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
         + "Capacity_Max";
     }
     
-    private void pushResults(InetAddress dest, long linkMetric) {
+    private void publishNeighborToSites(InetAddress walkNeighbor, long linkMetric) {
     	boolean foundOne = false;
         for (Map.Entry<SiteAddress, InetAddress> entry : siteToNeighbor.entrySet()) {
             SiteAddress site = entry.getKey();
             InetAddress neighbor = entry.getValue();
-            if (dest.equals(neighbor)) {
+            if (walkNeighbor.equals(neighbor)) {
                 String key = makeKey(site);
                 DataValue value = new DataValue(transform.toMaxCapacity(linkMetric), CREDIBILITY);
                 log.info("Pushing feed key " +key+ " with value " + value);
@@ -115,10 +117,10 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
             }
         }
         if (!foundOne) {
-			log.info("No site match for next hop " + dest);
+			log.info("No site match for next hop " + walkNeighbor);
 		}
     }
-
+    
     private static OID append(OID base, int suffix) {
         OID extension = (OID) base.clone();
         extension.append(suffix);
@@ -243,7 +245,13 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
     }
     
     private final class NeighborMetricListener implements WalkListener {
+    	// Neighbor IP to # metric
         private final Map<InetAddress, Long> results = new HashMap<InetAddress, Long>();
+        private final NeighborPoller poller;
+        
+        public NeighborMetricListener(NeighborPoller poller) {
+			this.poller = poller;
+		}
         
         public void walkEvent(VariableBinding[] bindings) {
             for (VariableBinding binding : bindings) {
@@ -257,10 +265,10 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
                             addressBytes[i] = bytes[offset + i];
                         }
                         try {
-                            InetAddress address = InetAddress.getByAddress(addressBytes);
+                            InetAddress neighborAddress = InetAddress.getByAddress(addressBytes);
                             Variable var = binding.getVariable();
                             long metric = var.toLong();
-                            results.put(address, metric);
+                            results.put(neighborAddress, metric);
                             if (log.isInfoEnabled()) {
                                 log.info(binding.toString());
                             }
@@ -278,8 +286,14 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
         }
 
         public void walkCompletion(boolean success) {
+        	Set<InetAddress> deletedNeighbors = poller.updateNeighbors(results.keySet());
+        	for (InetAddress deletedNeighbor : deletedNeighbors) {
+        		publishNeighborToSites(deletedNeighbor, Long.MAX_VALUE);
+        	}
             for (Map.Entry<InetAddress, Long> entry : results.entrySet()) {
-                pushResults(entry.getKey(), entry.getValue());
+                InetAddress activeNeighbor = entry.getKey();
+				Long metric = entry.getValue();
+				publishNeighborToSites(activeNeighbor, metric);
             }
         }
     }
@@ -291,8 +305,10 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
      */
     private final class NeighborPoller implements Runnable {
         private SimpleSnmpRequest request;
+        private Set<InetAddress> lastNeighbors;
         
         public NeighborPoller() {
+        	lastNeighbors = new HashSet<InetAddress>();
             try {
                 request = new SimpleSnmpRequest(snmpArgs, ROSPF_METRIC_NEIGHBOR_OID);
             } catch (RuntimeException e1) {
@@ -301,9 +317,16 @@ public class OspfDataFeed extends SimpleQueueingDataFeed implements Constants {
             }
         }
         
+        public Set<InetAddress> updateNeighbors(Set<InetAddress> currentNeighbors) {
+        	Set<InetAddress> deletedNeighbors = new HashSet<InetAddress>(lastNeighbors);
+        	deletedNeighbors.removeAll(currentNeighbors);
+        	lastNeighbors = currentNeighbors;
+        	return deletedNeighbors;
+        }
+        
         public void run() {
             try {
-                NeighborMetricListener body = new NeighborMetricListener();
+                NeighborMetricListener body = new NeighborMetricListener(this);
                 request.asynchronousWalk(body);
             } catch (IOException e) {
                 log.error("", e);

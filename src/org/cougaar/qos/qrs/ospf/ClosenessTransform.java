@@ -28,7 +28,12 @@ package org.cougaar.qos.qrs.ospf;
 public class ClosenessTransform implements OspfMetricTransform {
     
     public long toMaxCapacity(long linkMetric) {
-    	
-        return 100-linkMetric;
+    	if (linkMetric == Long.MAX_VALUE) {
+    		// this value indicates a link that has disappeared and
+    		// which is therefore unreachable.
+    		return 0;
+    	} else {
+    		return 100-linkMetric;
+    	}
     }
 }
