@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.6 $
- * $Date: 2008-03-04 16:14:16 $
+ * $Revision: 1.7 $
+ * $Date: 2008-03-04 21:38:17 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -92,8 +92,7 @@ public class PingSequencerPlugin
                 log.info(report.toString());
                 if (report instanceof SummaryReport) {
                     for (Anova stat : ((SummaryReport) report).getRawStats()) {
-                        long itemsPerSecond = Math.round(stat.itemPerSec());
-                        summary.newValue(itemsPerSecond);
+                        summary.newValue(stat.itemPerSec());
                     }
                 }
             }

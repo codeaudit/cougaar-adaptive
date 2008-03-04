@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.4 $
- * $Date: 2008-03-04 18:04:26 $
+ * $Revision: 1.5 $
+ * $Date: 2008-03-04 21:38:17 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -124,8 +124,7 @@ public class KnodeDiffServSequencerPlugin
                 log.info(report.toString());
                 if (report instanceof SummaryReport) {
                     for (Anova stat : ((SummaryReport) report).getRawStats()) {
-                        double itemsPerSecond = stat.itemPerSec();
-                        summary.newValue(itemsPerSecond);
+                        summary.newValue(stat.itemPerSec());
                     }
                 }
             }
