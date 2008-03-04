@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.3 $
- * $Date: 2008-03-04 16:14:17 $
+ * $Revision: 1.4 $
+ * $Date: 2008-03-04 18:04:26 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -78,30 +78,36 @@ public class KnodeDiffServSequencerPlugin
  	}
 	
 	private void addRestartKnodeSteps() {
+		String from = "192.168.162.100";
+		String to = "192.168.163.100";
+		String path = "IpFlow("+from+"," +to+ "):CapacityMax()";
+		addStep(KNODE_SET_METRIC, 0, null, METRIC_PATH_PROPERTY +"="+ path);
         addStep(SOCIETY_READY, 0, null);
         addStep(KNODE_ADD_LINK, 0, null, LINK_PROPERTY+"= 163 162");
         addStep(KNODE_DEL_LINK, 0, null, LINK_PROPERTY+"= 164 162");
         addStep(KNODE_DEL_LINK, 0, null, LINK_PROPERTY+"= 165 162");
         addStep(KNODE_DEL_LINK, 0, null, LINK_PROPERTY+"= 166 162");
-        addStep(KNODE_DEL_LINK, 10000, null, LINK_PROPERTY+"= 167 162");
-    	}
+        addStep(KNODE_DEL_LINK, 0, null, LINK_PROPERTY+"= 167 162");
+        addStep(KNODE_WAIT_METRIC, 0, null, METRIC_VALUE_PROPERTY+"=70.0");
+	}
 	
-	private void addMoveLinkSteps(String from, String to) {
+	private void addMoveLinkSteps(String from, String to, String desiredCapacity) {
         addStep(KNODE_ADD_LINK, 0, null, LINK_PROPERTY+"= 162 " + to);
-        addStep(KNODE_DEL_LINK, 10000, null, LINK_PROPERTY+"= 162 " +from);
+        addStep(KNODE_DEL_LINK, 0, null, LINK_PROPERTY+"= 162 " +from);
+        addStep(KNODE_WAIT_METRIC, 0, null, METRIC_VALUE_PROPERTY+"="+desiredCapacity);
  	}
 
     public void load() {
         super.load();
         addRestartKnodeSteps();
         addPingSteps("5hops");
-        addMoveLinkSteps("163","164");
+        addMoveLinkSteps("163","164","60.0");
         addPingSteps("4hops");
-        addMoveLinkSteps("164","165");
+        addMoveLinkSteps("164","165","50.0");
         addPingSteps("3hops");
-        addMoveLinkSteps("165","166");
+        addMoveLinkSteps("165","166","40.0");
         addPingSteps("2hops");
-        addMoveLinkSteps("166","167");
+        addMoveLinkSteps("166","167","30.0");
         addPingSteps("1hop");
         addStep(SHUTDOWN, 0, null);
         logExperimentDescription();
