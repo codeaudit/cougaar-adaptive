@@ -47,11 +47,12 @@
 				value="-url file:metric_values.conf -poll 5000" />
 		</component>
 		
-		<component class="org.cougaar.core.qos.metrics.FeedLoader"
+		<component class="org.cougaar.qos.qrs.ospf.RospfDataFeedComponent"
                   insertionpoint="Node.AgentManager.Agent.MetricsServices.Component">
-        	<argument name="name" value="ospf"/>
-        	<argument name="class" value="org.cougaar.qos.qrs.ospf.OspfDataFeed"/>
-       	 	<argument name="args" value="--poll-period=1000 --transform=org.cougaar.qos.qrs.ospf.ClosenessTransform -c public -v 1 192.168.162.1"/>
+        	<argument name="name" value="rospf"/>
+        	<argument name="pollPeriod" value="1000"/>
+        	<argument name="transform" value="org.cougaar.qos.qrs.ospf.ClosenessTransform"/>
+       	 	<argument name="snmpArgs" value="-c public -v 1 192.168.162.1"/>
      	</component>
 
 
