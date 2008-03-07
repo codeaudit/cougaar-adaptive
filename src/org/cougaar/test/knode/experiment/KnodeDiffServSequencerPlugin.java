@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.6 $
- * $Date: 2008-03-07 14:20:48 $
+ * $Revision: 1.7 $
+ * $Date: 2008-03-07 21:50:37 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -70,8 +70,9 @@ public class KnodeDiffServSequencerPlugin
 	}; 
 	
 	private void addPingSteps(String runName,String hops, String minSlots, String topology) {
+		long collectionTimeMillis= false? collectionLengthMillis : 180000;
         addStep(START_TEST, steadyStateWaitMillis, null);
-        addStep(START_STEADY_STATE, collectionLengthMillis, null);
+        addStep(START_STEADY_STATE, collectionTimeMillis, null);
         addStep(END_STEADY_STATE, 0, null);
         addStep(END_TEST, 0, null);
         addStep(SUMMARY_TEST, 0, summaryWork, 
