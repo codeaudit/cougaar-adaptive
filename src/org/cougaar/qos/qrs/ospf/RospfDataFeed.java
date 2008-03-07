@@ -159,13 +159,15 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
     	public void run() {
             // talk snmp to figure out our site
             if (!findMySite()) {
+            	log.info("Finding myself again");
                 reschedule();
             } else if (!sf.findNeighbors()) {
+            	log.info("Finding my neighbors again");
                 reschedule();
             } else {
             	siteToNeighbor = sf.getSiteToNeighbor();
                 // ready to go, start the ospf poller
-                NeighborPoller neighborPoller = new NeighborPoller(RospfDataFeed.this, snmpArgs);
+                NeighborMetricPoller neighborPoller = new NeighborMetricPoller(RospfDataFeed.this, snmpArgs);
 				RSSUtils.schedule(neighborPoller, 0, pollPeriodMillis);
             }
         }

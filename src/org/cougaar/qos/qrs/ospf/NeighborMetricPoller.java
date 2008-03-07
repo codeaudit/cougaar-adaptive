@@ -1,8 +1,8 @@
 package org.cougaar.qos.qrs.ospf;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -10,12 +10,12 @@ import java.util.Set;
  * inter-site capacity DataValue.
  * 
  */
-class NeighborPoller implements Runnable {
+class NeighborMetricPoller implements Runnable {
     private SimpleSnmpRequest request;
     private Set<InetAddress> lastNeighbors;
     private final RospfDataFeed dataFeed;
     
-    public NeighborPoller(RospfDataFeed dataFeed, String[] snmpArgs) {
+    public NeighborMetricPoller(RospfDataFeed dataFeed, String[] snmpArgs) {
     	this.dataFeed = dataFeed;
     	lastNeighbors = new HashSet<InetAddress>();
         try {
@@ -34,11 +34,19 @@ class NeighborPoller implements Runnable {
     }
     
     public void run() {
-        try {
-            NeighborMetricListener body = new NeighborMetricListener(this, dataFeed);
-            request.asynchronousWalk(body);
-        } catch (IOException e) {
-            RospfDataFeed.log.error("", e);
+    	NeighborMetricListener body = new NeighborMetricListener();
+    	body.synchronousWalk(request);
+    	Map<InetAddress, Long> results = body.getResults();
+    	
+    	Set<InetAddress> deletedNeighbors = updateNeighbors(results.keySet());
+    	for (InetAddress deletedNeighbor : deletedNeighbors) {
+    		dataFeed.publishNeighborToSites(deletedNeighbor, Long.MAX_VALUE);
+    	}
+    	
+        for (Map.Entry<InetAddress, Long> entry : results.entrySet()) {
+            InetAddress activeNeighbor = entry.getKey();
+			Long metric = entry.getValue();
+			dataFeed.publishNeighborToSites(activeNeighbor, metric);
         }
     }
 }

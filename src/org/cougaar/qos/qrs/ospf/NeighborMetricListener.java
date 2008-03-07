@@ -29,7 +29,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.snmp4j.smi.OID;
 import org.snmp4j.smi.Variable;
@@ -38,15 +37,15 @@ import org.snmp4j.smi.VariableBinding;
 class NeighborMetricListener extends SynchronousListener {
 	// Neighbor IP to # metric
     private final Map<InetAddress, Long> results = new HashMap<InetAddress, Long>();
-    private final NeighborPoller poller;
-    private final RospfDataFeed dataFeed;
     
-    public NeighborMetricListener(NeighborPoller poller, RospfDataFeed dataFeed) {
-		this.poller = poller;
-		this.dataFeed = dataFeed;
+    public NeighborMetricListener() {
 	}
     
-    public void walkEvent(VariableBinding[] bindings) {
+    public Map<InetAddress, Long> getResults() {
+		return results;
+	}
+
+	public void walkEvent(VariableBinding[] bindings) {
         for (VariableBinding binding : bindings) {
             OID oid = binding.getOid();
             if (oid.startsWith(RospfDataFeed.ROSPF_METRIC_NEIGHBOR_OID)) {
@@ -75,15 +74,6 @@ class NeighborMetricListener extends SynchronousListener {
                 RospfDataFeed.log.warn(oid.toString() +" does not start with " +
                          RospfDataFeed.ROSPF_METRIC_NEIGHBOR_OID.toString());
             }
-        }
-        Set<InetAddress> deletedNeighbors = poller.updateNeighbors(results.keySet());
-    	for (InetAddress deletedNeighbor : deletedNeighbors) {
-    		dataFeed.publishNeighborToSites(deletedNeighbor, Long.MAX_VALUE);
-    	}
-        for (Map.Entry<InetAddress, Long> entry : results.entrySet()) {
-            InetAddress activeNeighbor = entry.getKey();
-			Long metric = entry.getValue();
-			dataFeed.publishNeighborToSites(activeNeighbor, metric);
         }
     }
 }
