@@ -3,10 +3,7 @@ package org.cougaar.qos.qrs.ospf;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-
-import org.cougaar.qos.qrs.SiteAddress;
 
 /**
  * Send snmp requests for ospf link metric and publish on this data feed as
@@ -17,12 +14,9 @@ class NeighborPoller implements Runnable {
     private SimpleSnmpRequest request;
     private Set<InetAddress> lastNeighbors;
     private final RospfDataFeed dataFeed;
-    private final Map<SiteAddress, InetAddress> siteToNeighbor;
-    public NeighborPoller(RospfDataFeed dataFeed, 
-    		Map<SiteAddress, InetAddress> siteToNeighbor,
-    		String[] snmpArgs) {
-    	this.dataFeed =dataFeed;
-    	this.siteToNeighbor = siteToNeighbor;
+    
+    public NeighborPoller(RospfDataFeed dataFeed, String[] snmpArgs) {
+    	this.dataFeed = dataFeed;
     	lastNeighbors = new HashSet<InetAddress>();
         try {
             request = new SimpleSnmpRequest(snmpArgs, RospfDataFeed.ROSPF_METRIC_NEIGHBOR_OID);
@@ -41,7 +35,7 @@ class NeighborPoller implements Runnable {
     
     public void run() {
         try {
-            NeighborMetricListener body = new NeighborMetricListener(this, dataFeed, siteToNeighbor);
+            NeighborMetricListener body = new NeighborMetricListener(this, dataFeed);
             request.asynchronousWalk(body);
         } catch (IOException e) {
             RospfDataFeed.log.error("", e);

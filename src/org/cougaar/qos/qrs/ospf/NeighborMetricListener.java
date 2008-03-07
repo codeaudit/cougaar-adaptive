@@ -31,23 +31,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.cougaar.qos.qrs.SiteAddress;
 import org.snmp4j.smi.OID;
 import org.snmp4j.smi.Variable;
 import org.snmp4j.smi.VariableBinding;
 
-class NeighborMetricListener implements WalkListener {
+class NeighborMetricListener extends SynchronousListener {
 	// Neighbor IP to # metric
     private final Map<InetAddress, Long> results = new HashMap<InetAddress, Long>();
     private final NeighborPoller poller;
     private final RospfDataFeed dataFeed;
-    private final Map<SiteAddress, InetAddress> siteToNeighbor;
     
-    public NeighborMetricListener(NeighborPoller poller, RospfDataFeed dataFeed,
-    		 Map<SiteAddress, InetAddress> siteToNeighbor) {
+    public NeighborMetricListener(NeighborPoller poller, RospfDataFeed dataFeed) {
 		this.poller = poller;
 		this.dataFeed = dataFeed;
-		this.siteToNeighbor = siteToNeighbor;
 	}
     
     public void walkEvent(VariableBinding[] bindings) {
@@ -80,17 +76,14 @@ class NeighborMetricListener implements WalkListener {
                          RospfDataFeed.ROSPF_METRIC_NEIGHBOR_OID.toString());
             }
         }
-    }
-
-    public void walkCompletion(boolean success) {
-    	Set<InetAddress> deletedNeighbors = poller.updateNeighbors(results.keySet());
+        Set<InetAddress> deletedNeighbors = poller.updateNeighbors(results.keySet());
     	for (InetAddress deletedNeighbor : deletedNeighbors) {
-    		dataFeed.publishNeighborToSites(deletedNeighbor, siteToNeighbor, Long.MAX_VALUE);
+    		dataFeed.publishNeighborToSites(deletedNeighbor, Long.MAX_VALUE);
     	}
         for (Map.Entry<InetAddress, Long> entry : results.entrySet()) {
             InetAddress activeNeighbor = entry.getKey();
 			Long metric = entry.getValue();
-			dataFeed.publishNeighborToSites(activeNeighbor, siteToNeighbor, metric);
+			dataFeed.publishNeighborToSites(activeNeighbor, metric);
         }
     }
 }

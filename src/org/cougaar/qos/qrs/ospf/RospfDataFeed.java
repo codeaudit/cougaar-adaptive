@@ -57,6 +57,7 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
     private OspfMetricTransform transform;
     private String[] snmpArgs;
     private SiteAddress mySite;
+    private Map<SiteAddress, InetAddress> siteToNeighbor;
     
     public RospfDataFeed(String transformClassName, long pollPeriod, String[] snmpArgs) {
         pollPeriodMillis = pollPeriod;
@@ -128,7 +129,6 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
     }
     
     void publishNeighborToSites(InetAddress walkNeighbor, 
-    		Map<SiteAddress, InetAddress> siteToNeighbor,
     		long linkMetric) {
     	boolean foundOne = false;
         for (Map.Entry<SiteAddress, InetAddress> entry : siteToNeighbor.entrySet()) {
@@ -163,9 +163,9 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
             } else if (!sf.findNeighbors()) {
                 reschedule();
             } else {
-            	Map<SiteAddress, InetAddress> siteToNeighbor = sf.getSiteToNeighbor();
+            	siteToNeighbor = sf.getSiteToNeighbor();
                 // ready to go, start the ospf poller
-                NeighborPoller neighborPoller = new NeighborPoller(RospfDataFeed.this, siteToNeighbor, snmpArgs);
+                NeighborPoller neighborPoller = new NeighborPoller(RospfDataFeed.this, snmpArgs);
 				RSSUtils.schedule(neighborPoller, 0, pollPeriodMillis);
             }
         }
