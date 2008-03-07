@@ -67,7 +67,7 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
         } catch (Exception e) {
             log.error("Couldn't instantiate transform " +transformClassName);
         }
-        RSSUtils.schedule(new SiteFinder(this, pollPeriod, snmpArgs), 0);
+        RSSUtils.schedule(new Poller(), 0);
     }
     
     /**
@@ -99,7 +99,7 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
         snmpArgs = new String[snmpArgList.size()];
         snmpArgList.toArray(snmpArgs);
         
-        RSSUtils.schedule(new SiteFinder(this, pollPeriodMillis, snmpArgs), 0);
+        RSSUtils.schedule(new Poller(), 0);
     }
     
     private String makeKey(SiteAddress destination) {
@@ -151,6 +151,28 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
         OID extension = (OID) base.clone();
         extension.append(suffix);
         return extension;
+    }
+    
+    private class Poller implements Runnable {
+    	private final SiteToNeighborFinder sf = new SiteToNeighborFinder(snmpArgs);
+    	
+    	public void run() {
+            // talk snmp to figure out our site
+            if (!findMySite()) {
+                reschedule();
+            } else if (!sf.findNeighbors()) {
+                reschedule();
+            } else {
+            	Map<SiteAddress, InetAddress> siteToNeighbor = sf.getSiteToNeighbor();
+                // ready to go, start the ospf poller
+                NeighborPoller neighborPoller = new NeighborPoller(RospfDataFeed.this, siteToNeighbor, snmpArgs);
+				RSSUtils.schedule(neighborPoller, 0, pollPeriodMillis);
+            }
+        }
+    	
+    	private void reschedule() {
+            RSSUtils.schedule(this, pollPeriodMillis);
+        }
     }
 
 }

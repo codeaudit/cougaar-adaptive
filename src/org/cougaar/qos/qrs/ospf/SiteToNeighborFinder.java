@@ -4,44 +4,26 @@ import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cougaar.qos.qrs.RSSUtils;
 import org.cougaar.qos.qrs.SiteAddress;
 
 /**
- * Figure out our site, and the sites we talk to
+ * Figure out the sites we talk to
  *
  */
-class SiteFinder implements Runnable {
-	private final RospfDataFeed dataFeed;
-	private final long pollPeriodMillis;
+class SiteToNeighborFinder  {
 	private final String[] snmpArgs;
-    private boolean foundNeighbors;
     private Map<SiteAddress, InetAddress> siteToNeighbor;
     
-    public SiteFinder(RospfDataFeed dataFeed, long pollPeriodMillis, String[] snmpArgs) {
+    public SiteToNeighborFinder(String[] snmpArgs) {
     	siteToNeighbor = new HashMap<SiteAddress, InetAddress>();
-		this.dataFeed = dataFeed;
-		this.pollPeriodMillis = pollPeriodMillis;
 		this.snmpArgs = snmpArgs;
 	}
     
-    public void run() {
-        // talk snmp to figure out our site
-        if (!dataFeed.findMySite()) {
-            reschedule();
-        } else if (!foundNeighbors && !findNeighbors()) {
-            reschedule();
-        } else {
-            // ready to go, start the ospf poller
-            RSSUtils.schedule(new NeighborPoller(dataFeed, siteToNeighbor, snmpArgs), 0, pollPeriodMillis);
-        }
-    }
+     public Map<SiteAddress, InetAddress> getSiteToNeighbor() {
+		return siteToNeighbor;
+	}
 
-    private void reschedule() {
-        RSSUtils.schedule(this, pollPeriodMillis);
-    }
-    
-    private boolean findNeighbors() {
+	boolean findNeighbors() {
         SynchronousMaskListener masks =
             new SynchronousMaskListener(RospfDataFeed.IP_ROUTE_MASK);
         SimpleSnmpRequest request = new SimpleSnmpRequest(snmpArgs, RospfDataFeed.IP_ROUTE_MASK);
