@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.5 $
- * $Date: 2008-03-04 21:38:17 $
+ * $Revision: 1.6 $
+ * $Date: 2008-03-07 14:20:48 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -69,26 +69,39 @@ public class KnodeDiffServSequencerPlugin
 		}
 	}; 
 	
-	private void addPingSteps(String runName) {
+	private void addPingSteps(String runName,String hops, String minSlots, String topology) {
         addStep(START_TEST, steadyStateWaitMillis, null);
         addStep(START_STEADY_STATE, collectionLengthMillis, null);
         addStep(END_STEADY_STATE, 0, null);
         addStep(END_TEST, 0, null);
-        addStep(SUMMARY_TEST, 0, summaryWork, PING_RUN_PROPERTY+"="+runName);
+        addStep(SUMMARY_TEST, 0, summaryWork, 
+        		PING_RUN_PROPERTY+"="+runName,
+        		KNODE_HOPS_PROPERTY+"="+hops,
+        		KNODE_MIN_SLOTS_PROPERTY+"="+minSlots,
+        		KNODE_TOPOLOGY_TYPE_PROPERTY+"="+topology);
  	}
 	
+	// 5 hop line from 162->167
 	private void addRestartKnodeSteps() {
 		String from = "192.168.162.100";
-		String to = "192.168.163.100";
+		String to = "192.168.167.100";
 		String path = "IpFlow("+from+"," +to+ "):CapacityMax()";
 		addStep(KNODE_SET_METRIC, 0, null, METRIC_PATH_PROPERTY +"="+ path);
         addStep(SOCIETY_READY, 0, null);
-        addStep(KNODE_ADD_LINK, 0, null, LINK_PROPERTY+"= 163 162");
+        addStep(KNODE_ADD_LINK, 0, null, LINK_PROPERTY+"= 162 163");
+        addStep(KNODE_ADD_LINK, 0, null, LINK_PROPERTY+"= 163 164");
+        addStep(KNODE_ADD_LINK, 0, null, LINK_PROPERTY+"= 164 165");
+        addStep(KNODE_ADD_LINK, 0, null, LINK_PROPERTY+"= 165 166");
+        addStep(KNODE_ADD_LINK, 0, null, LINK_PROPERTY+"= 166 167");
         addStep(KNODE_DEL_LINK, 0, null, LINK_PROPERTY+"= 164 162");
         addStep(KNODE_DEL_LINK, 0, null, LINK_PROPERTY+"= 165 162");
         addStep(KNODE_DEL_LINK, 0, null, LINK_PROPERTY+"= 166 162");
         addStep(KNODE_DEL_LINK, 0, null, LINK_PROPERTY+"= 167 162");
-        addStep(KNODE_WAIT_METRIC, 0, null, METRIC_VALUE_PROPERTY+"=70.0");
+        addStep(KNODE_DEL_LINK, 0, null, LINK_PROPERTY+"= 167 163");
+        addStep(KNODE_DEL_LINK, 0, null, LINK_PROPERTY+"= 167 164");
+        addStep(KNODE_DEL_LINK, 0, null, LINK_PROPERTY+"= 167 165");
+        addStep(KNODE_DEL_LINK, 0, null, LINK_PROPERTY+"= 167 163");
+        addStep(KNODE_WAIT_METRIC, 0, null, METRIC_VALUE_PROPERTY+"=30.0");
 	}
 	
 	private void addMoveLinkSteps(String from, String to, String desiredCapacity) {
@@ -96,21 +109,78 @@ public class KnodeDiffServSequencerPlugin
         addStep(KNODE_DEL_LINK, 0, null, LINK_PROPERTY+"= 162 " +from);
         addStep(KNODE_WAIT_METRIC, 0, null, METRIC_VALUE_PROPERTY+"="+desiredCapacity);
  	}
+	
+	private void addDeleteLinkSteps(String from, String to) {
+        addStep(KNODE_DEL_LINK, 0, null, LINK_PROPERTY+"= "+ from +" "+ to);
+   	}
+
+	private void addAddLinkSteps(String from, String to,int wait) {
+        addStep(KNODE_ADD_LINK, wait, null, LINK_PROPERTY+"= "+ from +" "+ to);
+   	}
+	
+	private void addTeeShapedExperimentSteps() {	
+		addRestartKnodeSteps();
+		addPingSteps("5hops", "5", "33","Tee");
+		addMoveLinkSteps("163","164","40.0");
+		addPingSteps("4hops", "4", "25","Tee");
+		addMoveLinkSteps("164","165","50.0");
+		addPingSteps("3hops", "3", "25","Tee");
+		addMoveLinkSteps("165","166","60.0");
+		addPingSteps("2hops", "2", "25","Tee");
+		addMoveLinkSteps("166","167","70.0");
+		addPingSteps("1hop", "1", "33","Tee");
+		addStep(SHUTDOWN, 0, null);
+		logExperimentDescription();
+	}
+	
+	// assumes singele server is on node170
+	private void addLineShapedExperimentSteps() {	
+		addRestartKnodeSteps();
+		addPingSteps("5hops", "5", "33","Line");
+		addDeleteLinkSteps("163", "164");
+		addMoveLinkSteps("163","164","40.0");
+		addPingSteps("4hops", "4", "33","Line");
+		addDeleteLinkSteps("164", "165");
+		addMoveLinkSteps("164","165","50.0");
+		addPingSteps("3hops", "3", "33","Line");
+		addDeleteLinkSteps("165", "166");
+		addMoveLinkSteps("165","166","60.0");
+		addPingSteps("2hops", "2", "33","Line");
+		addDeleteLinkSteps("166", "167");
+		addMoveLinkSteps("166","167","70.0");
+		addPingSteps("1hop", "1", "50","Line");
+		addStep(SHUTDOWN, 0, null);
+		logExperimentDescription();
+	}
+	
+	private void addStarShapedExperimentSteps() {	
+		addRestartKnodeSteps();
+		addDeleteLinkSteps("163", "164");
+		addDeleteLinkSteps("164", "165");
+		addDeleteLinkSteps("165", "166");
+		addDeleteLinkSteps("166", "167");
+		addMoveLinkSteps("163","167","30.0");		
+		addPingSteps("2nodes", "1", "50","Star");
+		
+		addAddLinkSteps("166", "167",30000);
+		addPingSteps("3nodes", "1", "33","Star");
+		
+		addAddLinkSteps("165", "167",30000);
+		addPingSteps("4nodes", "1", "25","Star");
+		
+		addAddLinkSteps("164", "167",30000);
+		addPingSteps("5nodes", "1", "20","Star");
+		
+		addAddLinkSteps("163", "167",30000);
+		addPingSteps("6nodes", "1", "16","Star");
+		
+		addStep(SHUTDOWN, 0, null);
+		logExperimentDescription();
+	}
 
     public void load() {
         super.load();
-        addRestartKnodeSteps();
-        addPingSteps("5hops");
-        addMoveLinkSteps("163","164","60.0");
-        addPingSteps("4hops");
-        addMoveLinkSteps("164","165","50.0");
-        addPingSteps("3hops");
-        addMoveLinkSteps("165","166","40.0");
-        addPingSteps("2hops");
-        addMoveLinkSteps("166","167","30.0");
-        addPingSteps("1hop");
-        addStep(SHUTDOWN, 0, null);
-        logExperimentDescription();
+        addTeeShapedExperimentSteps();
     }
     
     private void processStats(Collection<Set<Report>> reportsCollection, Properties props) {
@@ -129,13 +199,13 @@ public class KnodeDiffServSequencerPlugin
                 }
             }
         }
-        PingRunSummaryBean row = new PingRunSummaryBean(summary, props, suiteName);
+        KnodeRunSummaryBean row = new KnodeRunSummaryBean(summary, props, suiteName);
         log.shout(row.toString());
         if (!csvFileName.equals("")) {
         	try {
-				PingRunSummaryCsvFormat csvFormat = new PingRunSummaryCsvFormat();
-				CsvWriter<PingRunSummaryBean> writer = 
-					new CsvWriter<PingRunSummaryBean>(csvFormat, csvFileName, log);
+				KnodeRunSummaryCvsFormat csvFormat = new KnodeRunSummaryCvsFormat();
+				CsvWriter<KnodeRunSummaryBean> writer = 
+					new CsvWriter<KnodeRunSummaryBean>(csvFormat, csvFileName, log);
 				writer.writeRow(row);
 			} catch (IntrospectionException e) {
 				log.error("Error writing a csv row", e);
