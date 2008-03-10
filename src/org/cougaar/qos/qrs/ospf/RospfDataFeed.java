@@ -113,13 +113,23 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
         + "Capacity_Max";
     }
     
+    /**
+     * Find the neighbor from the right neigborToMetric table.  Defaults
+     * to the given neighbor.  Subclasses can override to map through
+     * other router data.
+     */
+    protected InetAddress findMeasuredNeighbor(SiteAddress site, InetAddress neighbor) {
+    	return neighbor;
+    }
+    
     protected void publishNeighborToSites(InetAddress walkNeighbor, long linkMetric) {
     	boolean foundOne = false;
         for (Map.Entry<SiteAddress, InetAddress> entry : siteToNeighbor.entrySet()) {
             SiteAddress site = entry.getKey();
             InetAddress neighbor = entry.getValue();
-            if (walkNeighbor.equals(neighbor)) {
-                pushData(site, linkMetric);
+            InetAddress mappedNeighbor = findMeasuredNeighbor(site, neighbor);
+            if (mappedNeighbor != null && walkNeighbor.equals(mappedNeighbor)) {
+            	pushData(site, linkMetric);
                 foundOne = true;
             }
         }
@@ -171,7 +181,7 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
 		if (mySite != null) {
 			return true;
 		}
-		log.info("Finding myself again");
+		log.info("Finding myself");
 		if (mySiteFinder.findMySite()) {
 			mySite = mySiteFinder.getMySite();
 			return true;
@@ -184,7 +194,7 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
     	if (siteToNeighbor != null) {
     		return true;
     	}
-    	log.info("Finding my neighbors again");
+    	log.info("Finding my neighbors");
     	if (siteNeighborFinder.findNeighbors()) {
     		siteToNeighbor = siteNeighborFinder.getSiteToNeighbor();
     		return true;
