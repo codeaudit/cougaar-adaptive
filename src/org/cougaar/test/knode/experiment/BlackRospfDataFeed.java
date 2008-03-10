@@ -8,10 +8,29 @@ import org.cougaar.qos.qrs.ospf.NeighborMetricFinder;
 import org.cougaar.qos.qrs.ospf.RospfDataFeed;
 import org.cougaar.qos.qrs.ospf.SiteToNeighborFinder;
 
+/**
+ * Use the black router to get the link metrics instead of the red R-OSPF MIB. 
+ * The Black router metrics track the real network topology closer than the Red,
+ * Both in time and in accuracy. But the Black router should not be available to 
+ * a real fielded application, because of the HAIPE security boundary.
+ * 
+ * <p>
+ * This dataFeed assumes a special access port was created to get around the HAIPE and 
+ * access the Black router. Also, the HAIPE address translation is hard coded in the map 
+ * {@link HaipeRedToBlackAddressTranslator}
+ * <p>
+ * Extra steps are need to map from the Red-side neighbor to the black neighbor
+ * <ol>
+ * <li> The red neighbor is converted into the HAIPE neighbor
+ * <li> The HAIPE neighbor is converted to the Black site
+ * <li> The black site converted to the black neighbor. 
+ * </ol>
+ * 
+ */
 public class BlackRospfDataFeed extends RospfDataFeed {
 	private final String[] blackSnmpArgs;
 	private SiteToNeighborFinder blackSiteNeighborFinder, redSiteToNeighborFinder;
-	private Map<SiteAddress, InetAddress> blackSiteToNeighbor, redSiteToNeighbor;
+	private Map<SiteAddress, InetAddress> blackSiteToNeighbor;
 	
 	public BlackRospfDataFeed(String transformClassName, long pollPeriod, 
     		String community, String version, InetAddress router,
@@ -35,12 +54,10 @@ public class BlackRospfDataFeed extends RospfDataFeed {
 		if (!haveRed) {
 			return false;
 		}
-		redSiteToNeighbor = redSiteToNeighborFinder.getSiteToNeighbor();
-		
     	if (blackSiteToNeighbor != null) {
     		return true;
     	}
-    	log.info("Finding my black neighbors again");
+    	log.info("Finding my black neighbors");
     	if (blackSiteNeighborFinder.findNeighbors()) {
     		blackSiteToNeighbor = blackSiteNeighborFinder.getSiteToNeighbor();
     		return true;
@@ -60,23 +77,12 @@ public class BlackRospfDataFeed extends RospfDataFeed {
 		return null;
 	}
 	
-	protected void publishNeighborToSites(InetAddress walkNeighbor, long linkMetric) {
-    	boolean foundOne = false;
-        for (Map.Entry<SiteAddress, InetAddress> entry : redSiteToNeighbor.entrySet()) {
-            SiteAddress redSite = entry.getKey();
-            InetAddress redNeighbor = entry.getValue();
-            InetAddress haipeNeighbor = HaipeRedToBlackAddressTranslator.get(redNeighbor);
-            if (haipeNeighbor  != null) {
-				SiteAddress blackSite = redNeighborToBlackSite(haipeNeighbor);
-				InetAddress blackNeighbor = blackSiteToNeighbor.get(blackSite);
-				if (walkNeighbor.equals(blackNeighbor)) {
-					pushData(redSite, linkMetric);
-					foundOne = true;
-				}
-			}
+	protected InetAddress findMeasuredNeighbor(SiteAddress redSite, InetAddress redNeighbor) {
+		InetAddress haipeNeighbor = HaipeRedToBlackAddressTranslator.get(redNeighbor);
+        if (haipeNeighbor  != null) {
+			SiteAddress blackSite = redNeighborToBlackSite(haipeNeighbor);
+			return blackSiteToNeighbor.get(blackSite);
         }
-        if (!foundOne) {
-			log.info("No site match for next hop " + walkNeighbor);
-		}
-    }
+        return null;
+	}
 }
