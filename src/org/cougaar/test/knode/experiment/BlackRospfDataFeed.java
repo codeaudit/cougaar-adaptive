@@ -65,12 +65,15 @@ public class BlackRospfDataFeed extends RospfDataFeed {
         for (Map.Entry<SiteAddress, InetAddress> entry : redSiteToNeighbor.entrySet()) {
             SiteAddress redSite = entry.getKey();
             InetAddress redNeighbor = entry.getValue();
-            SiteAddress blackSite = redNeighborToBlackSite(redNeighbor);
-            InetAddress blackNeighbor = blackSiteToNeighbor.get(blackSite);
-            if (walkNeighbor.equals(blackNeighbor)) {
-            	pushData(redSite, linkMetric);
-                foundOne = true;
-            }
+            InetAddress haipeNeighbor = HaipeRedToBlackAddressTranslator.get(redNeighbor);
+            if (haipeNeighbor  != null) {
+				SiteAddress blackSite = redNeighborToBlackSite(haipeNeighbor);
+				InetAddress blackNeighbor = blackSiteToNeighbor.get(blackSite);
+				if (walkNeighbor.equals(blackNeighbor)) {
+					pushData(redSite, linkMetric);
+					foundOne = true;
+				}
+			}
         }
         if (!foundOne) {
 			log.info("No site match for next hop " + walkNeighbor);
