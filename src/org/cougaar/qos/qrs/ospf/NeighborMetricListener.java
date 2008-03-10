@@ -48,31 +48,29 @@ class NeighborMetricListener extends SynchronousListener {
 	public void walkEvent(VariableBinding[] bindings) {
         for (VariableBinding binding : bindings) {
             OID oid = binding.getOid();
-            if (oid.startsWith(RospfDataFeed.ROSPF_METRIC_NEIGHBOR_OID)) {
-                int offset = RospfDataFeed.ROSPF_METRIC_NEIGHBOR_OID.size();
-                if (oid.size() == offset+5) {
-                    byte[] bytes = oid.toByteArray();
-                    byte[] addressBytes = new byte[4];
-                    for (int i = 0; i < 4; i++) {
-                        addressBytes[i] = bytes[offset + i];
-                    }
-                    try {
-                        InetAddress neighborAddress = InetAddress.getByAddress(addressBytes);
-                        Variable var = binding.getVariable();
-                        long metric = var.toLong();
-                        results.put(neighborAddress, metric);
-                        if (RospfDataFeed.log.isInfoEnabled()) {
-                            RospfDataFeed.log.info(binding.toString());
-                        }
-                    } catch (UnknownHostException e) {
-                        RospfDataFeed.log.error(e.getMessage(), e);
-                    }
-                } else {
-                    RospfDataFeed.log.warn(oid.toString() + " is too short");
-                }
-            } else {
-                RospfDataFeed.log.warn(oid.toString() +" does not start with " +
+            if (!oid.startsWith(RospfDataFeed.ROSPF_METRIC_NEIGHBOR_OID)) {
+                throw new IllegalStateException(oid.toString() +" does not start with " +
                          RospfDataFeed.ROSPF_METRIC_NEIGHBOR_OID.toString());
+            }
+            int offset = RospfDataFeed.ROSPF_METRIC_NEIGHBOR_OID.size();
+            if (oid.size() != offset+5) {
+            	throw new IllegalStateException(oid.toString() + " is too short");
+            }
+            byte[] bytes = oid.toByteArray();
+            byte[] addressBytes = new byte[4];
+            for (int i = 0; i < 4; i++) {
+            	addressBytes[i] = bytes[offset + i];
+            }
+            try {
+            	InetAddress neighborAddress = InetAddress.getByAddress(addressBytes);
+            	Variable var = binding.getVariable();
+            	long metric = var.toLong();
+            	results.put(neighborAddress, metric);
+            	if (RospfDataFeed.log.isInfoEnabled()) {
+            		RospfDataFeed.log.info(binding.toString());
+            	}
+            } catch (UnknownHostException e) {
+            	throw new IllegalStateException(e.getMessage(), e);
             }
         }
     }

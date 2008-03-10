@@ -58,10 +58,12 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
     private String[] snmpArgs;
     private SiteAddress mySite;
     private Map<SiteAddress, InetAddress> siteToNeighbor;
+    private NeighborMetricFinder neighborPoller;
     
     public RospfDataFeed(String transformClassName, long pollPeriod, String[] snmpArgs) {
         pollPeriodMillis = pollPeriod;
         this.snmpArgs = snmpArgs;
+        neighborPoller = new NeighborMetricFinder(snmpArgs);
         try {
             Class<?> transformClass = Class.forName(transformClassName);
             transform = (OspfMetricTransform) transformClass.newInstance();
@@ -128,8 +130,7 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
         }
     }
     
-    void publishNeighborToSites(InetAddress walkNeighbor, 
-    		long linkMetric) {
+    void publishNeighborToSites(InetAddress walkNeighbor, long linkMetric) {
     	boolean foundOne = false;
         for (Map.Entry<SiteAddress, InetAddress> entry : siteToNeighbor.entrySet()) {
             SiteAddress site = entry.getKey();
@@ -153,23 +154,45 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
         return extension;
     }
     
+    private void publishNeighborMetrics() {
+    	for (InetAddress deletedNeighbor : neighborPoller.getDeletedNeighbors()) {
+    		publishNeighborToSites(deletedNeighbor, Long.MAX_VALUE);
+    	}
+    	
+        for (Map.Entry<InetAddress, Long> entry : neighborPoller.getResults().entrySet()) {
+            InetAddress activeNeighbor = entry.getKey();
+			Long metric = entry.getValue();
+			publishNeighborToSites(activeNeighbor, metric);
+        }
+    }
+    
     private class Poller implements Runnable {
     	private final SiteToNeighborFinder sf = new SiteToNeighborFinder(snmpArgs);
     	
     	public void run() {
-            // talk snmp to figure out our site
-            if (!findMySite()) {
+            // initialization
+            if (mySite == null) {
             	log.info("Finding myself again");
-                reschedule();
-            } else if (!sf.findNeighbors()) {
+            	if (!findMySite()) {
+            		reschedule();
+            		return;
+            	}
+            } 
+            if (siteToNeighbor == null) {
             	log.info("Finding my neighbors again");
-                reschedule();
-            } else {
-            	siteToNeighbor = sf.getSiteToNeighbor();
-                // ready to go, start the ospf poller
-                NeighborMetricPoller neighborPoller = new NeighborMetricPoller(RospfDataFeed.this, snmpArgs);
-				RSSUtils.schedule(neighborPoller, 0, pollPeriodMillis);
+            	if (sf.findNeighbors()) {
+            		siteToNeighbor = sf.getSiteToNeighbor();
+            	} else {
+            		reschedule();
+            		return;
+            	}
             }
+            
+            // Periodic poll once we're initialized
+            if (neighborPoller.updateNeighborMetrics()) {
+            	publishNeighborMetrics();
+            }
+            reschedule();
         }
     	
     	private void reschedule() {
