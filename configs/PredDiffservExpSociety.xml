@@ -52,6 +52,11 @@
         	<argument name="name" value="rospf"/>
         	<argument name="pollPeriod" value="1000"/>
         	<argument name="transform" value="org.cougaar.qos.qrs.ospf.ClosenessTransform"/>
+        	
+        	<argument name="router.community" value="public"/>
+        	<argument name="router.version" value="1"/>
+        	<argument name="router.address" value="192.168.162.1"/>
+        	
        	 	<argument name="snmpArgs" value="-c public -v 1 192.168.162.1"/>
      	</component>
 
