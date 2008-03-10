@@ -38,28 +38,23 @@ import org.cougaar.qos.qrs.SimpleQueueingDataFeed;
 import org.cougaar.qos.qrs.SiteAddress;
 import org.cougaar.util.log.Logger;
 import org.cougaar.util.log.Logging;
-import org.snmp4j.smi.OID;
 
 public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
-	static final Logger log = Logging.getLogger(RospfDataFeed.class);
-	static final OID IP_ROUTE_ENTRY = new OID("1.3.6.1.2.1.4.21.1");
-	static final OID ROSPF_METRIC_NEIGHBOR_OID = new OID("1.3.6.1.2.1.14.10.1.12");
-	static final OID IP_ROUTE_NEXT_HOP = append(IP_ROUTE_ENTRY, 7); 
-	static final OID IP_ROUTE_MASK = append(IP_ROUTE_ENTRY, 11); 
-	
-    private static final double CREDIBILITY = SECOND_MEAS_CREDIBILITY;
+	private static final double CREDIBILITY = SECOND_MEAS_CREDIBILITY;
     private static final String POLL_PERIOD_ARG = "--poll-period=";
     private static final String TRANSFORM_ARG = "--transform=";
    
+    static final Logger log = Logging.getLogger(RospfDataFeed.class);
     private long pollPeriodMillis;
     private OspfMetricTransform transform;
     private String[] snmpArgs;
     private SiteAddress mySite;
     private Map<SiteAddress, InetAddress> siteToNeighbor;
     
-    public RospfDataFeed(String transformClassName, long pollPeriod, String[] snmpArgs) {
+    public RospfDataFeed(String transformClassName, long pollPeriod, 
+    		String community, String version, InetAddress router) {
         pollPeriodMillis = pollPeriod;
-        this.snmpArgs = snmpArgs;
+        this.snmpArgs = makeSnmpArgs(community, version, router);
         try {
             Class<?> transformClass = Class.forName(transformClassName);
             transform = (OspfMetricTransform) transformClass.newInstance();
@@ -70,7 +65,8 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
     }
     
     /**
-     * This is the standard QRS datafeed constructor
+     * This is an older version that uses standard QRS datafeed constructor.
+     * Society xml must provide the all the right feed arguments.
      * 
      * @param feedArgs
      */
@@ -126,12 +122,6 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
 		}
     }
     
-    private static OID append(OID base, int suffix) {
-        OID extension = (OID) base.clone();
-        extension.append(suffix);
-        return extension;
-    }
-    
     private void publishNeighborMetrics(Map<InetAddress, Long> metrics,
     		Set<InetAddress> deletedNeighbors) {
     	for (InetAddress deletedNeighbor : deletedNeighbors) {
@@ -145,6 +135,16 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
         }
     }
     
+    private static String[] makeSnmpArgs(String community, String version, InetAddress router) {
+    	return new String[] {
+    			"-c",
+    			community,
+    			"-v",
+    			version,
+    			router.getHostAddress(),
+    	};
+    }
+    
     private class Poller implements Runnable {
     	private final MySiteFinder mySiteFinder = new MySiteFinder();
     	private final SiteToNeighborFinder sf = new SiteToNeighborFinder(snmpArgs);
@@ -154,11 +154,13 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
             // initialization
             if (mySite == null) {
             	log.info("Finding myself again");
-            	if (!mySiteFinder.findMySite()) {
+            	if (mySiteFinder.findMySite()) {
+            		mySite = mySiteFinder.getMySite();
+            	} else {
             		// no luck, try again later
             		reschedule();
             		return;
-            	}
+            	} 
             } 
             if (siteToNeighbor == null) {
             	log.info("Finding my neighbors again");

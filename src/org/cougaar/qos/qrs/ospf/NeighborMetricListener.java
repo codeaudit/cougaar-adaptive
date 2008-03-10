@@ -37,8 +37,10 @@ import org.snmp4j.smi.VariableBinding;
 class NeighborMetricListener extends SynchronousListener {
 	// Neighbor IP to # metric
     private final Map<InetAddress, Long> results = new HashMap<InetAddress, Long>();
+    private final OID queryOid;
     
-    public NeighborMetricListener() {
+    public NeighborMetricListener(OID oid) {
+    	this.queryOid = oid;
 	}
     
     public Map<InetAddress, Long> getResults() {
@@ -48,11 +50,11 @@ class NeighborMetricListener extends SynchronousListener {
 	public void walkEvent(VariableBinding[] bindings) {
         for (VariableBinding binding : bindings) {
             OID oid = binding.getOid();
-            if (!oid.startsWith(RospfDataFeed.ROSPF_METRIC_NEIGHBOR_OID)) {
+            if (!oid.startsWith(queryOid)) {
                 throw new IllegalStateException(oid.toString() +" does not start with " +
-                         RospfDataFeed.ROSPF_METRIC_NEIGHBOR_OID.toString());
+                		queryOid.toString());
             }
-            int offset = RospfDataFeed.ROSPF_METRIC_NEIGHBOR_OID.size();
+            int offset = queryOid.size();
             if (oid.size() != offset+5) {
             	throw new IllegalStateException(oid.toString() + " is too short");
             }

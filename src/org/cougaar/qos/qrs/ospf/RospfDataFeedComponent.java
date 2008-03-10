@@ -26,6 +26,8 @@
 
 package org.cougaar.qos.qrs.ospf;
 
+import java.net.InetAddress;
+
 import org.cougaar.core.qos.metrics.DataFeedRegistrationService;
 import org.cougaar.core.qos.metrics.QosComponent;
 import org.cougaar.core.service.LoggingService;
@@ -45,8 +47,14 @@ public class RospfDataFeedComponent extends QosComponent {
     @Arg(name="name")
     public String name;
     
-    @Arg(name="snmpArgs")
-    public String snmpArgsString;
+    @Arg(name="router.community", defaultValue="public")
+    public String community;
+    
+    @Arg(name="router.version", defaultValue="1")
+    public String version;
+    
+    @Arg(name="router.address")
+    public InetAddress router;
     
     @Arg(name="pollPeriod", defaultValue="1000")
     public long pollPeriod;
@@ -62,8 +70,7 @@ public class RospfDataFeedComponent extends QosComponent {
 
     public void load() {
         super.load();
-        String[] snmpArgs = snmpArgsString.split(" ");
-        RospfDataFeed feed = new RospfDataFeed(transformClassName, pollPeriod, snmpArgs);
+        RospfDataFeed feed = new RospfDataFeed(transformClassName, pollPeriod, community, version, router);
         svc.registerFeed(feed, name);
         getServiceBroker().releaseService(this, DataFeedRegistrationService.class, svc);
 

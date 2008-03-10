@@ -5,12 +5,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.cougaar.qos.qrs.SiteAddress;
+import org.snmp4j.smi.OID;
 
 /**
  * Figure out the sites we talk to
  *
  */
 class SiteToNeighborFinder  {
+	static final OID IP_ROUTE_ENTRY = new OID("1.3.6.1.2.1.4.21.1");
+	static final OID IP_ROUTE_NEXT_HOP = append(IP_ROUTE_ENTRY, 7); 
+	static final OID IP_ROUTE_MASK = append(IP_ROUTE_ENTRY, 11); 
 	private final String[] snmpArgs;
     private Map<SiteAddress, InetAddress> siteToNeighbor;
     
@@ -25,14 +29,14 @@ class SiteToNeighborFinder  {
 
 	boolean findNeighbors() {
         SynchronousMaskListener masks =
-            new SynchronousMaskListener(RospfDataFeed.IP_ROUTE_MASK);
-        SimpleSnmpRequest request = new SimpleSnmpRequest(snmpArgs, RospfDataFeed.IP_ROUTE_MASK);
+            new SynchronousMaskListener(IP_ROUTE_MASK);
+        SimpleSnmpRequest request = new SimpleSnmpRequest(snmpArgs, IP_ROUTE_MASK);
         boolean maskStatus = masks.synchronousWalk(request);
         Map<InetAddress, InetAddress> maskMap = masks.getSiteIpToIpMap();
         
         SynchronousMaskListener nextHops =
-            new SynchronousMaskListener(RospfDataFeed.IP_ROUTE_NEXT_HOP);
-        request = new SimpleSnmpRequest(snmpArgs, RospfDataFeed.IP_ROUTE_NEXT_HOP);
+            new SynchronousMaskListener(IP_ROUTE_NEXT_HOP);
+        request = new SimpleSnmpRequest(snmpArgs, IP_ROUTE_NEXT_HOP);
         boolean nextStatus = nextHops.synchronousWalk(request);
         Map<InetAddress, InetAddress> nextMap = nextHops.getSiteIpToIpMap();
         
@@ -54,4 +58,10 @@ class SiteToNeighborFinder  {
         
         return maskStatus && nextStatus;
     }
+	
+	 private static OID append(OID base, int suffix) {
+	        OID extension = (OID) base.clone();
+	        extension.append(suffix);
+	        return extension;
+	    }
 }
