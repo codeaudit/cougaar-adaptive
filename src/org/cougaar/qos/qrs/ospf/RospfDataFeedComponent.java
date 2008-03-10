@@ -71,6 +71,7 @@ public class RospfDataFeedComponent extends QosComponent {
     public void load() {
         super.load();
         RospfDataFeed feed = makeDataFeed();
+        feed.startPolling();
         svc.registerFeed(feed, name);
         getServiceBroker().releaseService(this, DataFeedRegistrationService.class, svc);
     }

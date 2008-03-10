@@ -65,11 +65,13 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
         } catch (Exception e) {
             log.error("Couldn't instantiate transform " +transformClassName);
         }
-        
-        siteNeighborFinder = makeSiteToNeighborFinder();
+    }
+
+	protected void startPolling() {
+		siteNeighborFinder = makeSiteToNeighborFinder();
         neighborMetricFinder  = makeNeighborMetricFinder();
         RSSUtils.schedule(new Poller(), 0);
-    }
+	}
 
     /**
      * This is an older version that uses standard QRS datafeed constructor.
