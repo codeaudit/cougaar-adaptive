@@ -11,7 +11,7 @@ import org.snmp4j.smi.OID;
  * Send snmp requests for ospf link metrics
  * 
  */
-class NeighborMetricFinder {
+public class NeighborMetricFinder {
 	static final OID ROSPF_METRIC_NEIGHBOR_OID = new OID("1.3.6.1.2.1.14.10.1.12");
     private /* final */ SimpleSnmpRequest request;
     private Set<InetAddress> lastNeighbors;

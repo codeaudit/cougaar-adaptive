@@ -44,13 +44,17 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
     private static final String POLL_PERIOD_ARG = "--poll-period=";
     private static final String TRANSFORM_ARG = "--transform=";
    
-    static final Logger log = Logging.getLogger(RospfDataFeed.class);
+    protected static final Logger log = Logging.getLogger(RospfDataFeed.class);
     private long pollPeriodMillis;
     private OspfMetricTransform transform;
     private String[] snmpArgs;
     private SiteAddress mySite;
     private Map<SiteAddress, InetAddress> siteToNeighbor;
     
+    private MySiteFinder mySiteFinder = new MySiteFinder();
+	private SiteToNeighborFinder siteNeighborFinder;
+	private NeighborMetricFinder neighborMetricFinder;
+	
     public RospfDataFeed(String transformClassName, long pollPeriod, 
     		String community, String version, InetAddress router) {
         pollPeriodMillis = pollPeriod;
@@ -61,9 +65,12 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
         } catch (Exception e) {
             log.error("Couldn't instantiate transform " +transformClassName);
         }
+        
+        siteNeighborFinder = makeSiteToNeighborFinder();
+        neighborMetricFinder  = makeNeighborMetricFinder();
         RSSUtils.schedule(new Poller(), 0);
     }
-    
+
     /**
      * This is an older version that uses standard QRS datafeed constructor.
      * Society xml must provide the all the right feed arguments.
@@ -97,23 +104,20 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
         RSSUtils.schedule(new Poller(), 0);
     }
     
-    private String makeKey(SiteAddress destination) {
+    protected String makeKey(SiteAddress destination) {
         return "Site" + KEY_SEPR + "Flow" + KEY_SEPR 
         + mySite + KEY_SEPR 
         + destination + KEY_SEPR 
         + "Capacity_Max";
     }
     
-    void publishNeighborToSites(InetAddress walkNeighbor, long linkMetric) {
+    protected void publishNeighborToSites(InetAddress walkNeighbor, long linkMetric) {
     	boolean foundOne = false;
         for (Map.Entry<SiteAddress, InetAddress> entry : siteToNeighbor.entrySet()) {
             SiteAddress site = entry.getKey();
             InetAddress neighbor = entry.getValue();
             if (walkNeighbor.equals(neighbor)) {
-                String key = makeKey(site);
-                DataValue value = new DataValue(transform.toMaxCapacity(linkMetric), CREDIBILITY);
-                log.info("Pushing feed key " +key+ " with value " + value);
-                newData(key, value, null);
+                pushData(site, linkMetric);
                 foundOne = true;
             }
         }
@@ -121,8 +125,15 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
 			log.info("No site match for next hop " + walkNeighbor);
 		}
     }
+
+	protected void pushData(SiteAddress site, long linkMetric) {
+		String key = makeKey(site);
+		DataValue value = new DataValue(transform.toMaxCapacity(linkMetric), CREDIBILITY);
+		log.info("Pushing feed key " +key+ " with value " + value);
+		newData(key, value, null);
+	}
     
-    private void publishNeighborMetrics(Map<InetAddress, Long> metrics,
+    protected void publishNeighborMetrics(Map<InetAddress, Long> metrics,
     		Set<InetAddress> deletedNeighbors) {
     	for (InetAddress deletedNeighbor : deletedNeighbors) {
     		publishNeighborToSites(deletedNeighbor, Long.MAX_VALUE);
@@ -135,7 +146,7 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
         }
     }
     
-    private static String[] makeSnmpArgs(String community, String version, InetAddress router) {
+    protected String[] makeSnmpArgs(String community, String version, InetAddress router) {
     	return new String[] {
     			"-c",
     			community,
@@ -145,40 +156,65 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
     	};
     }
     
-    private class Poller implements Runnable {
-    	private final MySiteFinder mySiteFinder = new MySiteFinder();
-    	private final SiteToNeighborFinder sf = new SiteToNeighborFinder(snmpArgs);
-    	private final NeighborMetricFinder neighborFinder  = new NeighborMetricFinder(snmpArgs);
-    	
+    protected SiteToNeighborFinder makeSiteToNeighborFinder() {
+    	return new SiteToNeighborFinder(snmpArgs);
+    }
+    
+    protected NeighborMetricFinder makeNeighborMetricFinder() {
+		return new NeighborMetricFinder(snmpArgs);
+	}
+
+    
+    protected boolean findMySite() {
+		if (mySite != null) {
+			return true;
+		}
+		log.info("Finding myself again");
+		if (mySiteFinder.findMySite()) {
+			mySite = mySiteFinder.getMySite();
+			return true;
+		} else {
+			return false;
+		} 
+	}
+    
+    protected boolean findMyNeighbors() {
+    	if (siteToNeighbor != null) {
+    		return true;
+    	}
+    	log.info("Finding my neighbors again");
+    	if (siteNeighborFinder.findNeighbors()) {
+    		siteToNeighbor = siteNeighborFinder.getSiteToNeighbor();
+    		return true;
+    	} else {
+    		return false;
+    	}
+    }
+    
+    protected void pollNeighbors() {
+    	if (neighborMetricFinder.updateNeighborMetrics()) {
+        	Map<InetAddress, Long> metrics = neighborMetricFinder.getResults();
+        	Set<InetAddress> deletedNeighbors = neighborMetricFinder.getDeletedNeighbors();
+			publishNeighborMetrics(metrics, deletedNeighbors);
+        }
+    }
+
+	private class Poller implements Runnable {
     	public void run() {
             // initialization
-            if (mySite == null) {
-            	log.info("Finding myself again");
-            	if (mySiteFinder.findMySite()) {
-            		mySite = mySiteFinder.getMySite();
-            	} else {
-            		// no luck, try again later
-            		reschedule();
-            		return;
-            	} 
-            } 
-            if (siteToNeighbor == null) {
-            	log.info("Finding my neighbors again");
-            	if (sf.findNeighbors()) {
-            		siteToNeighbor = sf.getSiteToNeighbor();
-            	} else {
-            		// no luck, try again later
-            		reschedule();
-            		return;
-            	}
+            if (!findMySite()) {
+            	// try again
+            	reschedule();
+            	return;
+            }
+            if (!findMyNeighbors()) {
+            	// no luck, try again later
+        		reschedule();
+        		return;
             }
             
             // Periodic poll once we're initialized
-            if (neighborFinder.updateNeighborMetrics()) {
-            	Map<InetAddress, Long> metrics = neighborFinder.getResults();
-            	Set<InetAddress> deletedNeighbors = neighborFinder.getDeletedNeighbors();
-				publishNeighborMetrics(metrics, deletedNeighbors);
-            }
+            pollNeighbors();
             
             reschedule();
         }

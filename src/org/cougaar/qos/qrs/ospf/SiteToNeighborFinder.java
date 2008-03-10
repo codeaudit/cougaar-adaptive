@@ -11,7 +11,7 @@ import org.snmp4j.smi.OID;
  * Figure out the sites we talk to
  *
  */
-class SiteToNeighborFinder  {
+public class SiteToNeighborFinder  {
 	static final OID IP_ROUTE_ENTRY = new OID("1.3.6.1.2.1.4.21.1");
 	static final OID IP_ROUTE_NEXT_HOP = append(IP_ROUTE_ENTRY, 7); 
 	static final OID IP_ROUTE_MASK = append(IP_ROUTE_ENTRY, 11); 
@@ -23,11 +23,11 @@ class SiteToNeighborFinder  {
 		this.snmpArgs = snmpArgs;
 	}
     
-     public Map<SiteAddress, InetAddress> getSiteToNeighbor() {
+    public Map<SiteAddress, InetAddress> getSiteToNeighbor() {
 		return siteToNeighbor;
 	}
 
-	boolean findNeighbors() {
+	public boolean findNeighbors() {
         SynchronousMaskListener masks =
             new SynchronousMaskListener(IP_ROUTE_MASK);
         SimpleSnmpRequest request = new SimpleSnmpRequest(snmpArgs, IP_ROUTE_MASK);

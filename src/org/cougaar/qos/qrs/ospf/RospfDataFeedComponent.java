@@ -70,9 +70,12 @@ public class RospfDataFeedComponent extends QosComponent {
 
     public void load() {
         super.load();
-        RospfDataFeed feed = new RospfDataFeed(transformClassName, pollPeriod, community, version, router);
+        RospfDataFeed feed = makeDataFeed();
         svc.registerFeed(feed, name);
         getServiceBroker().releaseService(this, DataFeedRegistrationService.class, svc);
-
     }
+
+	protected RospfDataFeed makeDataFeed() {
+		return new RospfDataFeed(transformClassName, pollPeriod, community, version, router);
+	}
 }
