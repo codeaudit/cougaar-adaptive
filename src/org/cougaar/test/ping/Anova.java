@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: Anova.java
- * $Revision: 1.2 $
- * $Date: 2008-03-03 22:30:21 $
+ * $Revision: 1.3 $
+ * $Date: 2008-03-11 19:34:54 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -56,7 +56,16 @@ public class Anova implements Statistic<Anova> {
         min = Math.min(min, value);
         timeStamp = System.currentTimeMillis();
     }
-
+    
+    public void addTable(Anova other) {
+        valueCount += other.valueCount;
+        sum += other.sum;
+        sumSq += other.sumSq;
+        max = Math.max(max, other.max);
+        min = Math.min(min, other.min);
+        timeStamp= Math.max(timeStamp, other.timeStamp);
+    }
+    
     public int getValueCount() {
         return valueCount;
     }

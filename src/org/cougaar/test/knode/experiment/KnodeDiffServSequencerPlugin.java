@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.7 $
- * $Date: 2008-03-07 21:50:37 $
+ * $Revision: 1.8 $
+ * $Date: 2008-03-11 19:34:53 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -33,8 +33,6 @@ import java.util.Set;
 
 import org.cougaar.test.ping.Anova;
 import org.cougaar.test.ping.CsvWriter;
-import org.cougaar.test.ping.PingRunSummaryBean;
-import org.cougaar.test.ping.PingRunSummaryCsvFormat;
 import org.cougaar.test.ping.SummaryReport;
 import org.cougaar.test.ping.experiment.PingSteps;
 import org.cougaar.test.sequencer.Report;
@@ -185,7 +183,8 @@ public class KnodeDiffServSequencerPlugin
     }
     
     private void processStats(Collection<Set<Report>> reportsCollection, Properties props) {
-        Anova summary = new Anova("Throughput");
+        Anova thrpSummary = new Anova("Throughput");
+        Anova delaySummary = new Anova("Delay");
 
         for (Set<Report> reports : reportsCollection) {
             for (Report report : reports) {
@@ -195,12 +194,13 @@ public class KnodeDiffServSequencerPlugin
                 log.info(report.toString());
                 if (report instanceof SummaryReport) {
                     for (Anova stat : ((SummaryReport) report).getRawStats()) {
-                        summary.newValue(stat.itemPerSec());
+                        thrpSummary.newValue(stat.itemPerSec());
+                        delaySummary.addTable(stat);
                     }
                 }
             }
         }
-        KnodeRunSummaryBean row = new KnodeRunSummaryBean(summary, props, suiteName);
+        KnodeRunSummaryBean row = new KnodeRunSummaryBean(thrpSummary, delaySummary, props, suiteName);
         log.shout(row.toString());
         if (!csvFileName.equals("")) {
         	try {
