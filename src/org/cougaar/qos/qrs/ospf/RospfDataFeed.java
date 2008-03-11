@@ -70,7 +70,7 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
 	protected void startPolling() {
 		siteNeighborFinder = makeSiteToNeighborFinder();
         neighborMetricFinder  = makeNeighborMetricFinder();
-        RSSUtils.schedule(new Poller(), 0);
+        RSSUtils.schedule(new Poller(), 7000); //delay start
 	}
 
     /**
@@ -103,7 +103,7 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
         snmpArgs = new String[snmpArgList.size()];
         snmpArgList.toArray(snmpArgs);
         
-        RSSUtils.schedule(new Poller(), 0);
+        RSSUtils.schedule(new Poller(), 7000); // delay start
     }
     
     protected String makeKey(SiteAddress destination) {
@@ -118,7 +118,7 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
      * to the given neighbor.  Subclasses can override to map through
      * other router data.
      */
-    protected InetAddress findMeasuredNeighbor(SiteAddress site, InetAddress neighbor) {
+    protected InetAddress findMeasuredNeighbor(InetAddress neighbor) {
     	return neighbor;
     }
     
@@ -127,7 +127,7 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
         for (Map.Entry<SiteAddress, InetAddress> entry : siteToNeighbor.entrySet()) {
             SiteAddress site = entry.getKey();
             InetAddress neighbor = entry.getValue();
-            InetAddress mappedNeighbor = findMeasuredNeighbor(site, neighbor);
+            InetAddress mappedNeighbor = findMeasuredNeighbor(neighbor);
             if (mappedNeighbor != null && walkNeighbor.equals(mappedNeighbor)) {
             	pushData(site, linkMetric);
                 foundOne = true;
@@ -141,14 +141,16 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
 	protected void pushData(SiteAddress site, long linkMetric) {
 		String key = makeKey(site);
 		DataValue value = new DataValue(transform.toMaxCapacity(linkMetric), CREDIBILITY);
-		log.info("Pushing feed key " +key+ " with value " + value);
+		if (log.isDebugEnabled()){
+			log.debug("Pushing feed key " +key+ " with value " + value);
+		}
 		newData(key, value, null);
 	}
     
     protected void publishNeighborMetrics(Map<InetAddress, Long> metrics,
     		Set<InetAddress> deletedNeighbors) {
     	for (InetAddress deletedNeighbor : deletedNeighbors) {
-    		publishNeighborToSites(deletedNeighbor, Long.MAX_VALUE);
+    		publishNeighborToSites(deletedNeighbor, Long.MAX_VALUE); // site unreachable
     	}
     	
         for (Map.Entry<InetAddress, Long> entry : metrics.entrySet()) {
@@ -203,7 +205,7 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
     	}
     }
     
-    protected void pollNeighbors() {
+    protected void collectNeighborMetrics() {
     	if (neighborMetricFinder.updateNeighborMetrics()) {
         	Map<InetAddress, Long> metrics = neighborMetricFinder.getResults();
         	Set<InetAddress> deletedNeighbors = neighborMetricFinder.getDeletedNeighbors();
@@ -215,19 +217,18 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
     	public void run() {
             // initialization
             if (!findMySite()) {
-            	// try again
+            	// no luck, try to get my site again later
             	reschedule();
             	return;
             }
             if (!findMyNeighbors()) {
-            	// no luck, try again later
+            	// no luck, try to get my Neighbors again later
         		reschedule();
         		return;
             }
             
-            // Periodic poll once we're initialized
-            pollNeighbors();
-            
+            // Periodic poll for next hop metrics once we're initialized
+            collectNeighborMetrics();
             reschedule();
         }
     	

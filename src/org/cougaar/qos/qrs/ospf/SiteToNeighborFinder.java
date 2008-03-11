@@ -31,9 +31,14 @@ public class SiteToNeighborFinder  {
         SynchronousMaskListener masks =
             new SynchronousMaskListener(IP_ROUTE_MASK);
         SimpleSnmpRequest request = new SimpleSnmpRequest(snmpArgs, IP_ROUTE_MASK);
+        if (RospfDataFeed.log.isDebugEnabled()) {
+        	RospfDataFeed.log.debug("Sending SNMP Poll");
+        }
         boolean maskStatus = masks.synchronousWalk(request);
-        Map<InetAddress, InetAddress> maskMap = masks.getSiteIpToIpMap();
-        
+        if (RospfDataFeed.log.isDebugEnabled()) {
+        	RospfDataFeed.log.debug("Done SNMP Poll");
+        }
+         Map<InetAddress, InetAddress> maskMap = masks.getSiteIpToIpMap();  
         SynchronousMaskListener nextHops =
             new SynchronousMaskListener(IP_ROUTE_NEXT_HOP);
         request = new SimpleSnmpRequest(snmpArgs, IP_ROUTE_NEXT_HOP);

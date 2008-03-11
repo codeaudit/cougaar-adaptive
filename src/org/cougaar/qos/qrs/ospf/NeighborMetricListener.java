@@ -68,8 +68,8 @@ class NeighborMetricListener extends SynchronousListener {
             	Variable var = binding.getVariable();
             	long metric = var.toLong();
             	results.put(neighborAddress, metric);
-            	if (RospfDataFeed.log.isInfoEnabled()) {
-            		RospfDataFeed.log.info(binding.toString());
+            	if (RospfDataFeed.log.isDebugEnabled()) {
+            		RospfDataFeed.log.debug(binding.toString());
             	}
             } catch (UnknownHostException e) {
             	throw new IllegalStateException(e.getMessage(), e);

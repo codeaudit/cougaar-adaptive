@@ -497,7 +497,7 @@ public class SimpleSnmpRequest {
             WalkListener body = new WalkListener() {
                 public void walkEvent(VariableBinding[] bindings) {
                     for (VariableBinding binding : bindings) {
-                        log.info(binding.toString());
+                        log.debug(binding.toString());
                     }
                 }
 
@@ -512,7 +512,7 @@ public class SimpleSnmpRequest {
             responseEvent = snmp.send(request, target);
             if (responseEvent != null) {
                 response = responseEvent.getResponse();
-                log.info("Received response after " + (System.currentTimeMillis() - startTime)
+                log.debug("Received response after " + (System.currentTimeMillis() - startTime)
                         + " millis");
             }
         }
@@ -561,11 +561,11 @@ public class SimpleSnmpRequest {
             }
 
             public void finished(TreeEvent e) {
-                if (log.isInfoEnabled()) {
-                    log.info("Total walk time:        " + (System.currentTimeMillis() - startTime)
+                if (log.isDebugEnabled()) {
+                    log.debug("Total walk time:        " + (System.currentTimeMillis() - startTime)
                             + " milliseconds");
-                    log.info("Total requests sent:    " + counts.requests);
-                    log.info("Total objects received: " + counts.objects);
+                    log.debug("Total requests sent:    " + counts.requests);
+                    log.debug("Total objects received: " + counts.objects);
                 }
                 if (e.isError()) {
                     log.error("The following error occurred during walk:");
