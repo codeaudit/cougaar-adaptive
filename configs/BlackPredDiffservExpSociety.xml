@@ -24,7 +24,7 @@
 		<component
 			class="org.cougaar.test.sequencer.experiment.ExperimentAggregatorPlugin">
 			<argument name="workerCount" value="2" />
-			<argument name="maxIdleTime" value="6000010" />
+			<argument name="maxIdleTime" value="60000010" />
 		</component>
 		<component
 			class="org.cougaar.test.sequencer.StoNNodeFacePlugin">

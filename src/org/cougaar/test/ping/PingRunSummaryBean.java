@@ -29,17 +29,20 @@ import java.io.StringWriter;
 import java.text.DecimalFormat;
 import java.util.Properties;
 
-import org.cougaar.test.knode.experiment.KnodeDiffServSequencerPlugin;
+import org.cougaar.test.ping.experiment.PingSteps;
 
 public class PingRunSummaryBean {
 	private final Anova summary;
+	private double pingSize=0.0;
 	private final String runId;
 	private final String suiteName;
 	
 	public PingRunSummaryBean(Anova summary, Properties props, String suiteName) {
 		this.summary = summary;
 		if (props != null) {
-			this.runId = props.getProperty(KnodeDiffServSequencerPlugin.PING_RUN_PROPERTY);
+			this.runId = props.getProperty(PingSteps.PING_RUN_PROPERTY);
+			String pingSizeString=props.getProperty(PingSteps.PING_SIZE_PROPERTY);
+			this.pingSize=pingSizeString == null? 0.0 : Double.parseDouble(pingSizeString);
 		} else {
 			runId = null;
 		}
@@ -54,19 +57,23 @@ public class PingRunSummaryBean {
 		return summary.getValueCount();
 	}
 	
-	public double getMin() {
+	public double getMinThrpPerPinger() {
 		return summary.min();
 	}
 	
-	public double getMax() {
+	public double getMaxThrpPerPinger() {
 		return summary.max();
 	}
 	
-	public double getSum() {
+	public double getThrpPings() {
 		return summary.getSum();
 	}
 	
-	public double getAvg() {
+	public double getThrpBits() {
+		return getThrpPings()*pingSize*8.0;
+	}
+
+	public double getAvgThrpPerPinger() {
 		return summary.average();
 	}
 	
@@ -74,14 +81,18 @@ public class PingRunSummaryBean {
 		return runId;
 	}
 	
+	public double getPingSize() {
+		return pingSize;
+	}
+		
 	public String toString() {
 		DecimalFormat fmt = new DecimalFormat("#0.00");
 		StringWriter writer = new StringWriter();
 		writer.append("Pingers=").append(fmt.format(getPingers()));
-		writer.append(" Pings/second=").append(fmt.format(getSum()));
-		writer.append(" Min/Avg/Max=").append(fmt.format(getMin()));
-		writer.append("/").append(fmt.format(getAvg()));
-		writer.append("/").append(fmt.format(getMax()));
+		writer.append(" Pings/second=").append(fmt.format(getThrpPings()));
+		writer.append(" Min/Avg/Max=").append(fmt.format(getMinThrpPerPinger()));
+		writer.append("/").append(fmt.format(getAvgThrpPerPinger()));
+		writer.append("/").append(fmt.format(getMaxThrpPerPinger()));
 		return writer.toString();
 	}
 	

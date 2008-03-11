@@ -36,10 +36,11 @@ public class PingRunSummaryCsvFormat extends CsvFormat<PingRunSummaryBean> {
 		super(PingRunSummaryBean.class);
 		DecimalFormat format = new DecimalFormat("#0.00");
 		defineField("pingers", "Pingers", null);
-		defineField("sum", "Ping/Sec", format);
-		defineField("min", "Min", format);
-		defineField("avg", "Avg", format);
-		defineField("max", "Max", format);
+		defineField("thrpPings", "Ping/Sec", format);
+		defineField("thrpBits","Bits/Sec",format);
+		defineField("minThrpPerPinger", "MinPingerThrp", format);
+		defineField("avgThrpPerPinger", "AvgPingerThrp", format);
+		defineField("maxThrpPerPinger", "MaxPingerThrp", format);
 		defineField("runId", "Run ID", null);
 		defineField("suiteId", "Suite", null);
 	}

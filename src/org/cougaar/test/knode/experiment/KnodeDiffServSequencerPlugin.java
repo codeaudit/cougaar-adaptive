@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.8 $
- * $Date: 2008-03-11 19:34:53 $
+ * $Revision: 1.9 $
+ * $Date: 2008-03-11 21:09:32 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -75,6 +75,7 @@ public class KnodeDiffServSequencerPlugin
         addStep(END_TEST, 0, null);
         addStep(SUMMARY_TEST, 0, summaryWork, 
         		PING_RUN_PROPERTY+"="+runName,
+        		PING_SIZE_PROPERTY+"="+"0.0",
         		KNODE_HOPS_PROPERTY+"="+hops,
         		KNODE_MIN_SLOTS_PROPERTY+"="+minSlots,
         		KNODE_TOPOLOGY_TYPE_PROPERTY+"="+topology);
@@ -180,6 +181,8 @@ public class KnodeDiffServSequencerPlugin
     public void load() {
         super.load();
         addTeeShapedExperimentSteps();
+        addLineShapedExperimentSteps();
+        addStarShapedExperimentSteps();
     }
     
     private void processStats(Collection<Set<Report>> reportsCollection, Properties props) {
