@@ -542,7 +542,7 @@ public class SimpleSnmpRequest {
         walk(snmp, request, target, body);
     }
 
-    private PDU walk(Snmp snmp, PDU request, Target target, final WalkListener body) {
+    private PDU walk(final Snmp snmp, PDU request, Target target, final WalkListener body) {
         request.setNonRepeaters(0);
         OID rootOID = request.get(0).getOid();
         PDU response = null;
@@ -572,6 +572,12 @@ public class SimpleSnmpRequest {
                     log.error(e.getErrorMessage());
                 }
                 body.walkCompletion(!e.isError());
+                //close snmp session, assumes one session per asynchronous walk (no reuse of snmp session)
+                try {
+					snmp.close();
+				} catch (IOException e1) {
+					log.error("Could not close snmp session:"+ e.getErrorMessage());
+				}
             }
         });
         return response;
