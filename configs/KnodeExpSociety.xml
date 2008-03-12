@@ -35,7 +35,7 @@
 			class="org.cougaar.core.qos.rss.ConfigFinderDataFeedComponent"
 			insertionpoint="Node.AgentManager.Agent.MetricsServices.Component">
 			<argument name="name" value="sites" />
-			<argument name="url" value="file:sites.conf" />
+			<argument name="url" value="file:sites_PredDiffserv.conf" />
 		</component>
 
 		<component class="org.cougaar.core.qos.metrics.FeedLoader"
@@ -46,6 +46,21 @@
 			<argument name="args"
 				value="-url file:metric_values.conf -poll 5000" />
 		</component>
+		
+		<component class="org.cougaar.test.knode.experiment.BlackRospfDataFeedComponent"
+                  insertionpoint="Node.AgentManager.Agent.MetricsServices.Component">
+        	<argument name="name" value="rospf"/>
+        	<!-- Fast poll -->
+        	<argument name="pollPeriod" value="10"/>
+        	<argument name="transform" value="org.cougaar.test.knode.experiment.BlackClosenessTransform"/>
+        	<argument name="router.community" value="public"/>
+        	<argument name="router.version" value="1"/>
+        	<argument name="router.address" value="192.168.162.1"/>
+        	<argument name="black.router.community" value="public"/>
+        	<argument name="black.router.version" value="1"/>
+        	<argument name="black.router.address" value="10.38.162.1"/>
+        	
+     	</component>
 
 
 		<agent name="Sequencer">
