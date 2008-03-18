@@ -134,7 +134,7 @@ public class RospfDataFeed extends SimpleQueueingDataFeed implements Constants {
             }
         }
         if (!foundOne) {
-			log.info("No site match for next hop " + walkNeighbor);
+			log.debug("No site match for next hop " + walkNeighbor);
 		}
     }
 
