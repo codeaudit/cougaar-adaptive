@@ -4,5 +4,7 @@
 Sample build script for the Cougaar sample debugging Tools.
 -->
 <project name="tools" basedir="." default="dist">
-	<import file="${basedir}/../build/data/cougaar-app-project-import.xml"/>
+	<property environment="env"/>
+	<property name="cougaar.install.path" value="${env.COUGAAR_INSTALL_PATH}" />
+	<import file="${cougaar.install.path}/build/data/cougaar-app-project-import.xml"/>
 </project>
