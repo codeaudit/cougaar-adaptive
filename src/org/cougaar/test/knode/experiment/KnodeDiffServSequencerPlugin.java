@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.10 $
- * $Date: 2008-03-12 17:35:11 $
+ * $Revision: 1.11 $
+ * $Date: 2008-03-18 18:22:13 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -95,25 +95,80 @@ public class KnodeDiffServSequencerPlugin
 		logExperimentDescription();
 	}
 	
-	// assumes singele server is on node170
+
 	private void addLineShapedExperimentSteps() {	
 		addRestartKnodeSteps();
-		addPingSteps("5hops", "5", "33","Line");
-		addDeleteLinkSteps("163", "164");
-		addMoveLinkSteps("163","164","40.0");
-		addPingSteps("4hops", "4", "33","Line");
-		addDeleteLinkSteps("164", "165");
-		addMoveLinkSteps("164","165","50.0");
-		addPingSteps("3hops", "3", "33","Line");
-		addDeleteLinkSteps("165", "166");
-		addMoveLinkSteps("165","166","60.0");
-		addPingSteps("2hops", "2", "33","Line");
-		addDeleteLinkSteps("166", "167");
-		addMoveLinkSteps("166","167","70.0");
-		addPingSteps("1hop", "1", "50","Line");
-		addStep(SHUTDOWN, 0, null);
+		addRunLineExpSteps("33","50","line");
 		logExperimentDescription();
 	}
+	
+	private void add1HairyLineShapedExperimentSteps() {	
+		addRestartKnodeSteps();
+		addAddLinkSteps("163","140");
+        addAddLinkSteps("164","143");
+        addAddLinkSteps("165","146");
+        addAddLinkSteps("166","149");
+        addAddLinkSteps("167","152");
+		addRunLineExpSteps("25","33","Hairy1Line");
+		logExperimentDescription();
+	}
+	
+	private void add2HairyLineShapedExperimentSteps() {	
+		addRestartKnodeSteps();
+		addAddLinkSteps("163","140");
+        addAddLinkSteps("164","143");
+        addAddLinkSteps("165","146");
+        addAddLinkSteps("166","149");
+        addAddLinkSteps("167","152");
+        addAddLinkSteps("163","141");
+        addAddLinkSteps("164","144");
+        addAddLinkSteps("165","147");
+        addAddLinkSteps("166","150");
+        addAddLinkSteps("167","153");
+		addRunLineExpSteps("20","25","Hairy2Line");
+		logExperimentDescription();
+	}
+	
+	private void add3HairyLineShapedExperimentSteps() {	
+		addRestartKnodeSteps();
+		addAddLinkSteps("163","140");
+        addAddLinkSteps("164","143");
+        addAddLinkSteps("165","146");
+        addAddLinkSteps("166","149");
+        addAddLinkSteps("167","152");
+        addAddLinkSteps("163","141");
+        addAddLinkSteps("164","144");
+        addAddLinkSteps("165","147");
+        addAddLinkSteps("166","150");
+        addAddLinkSteps("167","153");
+        addAddLinkSteps("163","142");
+        addAddLinkSteps("164","145");
+        addAddLinkSteps("165","148");
+        addAddLinkSteps("166","151");
+        addAddLinkSteps("167","154");
+		addRunLineExpSteps("16","20","Hairy3Line");
+		logExperimentDescription();
+	}
+
+
+	// assumes single server is on host app170, node170 off router 169
+	private void addRunLineExpSteps(String slots, String oneHopSlots, String topologyName) {
+		addPingSteps("5hops", "5", slots,topologyName);
+		addDeleteLinkSteps("163", "164");
+		addMoveLinkSteps("163","164","40.0");
+		addPingSteps("4hops", "4", slots,topologyName);
+		addDeleteLinkSteps("164", "165");
+		addMoveLinkSteps("164","165","50.0");
+		addPingSteps("3hops", "3", slots,topologyName);
+		addDeleteLinkSteps("165", "166");
+		addMoveLinkSteps("165","166","60.0");
+		addPingSteps("2hops", "2", slots,topologyName);
+		addDeleteLinkSteps("166", "167");
+		addMoveLinkSteps("166","167","70.0");
+		addPingSteps("1hop", "1", oneHopSlots,topologyName);
+		addStep(SHUTDOWN, 0, null);
+	}
+	
 	
 	private void addStarShapedExperimentSteps() {	
 		addRestartKnodeSteps();
@@ -142,9 +197,12 @@ public class KnodeDiffServSequencerPlugin
 
     public void load() {
         super.load();
-        addTeeShapedExperimentSteps();
-        addLineShapedExperimentSteps();
-        addStarShapedExperimentSteps();
+        add1HairyLineShapedExperimentSteps();
+        add2HairyLineShapedExperimentSteps();
+        add3HairyLineShapedExperimentSteps();
+        //addTeeShapedExperimentSteps();
+        //addLineShapedExperimentSteps();
+        //addStarShapedExperimentSteps();
     }
     
     private void processStats(Collection<Set<Report>> reportsCollection, Properties props) {
