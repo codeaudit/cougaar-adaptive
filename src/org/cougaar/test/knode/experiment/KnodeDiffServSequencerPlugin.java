@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.12 $
- * $Date: 2008-03-21 18:46:21 $
+ * $Revision: 1.13 $
+ * $Date: 2008-03-21 19:52:21 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -68,14 +68,15 @@ public class KnodeDiffServSequencerPlugin
 	
 	private void addPingSteps(String runName,String hops, String minSlots, String topology) {
 		long collectionTimeMillis= false? collectionLengthMillis : 180000;
-        addStep(START_TEST, steadyStateWaitMillis, null);
+        addStep(START_TEST, steadyStateWaitMillis, null,
+           		PING_SIZE_PROPERTY+"="+"0",
+        		PING_DELAY_PROPERTY+"="+"0" );
         addStep(START_STEADY_STATE, collectionTimeMillis, null);
         addStep(END_STEADY_STATE, 0, null);
         addStep(END_TEST, 0, null);
         addStep(SUMMARY_TEST, 0, summaryWork, 
         		PING_RUN_PROPERTY+"="+runName,
         		PING_SIZE_PROPERTY+"="+"0",
-        		PING_DELAY_PROPERTY+"="+"1000",
         		KNODE_HOPS_PROPERTY+"="+hops,
         		KNODE_MIN_SLOTS_PROPERTY+"="+minSlots,
         		KNODE_TOPOLOGY_TYPE_PROPERTY+"="+topology);
@@ -172,12 +173,12 @@ public class KnodeDiffServSequencerPlugin
 	
 	
 	private void addStarShapedExperimentSteps() {	
-		addRestartKnodeSteps();
-		addDeleteLinkSteps("163", "164");
-		addDeleteLinkSteps("164", "165");
-		addDeleteLinkSteps("165", "166");
-		addDeleteLinkSteps("166", "167");
-		addMoveLinkSteps("163","167","30.0");		
+//		addRestartKnodeSteps();
+//		addDeleteLinkSteps("163", "164");
+//		addDeleteLinkSteps("164", "165");
+//		addDeleteLinkSteps("165", "166");
+//		addDeleteLinkSteps("166", "167");
+//		addMoveLinkSteps("163","167","30.0");		
 		addPingSteps("2nodes", "1", "50","Star");
 		
 		addAddLinkSteps("166", "167",30000);
