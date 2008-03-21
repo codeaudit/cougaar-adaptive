@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingSenderPlugin.java
- * $Revision: 1.4 $
- * $Date: 2008-03-21 18:46:21 $
+ * $Revision: 1.5 $
+ * $Date: 2008-03-21 22:02:54 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -72,12 +72,13 @@ public class PingBBSenderPlugin extends TodoPlugin {
         // Ping count starts negative, when zero the pinger has started
         waitTime=startRequest.getWaitTimeMillis();
         payloadBytes=startRequest.getPayloadBytes();
+        Statistic stat= request.makeStatistic(sessionName);
         byte[] payload= new byte[payloadBytes];
         // TODO initialize array to something that compresses normally
         sendQuery =
                 new PingQuery(uids,
                               -preambleCount,
-                              new Anova(sessionName),
+                              stat,
                               agentId,
                               pluginId,
                               targetAgentId,

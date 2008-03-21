@@ -13,6 +13,7 @@ public interface PingSteps extends ExperimentSteps {
 	public static final String PING_RUN_PROPERTY = "runName";
 	public static final String PING_SIZE_PROPERTY = "pingSize";
 	public static final String PING_DELAY_PROPERTY = "pingDelayMillis";
+	public static final String PING_STATISTIC_PROPERTY = "statisticKind";
     public static final ExperimentStep START_TEST = new ExperimentStep("StartTest");
     public static final ExperimentStep START_STEADY_STATE = new ExperimentStep("StartSteadyStateCollection");
     public static final ExperimentStep END_STEADY_STATE = new ExperimentStep("EndSteadyStateCollection");

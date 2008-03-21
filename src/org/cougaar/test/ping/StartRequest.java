@@ -16,8 +16,8 @@
 *
 * Created : Aug 14, 2007
 * Workfile: StartRequest.java
-* $Revision: 1.2 $
-* $Date: 2008-03-21 18:46:21 $
+* $Revision: 1.3 $
+* $Date: 2008-03-21 22:02:54 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -29,9 +29,21 @@ import org.cougaar.core.util.UID;
 
 
 public class StartRequest extends RunRequest {
-	private long waitTimeMillis;
-	private int payloadBytes;
+	private final long waitTimeMillis;
+	private final int payloadBytes;
+	private final StatisticKind statisticKind;
 
+	public StartRequest(UID uid) {
+		this(uid, 0, 0, StatisticKind.ANOVA.name());
+	}
+	
+	public StartRequest(UID uid, long delay, int length, String statKind) {
+		super(uid);
+		this.waitTimeMillis=delay;
+		this.payloadBytes=length;
+		this.statisticKind = StatisticKind.valueOf(statKind);
+	}
+	
     public long getWaitTimeMillis() {
 		return waitTimeMillis;
 	}
@@ -39,14 +51,9 @@ public class StartRequest extends RunRequest {
 	public int getPayloadBytes() {
 		return payloadBytes;
 	}
-
-	public StartRequest(UID uid) {
-		this(uid, 0, 0);
-    }
 	
-	public StartRequest(UID uid, long delay, int length) {
-		super(uid);
-		this.waitTimeMillis=delay;
-		this.payloadBytes=length;
+	public Statistic<?> makeStatistic(String name) {
+		return statisticKind.makeStatistic(name);
 	}
+
 }
