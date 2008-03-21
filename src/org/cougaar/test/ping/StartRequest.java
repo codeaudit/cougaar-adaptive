@@ -16,8 +16,8 @@
 *
 * Created : Aug 14, 2007
 * Workfile: StartRequest.java
-* $Revision: 1.1 $
-* $Date: 2008-02-26 15:31:56 $
+* $Revision: 1.2 $
+* $Date: 2008-03-21 18:46:21 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -29,8 +29,24 @@ import org.cougaar.core.util.UID;
 
 
 public class StartRequest extends RunRequest {
+	private long waitTimeMillis;
+	private int payloadBytes;
 
-    public StartRequest(UID uid) {
-        super(uid);
+    public long getWaitTimeMillis() {
+		return waitTimeMillis;
+	}
+
+	public int getPayloadBytes() {
+		return payloadBytes;
+	}
+
+	public StartRequest(UID uid) {
+		this(uid, 0, 0);
     }
+	
+	public StartRequest(UID uid, long delay, int length) {
+		super(uid);
+		this.waitTimeMillis=delay;
+		this.payloadBytes=length;
+	}
 }

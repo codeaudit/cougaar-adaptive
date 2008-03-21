@@ -16,8 +16,8 @@
 *
 * Created : Aug 14, 2007
 * Workfile: PingQuery.java
-* $Revision: 1.1 $
-* $Date: 2008-02-26 15:31:56 $
+* $Revision: 1.2 $
+* $Date: 2008-03-21 18:46:21 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -36,6 +36,7 @@ public class PingQuery  extends UniqueObjectBase {
     private String senderPlugin;
     private MessageAddress receiverAgent;
     private String receiverPlugin;
+    private byte[] payload;
  
     public PingQuery(UIDService uids,
                      int count,
@@ -43,7 +44,8 @@ public class PingQuery  extends UniqueObjectBase {
                      MessageAddress senderAgent,
                      String senderPlugin,
                      MessageAddress receiverAgent,
-                     String receiverPlugin) {
+                     String receiverPlugin,
+                     byte[] payload) {
         super(uids.nextUID());
         this.count = count;
         this.statistic = statistic;
@@ -51,6 +53,7 @@ public class PingQuery  extends UniqueObjectBase {
         this.senderPlugin = senderPlugin;
         this.receiverAgent = receiverAgent;
         this.receiverPlugin = receiverPlugin;
+        this.payload=payload;
     }
  
     public int getCount() {
@@ -88,4 +91,12 @@ public class PingQuery  extends UniqueObjectBase {
     public void setReceiverAgent(MessageAddress receiverAgent) {
         this.receiverAgent = receiverAgent;
     }
+
+	public byte[] getPayload() {
+		return payload;
+	}
+
+	public void setPayload(byte[] payload) {
+		this.payload = payload;
+	}
 }

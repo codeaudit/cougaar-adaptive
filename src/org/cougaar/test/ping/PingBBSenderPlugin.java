@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingSenderPlugin.java
- * $Revision: 1.3 $
- * $Date: 2008-03-04 21:40:58 $
+ * $Revision: 1.4 $
+ * $Date: 2008-03-21 18:46:21 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -46,15 +46,14 @@ public class PingBBSenderPlugin extends TodoPlugin {
     @Cougaar.Arg(name = "pluginId", defaultValue = "a", description = "Sender Plugin Id")
     public String pluginId;
     
-    @Cougaar.Arg(name = "waitTime", defaultValue = "0", description = "Time between pings")
-    public int waitTime;
-
     private long lastQueryTime;
     private PingQuery sendQuery;
-    private RunRequest startRequest, stopRequest;
+    private StartRequest startRequest;
+    private StopRequest stopRequest;
     private String sessionName;
     private boolean failed = false;
-
+    private long waitTime;
+    private int payloadBytes;
 
     public void load() {
         super.load();
@@ -71,6 +70,10 @@ public class PingBBSenderPlugin extends TodoPlugin {
     public void executeStartRun(StartRequest request) {
         startRequest = request;
         // Ping count starts negative, when zero the pinger has started
+        waitTime=startRequest.getWaitTimeMillis();
+        payloadBytes=startRequest.getPayloadBytes();
+        byte[] payload= new byte[payloadBytes];
+        // TODO initialize array to something that compresses normally
         sendQuery =
                 new PingQuery(uids,
                               -preambleCount,
@@ -78,7 +81,8 @@ public class PingBBSenderPlugin extends TodoPlugin {
                               agentId,
                               pluginId,
                               targetAgentId,
-                              targetPluginId);
+                              targetPluginId,
+                              payload);
         lastQueryTime = System.nanoTime();
         blackboard.publishAdd(sendQuery);
     }

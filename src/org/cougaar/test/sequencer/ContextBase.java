@@ -16,8 +16,8 @@
 *
 * Created : Aug 9, 2007
 * Workfile: RegressionCondition.java
-* $Revision: 1.2 $
-* $Date: 2008-02-28 15:41:49 $
+* $Revision: 1.3 $
+* $Date: 2008-03-21 18:46:21 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -55,7 +55,11 @@ public class ContextBase implements Context {
         return properties.getProperty(key);
     }
     
-    public String toString() {
+    public Properties getProperties() {
+		return properties;
+	}
+
+	public String toString() {
         return "Context: hasFailed="+failed+" workerTimeout="+workerTimout;
     }
 

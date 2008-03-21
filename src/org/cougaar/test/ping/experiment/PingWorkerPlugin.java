@@ -16,8 +16,8 @@
 *
 * Created : Aug 14, 2007
 * Workfile: PingWorkerPlugin.java
-* $Revision: 1.3 $
-* $Date: 2008-03-03 22:30:20 $
+* $Revision: 1.4 $
+* $Date: 2008-03-21 18:46:21 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -40,6 +40,7 @@ import org.cougaar.test.sequencer.Report;
 import org.cougaar.test.sequencer.ReportBase;
 import org.cougaar.test.sequencer.experiment.ExperimentStep;
 import org.cougaar.test.sequencer.experiment.ExperimentWorkerPlugin;
+import org.cougaar.util.TypedProperties;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.util.annotations.Cougaar;
 import org.cougaar.util.annotations.Subscribe;
@@ -55,8 +56,11 @@ public class PingWorkerPlugin extends ExperimentWorkerPlugin implements PingStep
     public int pingerCount;
     
     protected void doStep(ExperimentStep step, Context context) {
+    	TypedProperties tprops = new TypedProperties(context.getProperties());
         if (START_TEST.equals(step)) { 
-            startRequest = new StartRequest(uids.nextUID());
+        	long wait = tprops.getLong(PING_DELAY_PROPERTY, 0);
+        	int size = tprops.getInt(PING_SIZE_PROPERTY, 0);
+            startRequest = new StartRequest(uids.nextUID(), wait, size );
             blackboard.publishAdd(startRequest);
             // defer until all start requests have returned
         } else if (START_STEADY_STATE.equals(step)) {

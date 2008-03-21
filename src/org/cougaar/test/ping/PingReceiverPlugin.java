@@ -16,8 +16,8 @@
 *
 * Created : Aug 14, 2007
 * Workfile: PingReceiverPlugin.java
-* $Revision: 1.1 $
-* $Date: 2008-02-26 15:31:56 $
+* $Revision: 1.2 $
+* $Date: 2008-03-21 18:46:21 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -55,7 +55,7 @@ public class PingReceiverPlugin extends AnnotatedSubscriptionsPlugin {
             PingReply reply = 
                 new PingReply(uids,query.getCount(),
                               query.getSenderAgent(), query.getSenderPlugin(), 
-                              agentId,pluginId);
+                              agentId,pluginId,query.getPayload());
             UID uid = uids.nextUID();
             receiverRelay = new SimpleRelaySource(uid, agentId, sender, reply);
             returnRelays.put(sender, receiverRelay);
@@ -73,7 +73,7 @@ public class PingReceiverPlugin extends AnnotatedSubscriptionsPlugin {
             PingQuery query = (PingQuery) senderRelay.getQuery();
             PingReply reply = new PingReply(uids,query.getCount(),
                                             query.getSenderAgent(), query.getSenderPlugin(), 
-                                            agentId,pluginId);
+                                            agentId,pluginId,query.getPayload());
             receiverRelay.setQuery(reply);
             Collection<?> changes = Collections.singleton(reply);
             blackboard.publishChange(receiverRelay, changes);

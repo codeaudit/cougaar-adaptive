@@ -16,8 +16,8 @@
 *
 * Created : Aug 14, 2007
 * Workfile: PingReply.java
-* $Revision: 1.1 $
-* $Date: 2008-02-26 15:31:56 $
+* $Revision: 1.2 $
+* $Date: 2008-03-21 18:46:21 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -35,6 +35,7 @@ public class PingReply extends UniqueObjectBase {
     private String senderPlugin;
     private MessageAddress receiverAgent;
     private String receiverPlugin;
+    private byte[] payload;
  
 
    public PingReply(UIDService uids,
@@ -42,13 +43,15 @@ public class PingReply extends UniqueObjectBase {
                      MessageAddress originatorAgent,
                      String orginatorPlugin,
                      MessageAddress targetAgent,
-                     String targetPlugin) {
+                     String targetPlugin,
+                     byte[] payload) {
         super(uids.nextUID());
         this.count = count;
         this.senderAgent = originatorAgent;
         this.senderPlugin = orginatorPlugin;
         this.receiverAgent = targetAgent;
         this.receiverPlugin = targetPlugin;
+        this.payload=payload;
     }
 
 
@@ -79,4 +82,14 @@ public class PingReply extends UniqueObjectBase {
     public void setReceiverAgent(MessageAddress logicalServerAddress) {
         receiverAgent = logicalServerAddress;
     }
+
+
+	public byte[] getPayload() {
+		return payload;
+	}
+
+
+	public void setPayload(byte[] payload) {
+		this.payload = payload;
+	}
 }

@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingReceiverPlugin.java
- * $Revision: 1.1 $
- * $Date: 2008-02-26 15:31:56 $
+ * $Revision: 1.2 $
+ * $Date: 2008-03-21 18:46:21 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -50,6 +50,7 @@ public class PingBBReceiverPlugin extends AnnotatedSubscriptionsPlugin {
     public void executeNewQueryRelay(PingQuery query) {
         String senderPluginId = query.getSenderPlugin();
         MessageAddress senderAgentId = query.getSenderAgent();
+        byte[] payload =query.getPayload();
         String senderKey = makeSenderKey(senderAgentId, senderPluginId);
         PingReply reply = returnRelays.get(senderKey);
         if (reply == null) {
@@ -59,12 +60,14 @@ public class PingBBReceiverPlugin extends AnnotatedSubscriptionsPlugin {
                                   senderAgentId,
                                   senderPluginId,
                                   agentId,
-                                  pluginId);
+                                  pluginId,
+                                  payload);
             returnRelays.put(senderKey, reply);
             blackboard.publishAdd(reply);
         } else {
             int count = query.getCount();
             reply.setCount(count);
+            reply.setPayload(payload);
             Collection<?> changes = Collections.singleton(count);
             blackboard.publishChange(reply, changes);            
         }

@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingSenderPlugin.java
- * $Revision: 1.2 $
- * $Date: 2008-03-04 21:40:58 $
+ * $Revision: 1.3 $
+ * $Date: 2008-03-21 18:46:21 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -50,15 +50,14 @@ public class PingSenderPlugin extends TodoPlugin {
     @Cougaar.Arg(name = "pluginId", defaultValue="a", description = "Sender Plugin Id")
     public String pluginId;
  
-    @Cougaar.Arg(name = "waitTime", defaultValue = "0", description = "Time between pings")
-    public int waitTime;
-
-    
     private long lastQueryTime;
     private SimpleRelay sendRelay;
-    private RunRequest startRequest, stopRequest;
+    private StartRequest startRequest;
+    private StopRequest stopRequest;
     private String sessionName;
     private boolean failed = false;
+    private int payloadBytes;
+    private long waitTime;
 
     public void load() {
         super.load();
@@ -71,10 +70,16 @@ public class PingSenderPlugin extends TodoPlugin {
     @Cougaar.Execute(on=Subscribe.ModType.ADD)
     public void executeStartRun(StartRequest request) {
         startRequest = request;
-        UID uid = uids.nextUID();
+        // Ping count starts negative, when zero the pinger has started
+        waitTime=startRequest.getWaitTimeMillis();
+        payloadBytes=startRequest.getPayloadBytes();
+        byte[] payload= new byte[payloadBytes];
+        // TODO initialize array to something that compresses normally
+         UID uid = uids.nextUID();
         // Ping count starts negative, when zero the pinger has started
         Object query = new PingQuery(uids, -preambleCount, new Anova(sessionName),
-                                     agentId, pluginId, targetAgent, targetPlugin);
+                                     agentId, pluginId, targetAgent, targetPlugin,
+                                     payload);
         sendRelay = new SimpleRelaySource(uid, agentId, targetAgent, query);
         lastQueryTime = System.nanoTime();
         blackboard.publishAdd(sendRelay);
