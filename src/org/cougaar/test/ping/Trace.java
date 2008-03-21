@@ -5,7 +5,7 @@ import org.cougaar.util.log.Logging;
 
 public class Trace implements Statistic<Trace> {
 	
-	private final Logger log = Logging.getLogger(getClass().getName());
+	private transient final Logger log = Logging.getLogger(getClass().getName());
 	private final String name;
 	
 	public Trace(String name) {
@@ -18,7 +18,7 @@ public class Trace implements Statistic<Trace> {
 	}
 
 	public void newValue(long value) {
-		log.shout("new value" + value);
+		log.shout("new value" +name + " " + value);
 
 	}
 

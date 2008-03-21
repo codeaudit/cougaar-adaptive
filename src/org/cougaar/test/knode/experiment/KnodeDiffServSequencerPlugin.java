@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.14 $
- * $Date: 2008-03-21 22:02:54 $
+ * $Revision: 1.15 $
+ * $Date: 2008-03-21 22:12:03 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -71,7 +71,7 @@ public class KnodeDiffServSequencerPlugin
         addStep(START_TEST, steadyStateWaitMillis, null,
            		PING_SIZE_PROPERTY+"="+"0",
         		PING_DELAY_PROPERTY+"="+"0",
-        		PING_STATISTIC_PROPERTY+"="+"TRACE");
+        		PING_STATISTIC_PROPERTY+"="+"ANOVA");
         addStep(START_STEADY_STATE, collectionTimeMillis, null);
         addStep(END_STEADY_STATE, 0, null);
         addStep(END_TEST, 0, null);

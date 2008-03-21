@@ -16,8 +16,8 @@
 *
 * Created : Aug 14, 2007
 * Workfile: PingQuery.java
-* $Revision: 1.2 $
-* $Date: 2008-03-21 18:46:21 $
+* $Revision: 1.3 $
+* $Date: 2008-03-21 22:12:03 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -31,7 +31,7 @@ import org.cougaar.core.util.UniqueObjectBase;
 
 public class PingQuery  extends UniqueObjectBase {
     private int count;
-    private Statistic<?> statistic;
+    private transient Statistic<?> statistic;
     private MessageAddress senderAgent;
     private String senderPlugin;
     private MessageAddress receiverAgent;
