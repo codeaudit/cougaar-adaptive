@@ -7,7 +7,7 @@ Example regression test society
 	<node name="Node1">
 		<component
 			class="org.cougaar.test.ping.regression.PingSequencerPlugin">
-			<argument name="suiteName" value="Ping Hub 4" />
+			<argument name="suiteName" value="Ping Hub 5/4" />
 			<argument name="defaultWorkerTimeout" value="10001" />
 			<argument name="defaultNodeTimeout" value="100001" />
 			<argument name="nodeCount" value="1" />
