@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.15 $
- * $Date: 2008-03-21 22:12:03 $
+ * $Revision: 1.16 $
+ * $Date: 2008-03-28 20:49:19 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -66,10 +66,10 @@ public class KnodeDiffServSequencerPlugin
 		}
 	}; 
 	
-	private void addPingSteps(String runName,String hops, String minSlots, String topology) {
+	private void addPingSteps(String size, String runName,String hops, String minSlots, String topology) {
 		long collectionTimeMillis= false? collectionLengthMillis : 180000;
         addStep(START_TEST, steadyStateWaitMillis, null,
-           		PING_SIZE_PROPERTY+"="+"0",
+           		PING_SIZE_PROPERTY+"="+size,
         		PING_DELAY_PROPERTY+"="+"0",
         		PING_STATISTIC_PROPERTY+"="+"ANOVA");
         addStep(START_STEADY_STATE, collectionTimeMillis, null);
@@ -77,7 +77,7 @@ public class KnodeDiffServSequencerPlugin
         addStep(END_TEST, 0, null);
         addStep(SUMMARY_TEST, 0, summaryWork, 
         		PING_RUN_PROPERTY+"="+runName,
-        		PING_SIZE_PROPERTY+"="+"0",
+        		PING_SIZE_PROPERTY+"="+size,
         		KNODE_HOPS_PROPERTY+"="+hops,
         		KNODE_MIN_SLOTS_PROPERTY+"="+minSlots,
         		KNODE_TOPOLOGY_TYPE_PROPERTY+"="+topology);
@@ -85,19 +85,35 @@ public class KnodeDiffServSequencerPlugin
 	
 	private void addTeeShapedExperimentSteps() {	
 		addRestartKnodeSteps();
-		addPingSteps("5hops", "5", "33","Tee");
+		addPingSteps("0", "5hops", "5", "33","Tee");
 		addMoveLinkSteps("163","164","40.0");
-		addPingSteps("4hops", "4", "25","Tee");
+		addPingSteps("0", "4hops", "4", "25","Tee");
 		addMoveLinkSteps("164","165","50.0");
-		addPingSteps("3hops", "3", "25","Tee");
+		addPingSteps("0", "3hops", "3", "25","Tee");
 		addMoveLinkSteps("165","166","60.0");
-		addPingSteps("2hops", "2", "25","Tee");
+		addPingSteps("0", "2hops", "2", "25","Tee");
 		addMoveLinkSteps("166","167","70.0");
-		addPingSteps("1hop", "1", "33","Tee");
+		addPingSteps("0", "1hop", "1", "33","Tee");
 		addStep(SHUTDOWN, 0, null);
 		logExperimentDescription();
 	}
 	
+	private void addLengthExperimentSteps() {	
+		addRestartKnodeSteps();
+		//addPingSteps("1", "1length", "5", "33","Line");
+		//ddPingSteps("10", "10length", "5", "33","Line");
+		//addPingSteps("100", "100length", "5", "33","Line");
+		//addPingSteps("1000", "1000length", "5", "33","Line");
+		addPingSteps("10000", "10000length", "5", "33","Line");
+		addPingSteps("20000", "20000length", "5", "33","Line");
+		addPingSteps("50000", "50000length", "5", "33","Line");
+		addPingSteps("100000", "100000length", "5", "33","Line");
+		addPingSteps("200000", "20000length", "5", "33","Line");
+		addPingSteps("500000", "500000length", "5", "33","Line");
+		
+		addStep(SHUTDOWN, 0, null);
+		logExperimentDescription();
+	}
 
 	private void addLineShapedExperimentSteps() {	
 		addRestartKnodeSteps();
@@ -156,19 +172,19 @@ public class KnodeDiffServSequencerPlugin
 
 	// assumes single server is on host app170, node170 off router 169
 	private void addRunLineExpSteps(String slots, String oneHopSlots, String topologyName) {
-		addPingSteps("5hops", "5", slots,topologyName);
+		addPingSteps("0", "5hops", "5", slots,topologyName);
 		addDeleteLinkSteps("163", "164");
 		addMoveLinkSteps("163","164","40.0");
-		addPingSteps("4hops", "4", slots,topologyName);
+		addPingSteps("0", "4hops", "4", slots,topologyName);
 		addDeleteLinkSteps("164", "165");
 		addMoveLinkSteps("164","165","50.0");
-		addPingSteps("3hops", "3", slots,topologyName);
+		addPingSteps("0", "3hops", "3", slots,topologyName);
 		addDeleteLinkSteps("165", "166");
 		addMoveLinkSteps("165","166","60.0");
-		addPingSteps("2hops", "2", slots,topologyName);
+		addPingSteps("0", "2hops", "2", slots,topologyName);
 		addDeleteLinkSteps("166", "167");
 		addMoveLinkSteps("166","167","70.0");
-		addPingSteps("1hop", "1", oneHopSlots,topologyName);
+		addPingSteps("0", "1hop", "1", oneHopSlots,topologyName);
 		addStep(SHUTDOWN, 0, null);
 	}
 	
@@ -180,19 +196,19 @@ public class KnodeDiffServSequencerPlugin
 //		addDeleteLinkSteps("165", "166");
 //		addDeleteLinkSteps("166", "167");
 //		addMoveLinkSteps("163","167","30.0");		
-		addPingSteps("2nodes", "1", "50","Star");
+		addPingSteps("0", "2nodes", "1", "50","Star");
 		
 		addAddLinkSteps("166", "167",30000);
-		addPingSteps("3nodes", "1", "33","Star");
+		addPingSteps("0", "3nodes", "1", "33","Star");
 		
 		addAddLinkSteps("165", "167",30000);
-		addPingSteps("4nodes", "1", "25","Star");
+		addPingSteps("0", "4nodes", "1", "25","Star");
 		
 		addAddLinkSteps("164", "167",30000);
-		addPingSteps("5nodes", "1", "20","Star");
+		addPingSteps("0", "5nodes", "1", "20","Star");
 		
 		addAddLinkSteps("163", "167",30000);
-		addPingSteps("6nodes", "1", "16","Star");
+		addPingSteps("0", "6nodes", "1", "16","Star");
 		
 		addStep(SHUTDOWN, 0, null);
 		logExperimentDescription();
@@ -200,12 +216,9 @@ public class KnodeDiffServSequencerPlugin
 
     public void load() {
         super.load();
-        //add1HairyLineShapedExperimentSteps();
-        //add2HairyLineShapedExperimentSteps();
-        //add3HairyLineShapedExperimentSteps();
-        //addTeeShapedExperimentSteps();
-        //addLineShapedExperimentSteps();
-        addStarShapedExperimentSteps();
+        suiteName="Length";
+        addLengthExperimentSteps();
+        
     }
     
     private void processStats(Collection<Set<Report>> reportsCollection, Properties props) {

@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingSenderPlugin.java
- * $Revision: 1.5 $
- * $Date: 2008-03-21 22:02:54 $
+ * $Revision: 1.6 $
+ * $Date: 2008-03-28 20:49:19 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -73,7 +73,12 @@ public class PingBBSenderPlugin extends TodoPlugin {
         waitTime=startRequest.getWaitTimeMillis();
         payloadBytes=startRequest.getPayloadBytes();
         Statistic stat= request.makeStatistic(sessionName);
+        // Todo intialize to something compressable
         byte[] payload= new byte[payloadBytes];
+        for (int i=0; i< payloadBytes; i++) {
+        	payload[i]=64;
+        }
+        log.shout("Length =" + payload.length + "spec=" +payloadBytes );
         // TODO initialize array to something that compresses normally
         sendQuery =
                 new PingQuery(uids,
