@@ -87,6 +87,7 @@
 				class="org.cougaar.test.ping.regression.PingTesterPlugin">
 				<argument name="workerId" value="source3" />
 				<argument name="pingerCount" value="2" />
+				<argument name="payloadSize" value="10000" />
 			</component>
 		</agent>
 	</node>
@@ -113,6 +114,7 @@
 				class="org.cougaar.test.ping.regression.PingTesterPlugin">
 				<argument name="workerId" value="source4" />
 				<argument name="pingerCount" value="1" />
+				<argument name="interPingDelay" value="100" />
 			</component>
 		</agent>
 		

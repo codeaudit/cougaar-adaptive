@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.7 $
- * $Date: 2008-03-04 21:38:17 $
+ * $Revision: 1.8 $
+ * $Date: 2008-03-30 14:18:57 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -35,6 +35,7 @@ import org.cougaar.test.ping.Anova;
 import org.cougaar.test.ping.CsvWriter;
 import org.cougaar.test.ping.PingRunSummaryBean;
 import org.cougaar.test.ping.PingRunSummaryCsvFormat;
+import org.cougaar.test.ping.StatisticKind;
 import org.cougaar.test.ping.SummaryReport;
 import org.cougaar.test.sequencer.Report;
 import org.cougaar.test.sequencer.experiment.AbstractExperimentSequencerPlugin;
@@ -58,6 +59,18 @@ public class PingSequencerPlugin
                       		" before starting collection")
     public long steadyStateWaitMillis; 
     
+    @Cougaar.Arg(name="payloadSize", defaultValue="0", description="Payload Sizes in Bytes")
+    public long payloadSize; 
+
+    @Cougaar.Arg(name="interPingDelay", defaultValue="0", 
+    		description="Time between sending next ping after receiving reply (in milliseconds)")
+    public long interPingDelay; 
+
+    // TODO JAZ why can't I use StatisticKind.ANOVA.toString()
+    @Cougaar.Arg(name="statisticsKind", defaultValue="ANOVA", 
+    		description="Kind of statistics to collect (ANOVA, TRACE, or BOTH)")
+    public StatisticKind statisticsKind; 
+
     @Cougaar.Arg(name="csvFileName", defaultValue="",
                       description="File name to append results, default directory is run")
     public String csvFileName;
@@ -71,7 +84,10 @@ public class PingSequencerPlugin
     public void load() {
         super.load();
         addStep(SOCIETY_READY, 0, null);
-        addStep(START_TEST, steadyStateWaitMillis, null);
+        addStep(START_TEST, steadyStateWaitMillis, null,
+        		PING_SIZE_PROPERTY+"="+payloadSize,
+        		PING_DELAY_PROPERTY+"="+ interPingDelay,
+        		PING_STATISTICS_PROPERTY+"="+statisticsKind );
         addStep(START_STEADY_STATE, collectionLengthMillis, null);
         addStep(END_STEADY_STATE, 0, null);
         addStep(END_TEST, 0, null);

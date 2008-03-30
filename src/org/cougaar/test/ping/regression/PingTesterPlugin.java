@@ -16,8 +16,8 @@
 *
 * Created : Aug 14, 2007
 * Workfile: PingWorkerPlugin.java
-* $Revision: 1.4 $
-* $Date: 2008-02-26 21:10:05 $
+* $Revision: 1.5 $
+* $Date: 2008-03-30 14:18:57 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -33,6 +33,7 @@ import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.test.ping.Anova;
 import org.cougaar.test.ping.PingQuery;
 import org.cougaar.test.ping.StartRequest;
+import org.cougaar.test.ping.StatisticKind;
 import org.cougaar.test.ping.StopRequest;
 import org.cougaar.test.ping.SummaryReport;
 import org.cougaar.test.sequencer.Context;
@@ -53,9 +54,21 @@ public class PingTesterPlugin extends AbstractRegressionTesterPlugin<Report> {
     
     @Cougaar.Arg(name="pingerCount", required=true)
     public int pingerCount;
+    
+    @Cougaar.Arg(name="payloadSize", defaultValue="0", description="Payload Sizes in Bytes")
+    public int payloadSize; 
 
+    @Cougaar.Arg(name="interPingDelay", defaultValue="0", 
+    		description="Time between sending next ping after receiving reply (in milliseconds)")
+    public long interPingDelay; 
+
+    // TODO JAZ why can't I use StatisticKind.ANOVA.toString()
+    @Cougaar.Arg(name="statisticsKind", defaultValue="ANOVA", 
+    		description="Kind of statistics to collect (ANOVA, TRACE, or BOTH)")
+    public StatisticKind statisticsKind; 
+ 
     protected void doStartTest(Context context) {
-        startRequest = new StartRequest(uids.nextUID());
+        startRequest = new StartRequest(uids.nextUID(), interPingDelay, payloadSize, statisticsKind.name());
         blackboard.publishAdd(startRequest);
         //defer until all Start requests have returned
     }

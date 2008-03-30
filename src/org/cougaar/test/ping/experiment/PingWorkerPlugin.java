@@ -16,8 +16,8 @@
 *
 * Created : Aug 14, 2007
 * Workfile: PingWorkerPlugin.java
-* $Revision: 1.5 $
-* $Date: 2008-03-21 22:02:53 $
+* $Revision: 1.6 $
+* $Date: 2008-03-30 14:18:57 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -60,7 +60,7 @@ public class PingWorkerPlugin extends ExperimentWorkerPlugin implements PingStep
         if (START_TEST.equals(step)) { 
         	long wait = tprops.getLong(PING_DELAY_PROPERTY, 0);
         	int size = tprops.getInt(PING_SIZE_PROPERTY, 0);
-        	String statKind = tprops.getString(PING_STATISTIC_PROPERTY, "ANOVA");
+        	String statKind = tprops.getString(PING_STATISTICS_PROPERTY, "ANOVA");
             startRequest = new StartRequest(uids.nextUID(), wait, size, statKind );
             blackboard.publishAdd(startRequest);
             // defer until all start requests have returned

@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.16 $
- * $Date: 2008-03-28 20:49:19 $
+ * $Revision: 1.17 $
+ * $Date: 2008-03-30 14:18:57 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -33,6 +33,7 @@ import java.util.Set;
 
 import org.cougaar.test.ping.Anova;
 import org.cougaar.test.ping.CsvWriter;
+import org.cougaar.test.ping.StatisticKind;
 import org.cougaar.test.ping.SummaryReport;
 import org.cougaar.test.ping.experiment.PingSteps;
 import org.cougaar.test.sequencer.Report;
@@ -66,12 +67,31 @@ public class KnodeDiffServSequencerPlugin
 		}
 	}; 
 	
-	private void addPingSteps(String size, String runName,String hops, String minSlots, String topology) {
+    @Cougaar.Arg(name="payloadSize", defaultValue="0", description="Payload Sizes in Bytes")
+    public long payloadSize; 
+
+    @Cougaar.Arg(name="interPingDelay", defaultValue="0", 
+    		description="Time between sending next ping after receiving reply (in milliseconds)")
+    public long interPingDelay; 
+
+    // TODO JAZ why can't I use StatisticKind.ANOVA.toString()
+    @Cougaar.Arg(name="statisticsKind", defaultValue="ANOVA", 
+    		description="Kind of statistics to collect (ANOVA, TRACE, or BOTH)")
+    public StatisticKind statisticsKind; 
+    
+    
+    private void addPingSteps(String runName, String hops, String minSlots, String topology)
+    {
+    	addPingSteps(payloadSize, interPingDelay, statisticsKind, runName, hops, minSlots, topology);
+    }
+	
+	private void addPingSteps(long size, long delay, StatisticKind statKind,
+			String runName, String hops, String minSlots, String topology) {
 		long collectionTimeMillis= false? collectionLengthMillis : 180000;
         addStep(START_TEST, steadyStateWaitMillis, null,
-           		PING_SIZE_PROPERTY+"="+size,
-        		PING_DELAY_PROPERTY+"="+"0",
-        		PING_STATISTIC_PROPERTY+"="+"ANOVA");
+        		PING_SIZE_PROPERTY+"="+size,
+        		PING_DELAY_PROPERTY+"="+ delay,
+        		PING_STATISTICS_PROPERTY+"="+statKind );
         addStep(START_STEADY_STATE, collectionTimeMillis, null);
         addStep(END_STEADY_STATE, 0, null);
         addStep(END_TEST, 0, null);
@@ -85,31 +105,31 @@ public class KnodeDiffServSequencerPlugin
 	
 	private void addTeeShapedExperimentSteps() {	
 		addRestartKnodeSteps();
-		addPingSteps("0", "5hops", "5", "33","Tee");
+		addPingSteps("5hops", "5", "33","Tee");
 		addMoveLinkSteps("163","164","40.0");
-		addPingSteps("0", "4hops", "4", "25","Tee");
+		addPingSteps("4hops", "4", "25","Tee");
 		addMoveLinkSteps("164","165","50.0");
-		addPingSteps("0", "3hops", "3", "25","Tee");
+		addPingSteps("3hops", "3", "25","Tee");
 		addMoveLinkSteps("165","166","60.0");
-		addPingSteps("0", "2hops", "2", "25","Tee");
+		addPingSteps("2hops", "2", "25","Tee");
 		addMoveLinkSteps("166","167","70.0");
-		addPingSteps("0", "1hop", "1", "33","Tee");
+		addPingSteps("1hop", "1", "33","Tee");
 		addStep(SHUTDOWN, 0, null);
 		logExperimentDescription();
 	}
 	
 	private void addLengthExperimentSteps() {	
 		addRestartKnodeSteps();
-		//addPingSteps("1", "1length", "5", "33","Line");
-		//ddPingSteps("10", "10length", "5", "33","Line");
-		//addPingSteps("100", "100length", "5", "33","Line");
-		//addPingSteps("1000", "1000length", "5", "33","Line");
-		addPingSteps("10000", "10000length", "5", "33","Line");
-		addPingSteps("20000", "20000length", "5", "33","Line");
-		addPingSteps("50000", "50000length", "5", "33","Line");
-		addPingSteps("100000", "100000length", "5", "33","Line");
-		addPingSteps("200000", "20000length", "5", "33","Line");
-		addPingSteps("500000", "500000length", "5", "33","Line");
+		//addPingSteps(1, interPingDelay, statisticsKind, "1length", "5", "33", "Line");
+		//addPingSteps(10, interPingDelay, statisticsKind, "10length", "5", "33", "Line");
+		//addPingSteps(100, interPingDelay, statisticsKind, "100length", "5", "33", "Line");
+		//addPingSteps(1000, interPingDelay, statisticsKind, "1000length", "5", "33", "Line");
+		addPingSteps(10000, interPingDelay, statisticsKind, "10000length", "5", "33", "Line");
+		addPingSteps(20000, interPingDelay, statisticsKind, "20000length", "5", "33", "Line");
+		addPingSteps(50000, interPingDelay, statisticsKind, "50000length", "5", "33", "Line");
+		addPingSteps(100000, interPingDelay, statisticsKind, "100000length", "5", "33", "Line");
+		addPingSteps(200000, interPingDelay, statisticsKind, "20000length", "5", "33", "Line");
+		addPingSteps(500000, interPingDelay, statisticsKind, "500000length", "5", "33", "Line");
 		
 		addStep(SHUTDOWN, 0, null);
 		logExperimentDescription();
@@ -172,19 +192,19 @@ public class KnodeDiffServSequencerPlugin
 
 	// assumes single server is on host app170, node170 off router 169
 	private void addRunLineExpSteps(String slots, String oneHopSlots, String topologyName) {
-		addPingSteps("0", "5hops", "5", slots,topologyName);
+		addPingSteps("5hops", "5", slots,topologyName);
 		addDeleteLinkSteps("163", "164");
 		addMoveLinkSteps("163","164","40.0");
-		addPingSteps("0", "4hops", "4", slots,topologyName);
+		addPingSteps("4hops", "4", slots,topologyName);
 		addDeleteLinkSteps("164", "165");
 		addMoveLinkSteps("164","165","50.0");
-		addPingSteps("0", "3hops", "3", slots,topologyName);
+		addPingSteps("3hops", "3", slots,topologyName);
 		addDeleteLinkSteps("165", "166");
 		addMoveLinkSteps("165","166","60.0");
-		addPingSteps("0", "2hops", "2", slots,topologyName);
+		addPingSteps("2hops", "2", slots,topologyName);
 		addDeleteLinkSteps("166", "167");
 		addMoveLinkSteps("166","167","70.0");
-		addPingSteps("0", "1hop", "1", oneHopSlots,topologyName);
+		addPingSteps("1hop", "1", oneHopSlots,topologyName);
 		addStep(SHUTDOWN, 0, null);
 	}
 	
@@ -196,19 +216,19 @@ public class KnodeDiffServSequencerPlugin
 //		addDeleteLinkSteps("165", "166");
 //		addDeleteLinkSteps("166", "167");
 //		addMoveLinkSteps("163","167","30.0");		
-		addPingSteps("0", "2nodes", "1", "50","Star");
+		addPingSteps("2nodes", "1", "50","Star");
 		
 		addAddLinkSteps("166", "167",30000);
-		addPingSteps("0", "3nodes", "1", "33","Star");
+		addPingSteps("3nodes", "1", "33","Star");
 		
 		addAddLinkSteps("165", "167",30000);
-		addPingSteps("0", "4nodes", "1", "25","Star");
+		addPingSteps("4nodes", "1", "25","Star");
 		
 		addAddLinkSteps("164", "167",30000);
-		addPingSteps("0", "5nodes", "1", "20","Star");
+		addPingSteps("5nodes", "1", "20","Star");
 		
 		addAddLinkSteps("163", "167",30000);
-		addPingSteps("0", "6nodes", "1", "16","Star");
+		addPingSteps("6nodes", "1", "16","Star");
 		
 		addStep(SHUTDOWN, 0, null);
 		logExperimentDescription();

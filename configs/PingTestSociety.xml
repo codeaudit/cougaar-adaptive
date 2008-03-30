@@ -42,6 +42,7 @@ Example regression test society
 		    <component class="org.cougaar.test.ping.regression.PingTesterPlugin">
 		    	<argument name="workerId" value="source1"/>
 		    	<argument name="pingerCount" value="1"/>
+		    	<argument name="interPingDelay" value="0"/>
 			</component>
 		</agent>
 		<agent name="sink1">
