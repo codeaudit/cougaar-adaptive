@@ -9,12 +9,13 @@ public class Trace implements Statistic<Trace> {
 	private final String name;
 	
 	public Trace(String name) {
+		reset();
 		this.name = name;
 	}
-	 
-	public Trace delta(Trace s) {
+	
+	public void reset() {
 		// TODO Auto-generated method stub
-		return null;
+
 	}
 
 	public void newValue(long value) {
@@ -22,12 +23,22 @@ public class Trace implements Statistic<Trace> {
 
 	}
 
-	public void reset() {
+	public Trace delta(Trace s) {
 		// TODO Auto-generated method stub
+		return null;
+	}
 
+	public void accumulate(Trace additionalStatistic) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	public Trace clone() throws CloneNotSupportedException {
         return (Trace) super.clone();
     }
+
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

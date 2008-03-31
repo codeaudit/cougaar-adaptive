@@ -16,8 +16,8 @@
 *
 * Created : Aug 15, 2007
 * Workfile: SummaryReport.java
-* $Revision: 1.1 $
-* $Date: 2008-02-26 21:10:05 $
+* $Revision: 1.2 $
+* $Date: 2008-03-31 10:29:40 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -36,8 +36,6 @@ public class SummaryReport extends ReportBase {
     
     /**
      * Use this constructor if there was a failure (no stats)
-     * @param worker
-     * @param reason
      */
     public SummaryReport(String worker, String reason) {
         super(worker, false, reason);

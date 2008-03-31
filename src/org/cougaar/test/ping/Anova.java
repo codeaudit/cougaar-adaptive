@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: Anova.java
- * $Revision: 1.3 $
- * $Date: 2008-03-11 19:34:54 $
+ * $Revision: 1.4 $
+ * $Date: 2008-03-31 10:29:41 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -43,6 +43,17 @@ public class Anova implements Statistic<Anova> {
         reset();
         this.name = name;
     }
+    
+    public void reset() {
+        valueCount = 0;
+        sum = 0.0;
+        sumSq = 0.0;
+        max = Double.MIN_VALUE;
+        min = Double.MAX_VALUE;
+        timeStamp = System.currentTimeMillis();
+        deltaT =0.0;
+
+    }
 
     public void newValue(long value) {
     	newValue((double)value);
@@ -57,7 +68,20 @@ public class Anova implements Statistic<Anova> {
         timeStamp = System.currentTimeMillis();
     }
     
-    public void addTable(Anova other) {
+    public Anova delta(Anova other) {
+        Anova delta = new Anova();
+        delta.name=name;
+        delta.valueCount = valueCount - other.valueCount;
+        delta.sum = sum - other.sum;
+        delta.sumSq = sumSq - other.sumSq;
+        delta.max = Math.max(max, other.max);
+        delta.min = Math.min(min, other.min);
+        delta.deltaT = timeStamp - other.timeStamp;
+        delta.timeStamp = timeStamp;
+        return delta;
+    }
+    
+    public void accumulate(Anova other) {
         valueCount += other.valueCount;
         sum += other.sum;
         sumSq += other.sumSq;
@@ -66,23 +90,22 @@ public class Anova implements Statistic<Anova> {
         timeStamp= Math.max(timeStamp, other.timeStamp);
     }
     
-    public int getValueCount() {
-        return valueCount;
-    }
-
-    public void setValueCount(int valueCount) {
-        this.valueCount = valueCount;
-    }
-    
     public String getName() {
         return name;
     }
+         
+    public Anova clone() throws CloneNotSupportedException {
+        return (Anova) super.clone();
+    }   
     
-    public void setName(String name) {
-        this.name = name;
+    /*
+     * Anova specific statistical output
+     */
+    
+    public int getValueCount() {
+        return valueCount;
     }
     
- 
     public double getSum() {
         return sum;
     }
@@ -118,35 +141,4 @@ public class Anova implements Statistic<Anova> {
         }
         return 0;
     }
-    
-    public Anova delta(Anova other) {
-        Anova delta = new Anova();
-        delta.name=name;
-        delta.valueCount = valueCount - other.valueCount;
-        delta.sum = sum - other.sum;
-        delta.sumSq = sumSq - other.sumSq;
-        delta.max = Math.max(max, other.max);
-        delta.min = Math.min(min, other.min);
-        delta.deltaT = timeStamp - other.timeStamp;
-        delta.timeStamp = timeStamp;
-        return delta;
-    }
-    
-    public void reset() {
-        valueCount = 0;
-        sum = 0.0;
-        sumSq = 0.0;
-        max = Double.MIN_VALUE;
-        min = Double.MAX_VALUE;
-        timeStamp = System.currentTimeMillis();
-        deltaT =0.0;
-
-    }
-
-    @Override
-    public Anova clone() throws CloneNotSupportedException {
-        return (Anova) super.clone();
-    }
-
-
-}
+ }
