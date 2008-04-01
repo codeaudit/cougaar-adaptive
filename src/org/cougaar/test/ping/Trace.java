@@ -7,6 +7,8 @@ public class Trace implements Statistic<Trace> {
 	
 	private transient final Logger log = Logging.getLogger(getClass().getName());
 	private final String name;
+	private long startTime;
+	private long endTime;
 	
 	public Trace(String name) {
 		reset();
@@ -14,8 +16,8 @@ public class Trace implements Statistic<Trace> {
 	}
 	
 	public void reset() {
-		// TODO Auto-generated method stub
-
+		startTime = System.currentTimeMillis();
+		endTime= startTime;
 	}
 
 	public void newValue(long value) {
@@ -33,12 +35,45 @@ public class Trace implements Statistic<Trace> {
 		
 	}
 
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public String getSummaryString() {
+		return getName();
+	}
+	
+	public String toString(){
+		return "<Trace: " + getSummaryString() + ">";
+		
+	}
+	
+	public StatisticKind getKind () {
+		return StatisticKind.TRACE;
+	}
+	
 	public Trace clone() throws CloneNotSupportedException {
         return (Trace) super.clone();
     }
 
-	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+	public Trace snapshot() {
+    	Trace copy;
+		try {
+			copy = clone();
+		} catch (CloneNotSupportedException e) {
+			// This can't happen
+			return null;
+		}
+    	copy.endTime = System.currentTimeMillis();
+    	return copy;
+    }
+
+	public long getStartTime() {
+		return startTime;
+	}
+
+	public long getEndTime() {
+		return endTime;
 	}
 }

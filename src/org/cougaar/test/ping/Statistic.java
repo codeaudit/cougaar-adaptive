@@ -16,8 +16,8 @@
 *
 * Created : Aug 14, 2007
 * Workfile: Statistic.java
-* $Revision: 1.2 $
-* $Date: 2008-03-31 10:29:41 $
+* $Revision: 1.3 $
+* $Date: 2008-04-01 09:19:53 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -64,9 +64,15 @@ public interface Statistic<T extends Statistic<?>> extends Cloneable, Serializab
     public void accumulate(T additionalStatistic);
  
     /*
-     * Snapshot the content of the statistics
+     * Copy the content of the statistics, leaving endTime alone;
      */
     public T clone() throws CloneNotSupportedException;
+    
+    /*
+     * Snapshot the content of the statistics, setting endTime to the current time;
+     */
+    public T snapshot();
+ 
     
 	/*
 	 * Get name of the collection point where the statistic was gathered.
@@ -75,5 +81,24 @@ public interface Statistic<T extends Statistic<?>> extends Cloneable, Serializab
 	 * but at different times
 	 */
 	public String getName();
-
+	
+	/*
+	 * Short one-line summary string for human consumption
+	 */
+    public String getSummaryString();
+    
+    /*
+     * Return enum for use in switch statements
+     */
+    public StatisticKind getKind();
+    
+    /*
+     * Time statistics started (not the time of the first newValue)
+     */    
+	public long getStartTime();
+	
+	/* 
+	 * Time of the last newValue or time the snapshot was taken
+	 */
+	public long getEndTime(); 
 }

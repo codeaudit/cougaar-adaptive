@@ -16,8 +16,8 @@
 *
 * Created : Aug 15, 2007
 * Workfile: SummaryReport.java
-* $Revision: 1.2 $
-* $Date: 2008-03-31 10:29:40 $
+* $Revision: 1.3 $
+* $Date: 2008-04-01 09:19:52 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -71,15 +71,8 @@ public class SummaryReport extends ReportBase {
         StringBuffer buf = new StringBuffer();
         buf.append("Statistics");
         for (Anova statistic : rawStats) {
-            buf.append(" ");
-            buf.append(statistic.getName());
-            buf.append(":");
-            buf.append(statistic.min());
-            buf.append("/");
-            buf.append(statistic.average());
-            buf.append("/");
-            buf.append(statistic.max());
-        }
+            buf.append(statistic.getSummaryString());
+        } 
         return buf.toString();
     }
 

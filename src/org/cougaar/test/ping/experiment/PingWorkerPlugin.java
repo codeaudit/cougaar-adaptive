@@ -16,8 +16,8 @@
 *
 * Created : Aug 14, 2007
 * Workfile: PingWorkerPlugin.java
-* $Revision: 1.6 $
-* $Date: 2008-03-30 14:18:57 $
+* $Revision: 1.7 $
+* $Date: 2008-04-01 09:19:54 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -89,22 +89,17 @@ public class PingWorkerPlugin extends ExperimentWorkerPlugin implements PingStep
     // snapshot the statistics
     // store the statistics for later processing
     protected Map<String, Anova> gatherStatistics() {
-        Map<String, Anova> statistics = new HashMap<String, Anova>();
-        @SuppressWarnings("unchecked")
-        Collection<SimpleRelay> relays = blackboard.query(new IsQueryRelay());
-        try {
-            for (SimpleRelay relay : relays) {
-                PingQuery query = (PingQuery) relay.getQuery();
-                Anova statistic = (Anova) query.getStatistic();
-                String sessionName=statistic.getName();
-                statistics.put(sessionName, statistic.clone());
-            }
-        } catch (CloneNotSupportedException e) {
-            log.error("Failed to clone a Statistic!");
-            return null;
-        }
-        return statistics;
-    }
+		Map<String, Anova> statistics = new HashMap<String, Anova>();
+		@SuppressWarnings("unchecked")
+		Collection<SimpleRelay> relays = blackboard.query(new IsQueryRelay());
+		for (SimpleRelay relay : relays) {
+			PingQuery query = (PingQuery) relay.getQuery();
+			Anova statistic = (Anova) query.getStatistic();
+			String sessionName = statistic.getName();
+			statistics.put(sessionName, statistic.snapshot());
+		}
+		return statistics;
+	}
     
     protected Report makeReport(ExperimentStep step) {
         return new ReportBase(workerId,!failed,reason);

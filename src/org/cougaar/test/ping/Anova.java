@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: Anova.java
- * $Revision: 1.4 $
- * $Date: 2008-03-31 10:29:41 $
+ * $Revision: 1.5 $
+ * $Date: 2008-04-01 09:19:53 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -30,10 +30,10 @@ public class Anova implements Statistic<Anova> {
     private int valueCount;
     private double sum;
     private double sumSq;
-    private double max = Long.MIN_VALUE;
-    private double min = Long.MAX_VALUE;
-    private double timeStamp = System.currentTimeMillis();
-    private double deltaT;
+    private double max; 
+    private double min;
+    private long startTime ;
+    private long endTime ;
 
     public Anova() {
         reset();
@@ -50,8 +50,8 @@ public class Anova implements Statistic<Anova> {
         sumSq = 0.0;
         max = Double.MIN_VALUE;
         min = Double.MAX_VALUE;
-        timeStamp = System.currentTimeMillis();
-        deltaT =0.0;
+        startTime = System.currentTimeMillis();
+        endTime = startTime;
 
     }
 
@@ -65,7 +65,7 @@ public class Anova implements Statistic<Anova> {
         sumSq += value * value;
         max = Math.max(max, value);
         min = Math.min(min, value);
-        timeStamp = System.currentTimeMillis();
+        endTime = System.currentTimeMillis();
     }
     
     public Anova delta(Anova other) {
@@ -76,8 +76,8 @@ public class Anova implements Statistic<Anova> {
         delta.sumSq = sumSq - other.sumSq;
         delta.max = Math.max(max, other.max);
         delta.min = Math.min(min, other.min);
-        delta.deltaT = timeStamp - other.timeStamp;
-        delta.timeStamp = timeStamp;
+        delta.startTime= other.endTime;
+        delta.endTime = endTime;
         return delta;
     }
     
@@ -87,16 +87,57 @@ public class Anova implements Statistic<Anova> {
         sumSq += other.sumSq;
         max = Math.max(max, other.max);
         min = Math.min(min, other.min);
-        timeStamp= Math.max(timeStamp, other.timeStamp);
+        startTime= Math.min(startTime, other.startTime);
+        endTime= Math.max(endTime, other.endTime);
     }
     
     public String getName() {
         return name;
     }
+    
+    public String getSummaryString() {
+		StringBuffer buf = new StringBuffer();
+		buf.append(getName());
+		buf.append(":");
+		buf.append(min());
+		buf.append("/");
+		buf.append(average());
+		buf.append("/");
+		buf.append(max());
+		return buf.toString();
+	}
          
+    public String toString() {
+    	return "<Anova: " + getSummaryString() + ">";
+    }
+    
     public Anova clone() throws CloneNotSupportedException {
         return (Anova) super.clone();
     }   
+    
+    public Anova snapshot() {
+    	Anova copy;
+		try {
+			copy = clone();
+		} catch (CloneNotSupportedException e) {
+			// This can't happen
+			return null;
+		}
+    	copy.endTime = System.currentTimeMillis();
+    	return copy;
+    }
+    
+    public StatisticKind getKind () {
+    	return StatisticKind.ANOVA;
+    }
+    
+	public long getStartTime() {
+		return startTime;
+	}
+
+	public long getEndTime() {
+		return endTime;
+	}
     
     /*
      * Anova specific statistical output
@@ -111,10 +152,11 @@ public class Anova implements Statistic<Anova> {
     }
     
     public double itemPerSec() {
+    	long deltaT = endTime - startTime;
         if (deltaT != 0) {
-            return 1000.0 * valueCount/deltaT;
+            return (1000.0 * valueCount)/deltaT;
         } else {
-            return -1f;
+            return -1d;
         }
     }
     
@@ -141,4 +183,5 @@ public class Anova implements Statistic<Anova> {
         }
         return 0;
     }
+
  }
