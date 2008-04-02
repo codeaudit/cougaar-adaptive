@@ -25,7 +25,6 @@
  */
 package org.cougaar.test.ping;
 
-import java.beans.IntrospectionException;
 import java.text.DecimalFormat;
 
 import org.cougaar.core.qos.stats.CsvFormat;
@@ -34,7 +33,7 @@ import org.cougaar.core.qos.stats.CsvFormat;
  *
  */
 public class PingRunSummaryCsvFormat extends CsvFormat<PingRunSummaryBean> {
-	public PingRunSummaryCsvFormat() throws IntrospectionException {
+	public PingRunSummaryCsvFormat() {
 		super(PingRunSummaryBean.class);
 		DecimalFormat format = new DecimalFormat("#0.00");
 		defineField("pingers", "Pingers", null);

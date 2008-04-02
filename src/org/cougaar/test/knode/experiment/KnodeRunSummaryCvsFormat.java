@@ -1,13 +1,12 @@
 package org.cougaar.test.knode.experiment;
 
-import java.beans.IntrospectionException;
 import java.text.DecimalFormat;
 
 import org.cougaar.core.qos.stats.CsvFormat;
 
 public class KnodeRunSummaryCvsFormat extends CsvFormat<KnodeRunSummaryBean> {
 
-	public KnodeRunSummaryCvsFormat() throws IntrospectionException {
+	public KnodeRunSummaryCvsFormat() {
 		super(KnodeRunSummaryBean.class);
 		DecimalFormat format = new DecimalFormat("#0.00");
 		DecimalFormat delayFormat = new DecimalFormat("#0.0");

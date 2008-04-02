@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.7 $
- * $Date: 2008-04-02 13:42:58 $
+ * $Revision: 1.8 $
+ * $Date: 2008-04-02 14:56:24 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -25,20 +25,21 @@
 
 package org.cougaar.test.ping.regression;
 
-import java.beans.IntrospectionException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
 import org.cougaar.core.qos.stats.Anova;
+import org.cougaar.core.qos.stats.CsvFormat;
 import org.cougaar.core.qos.stats.CsvWriter;
 import org.cougaar.core.qos.stats.Statistic;
 import org.cougaar.core.qos.stats.StatisticKind;
 import org.cougaar.test.ping.PingRunSummaryBean;
 import org.cougaar.test.ping.PingRunSummaryCsvFormat;
-import org.cougaar.test.ping.SummaryReport;
 import org.cougaar.test.sequencer.Report;
 import org.cougaar.test.sequencer.SocietyCompletionEvent;
+import org.cougaar.test.sequencer.StatisticsAccumulator;
+import org.cougaar.test.sequencer.StatisticsReport;
 import org.cougaar.test.sequencer.regression.AbstractRegressionSequencerPlugin;
 import org.cougaar.test.sequencer.regression.RegressionStep;
 import org.cougaar.util.annotations.Cougaar;
@@ -90,39 +91,26 @@ public class PingSequencerPlugin
         }
     }
 
+   
+    
     private void processStats(Collection<Set<Report>> reportsCollection) {
-        Anova summary = (Anova) StatisticKind.ANOVA.makeStatistic("Throughput");
-
-        for (Set<Report> reports : reportsCollection) {
-            for (Report report : reports) {
-                if (!report.isSuccessful()) {
-                    log.error("Summary step was successful, but unsuccessful report" + report);
-                }
-                log.info(report.toString());
-                if (report instanceof SummaryReport) {
-                    for (Statistic stat : ((SummaryReport) report).getRawStats()) {
-                        Anova anova = (Anova) stat;
-                        summary.newValue(anova.itemPerSec());
-                    }
-                }
+        final Anova summary = (Anova) StatisticKind.ANOVA.makeStatistic("Throughput");
+        StatisticsAccumulator acc = new StatisticsAccumulator(log) {
+            protected void accumulate(Statistic statistic) {
+                Anova anova = (Anova) statistic;
+                summary.newValue(anova.itemPerSec());
             }
-        }
+        };
+        acc.accumulate(reportsCollection);
+        
         PingRunSummaryBean row = new PingRunSummaryBean(summary, null, suiteName);
         log.shout(row.toString());
-        if (!csvFileName.equals("")) {
-        	try {
-				PingRunSummaryCsvFormat csvFormat = new PingRunSummaryCsvFormat();
-				CsvWriter<PingRunSummaryBean> writer = 
-					new CsvWriter<PingRunSummaryBean>(csvFormat, csvFileName, log);
-				writer.writeRow(row);
-			} catch (IntrospectionException e) {
-				log.error("Error writing a csv row", e);
-			}
-        }
+        CsvWriter.writeRow(row, new PingRunSummaryCsvFormat(), csvFileName, log);
+        
     }
     
     protected Set<Report> makeNodeTimoutFailureReport(RegressionStep step, String reason) {
-        Report report = new SummaryReport(agentId.getAddress(), reason);
+        Report report = new StatisticsReport(agentId.getAddress(), reason);
         return Collections.singleton(report);
     }
 }

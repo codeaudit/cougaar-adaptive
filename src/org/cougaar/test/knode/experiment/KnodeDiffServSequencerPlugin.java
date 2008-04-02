@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.19 $
- * $Date: 2008-04-02 13:42:58 $
+ * $Revision: 1.20 $
+ * $Date: 2008-04-02 14:56:23 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -25,7 +25,6 @@
 
 package org.cougaar.test.knode.experiment;
 
-import java.beans.IntrospectionException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Properties;
@@ -35,9 +34,10 @@ import org.cougaar.core.qos.stats.Anova;
 import org.cougaar.core.qos.stats.CsvWriter;
 import org.cougaar.core.qos.stats.Statistic;
 import org.cougaar.core.qos.stats.StatisticKind;
-import org.cougaar.test.ping.SummaryReport;
 import org.cougaar.test.ping.experiment.PingSteps;
 import org.cougaar.test.sequencer.Report;
+import org.cougaar.test.sequencer.StatisticsAccumulator;
+import org.cougaar.test.sequencer.StatisticsReport;
 import org.cougaar.test.sequencer.experiment.ExperimentStep;
 import org.cougaar.util.annotations.Cougaar;
 
@@ -243,40 +243,25 @@ public class KnodeDiffServSequencerPlugin
     }
     
     private void processStats(Collection<Set<Report>> reportsCollection, Properties props) {
-        Anova thrpSummary = (Anova) StatisticKind.ANOVA.makeStatistic("Throughput");
-        Anova delaySummary = (Anova) StatisticKind.ANOVA.makeStatistic("Delay");
-
-        for (Set<Report> reports : reportsCollection) {
-            for (Report report : reports) {
-                if (!report.isSuccessful()) {
-                    log.error("Summary step was successful, but unsuccessful report" + report);
-                }
-                log.info(report.toString());
-                if (report instanceof SummaryReport) {
-                    for (Statistic stat : ((SummaryReport) report).getRawStats()) {
-                        double itemPerSec = ((Anova) stat).itemPerSec();
-                        thrpSummary.newValue(itemPerSec);
-                        delaySummary.accumulate(stat);
-                    }
-                }
+        final Anova thrpSummary = (Anova) StatisticKind.ANOVA.makeStatistic("Throughput");
+        final Anova delaySummary = (Anova) StatisticKind.ANOVA.makeStatistic("Delay");
+        StatisticsAccumulator acc = new StatisticsAccumulator(log) {
+            protected void accumulate(Statistic statistic) {
+                double itemPerSec = ((Anova) statistic).itemPerSec();
+                thrpSummary.newValue(itemPerSec);
+                delaySummary.accumulate(statistic);
             }
-        }
+        };
+        acc.accumulate(reportsCollection);
+        
+       
         KnodeRunSummaryBean row = new KnodeRunSummaryBean(thrpSummary, delaySummary, props, suiteName);
         log.shout(row.toString());
-        if (!csvFileName.equals("")) {
-        	try {
-				KnodeRunSummaryCvsFormat csvFormat = new KnodeRunSummaryCvsFormat();
-				CsvWriter<KnodeRunSummaryBean> writer = 
-					new CsvWriter<KnodeRunSummaryBean>(csvFormat, csvFileName, log);
-				writer.writeRow(row);
-			} catch (IntrospectionException e) {
-				log.error("Error writing a csv row", e);
-			}
-        }
+        CsvWriter.writeRow(row, new KnodeRunSummaryCvsFormat(), csvFileName, log);
     }
     
     protected Set<Report> makeNodeTimoutFailureReport(ExperimentStep step, String reason) {
-        Report report = new SummaryReport(agentId.getAddress(), reason);
+        Report report = new StatisticsReport(agentId.getAddress(), reason);
         return Collections.singleton(report);
     }
 }

@@ -16,8 +16,8 @@
 *
 * Created : Aug 14, 2007
 * Workfile: PingWorkerPlugin.java
-* $Revision: 1.7 $
-* $Date: 2008-04-02 13:42:58 $
+* $Revision: 1.8 $
+* $Date: 2008-04-02 14:56:24 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -35,10 +35,10 @@ import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.test.ping.PingQuery;
 import org.cougaar.test.ping.StartRequest;
 import org.cougaar.test.ping.StopRequest;
-import org.cougaar.test.ping.SummaryReport;
 import org.cougaar.test.sequencer.Context;
 import org.cougaar.test.sequencer.Report;
 import org.cougaar.test.sequencer.ReportBase;
+import org.cougaar.test.sequencer.StatisticsReport;
 import org.cougaar.test.sequencer.regression.AbstractRegressionTesterPlugin;
 import org.cougaar.test.sequencer.regression.RegressionStep;
 import org.cougaar.util.UnaryPredicate;
@@ -107,7 +107,7 @@ public class PingTesterPlugin extends AbstractRegressionTesterPlugin<Report> {
         if (log.isInfoEnabled()) {
             log.info("Do Summary context="+context);
         }
-        Report report = new SummaryReport(workerId, reason,initialStatistics, finalStatistics);
+        Report report = new StatisticsReport(workerId, reason,initialStatistics, finalStatistics);
         doneSummary(report);
     }
 

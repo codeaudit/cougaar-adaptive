@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.2 $
- * $Date: 2008-03-12 17:35:11 $
+ * $Revision: 1.3 $
+ * $Date: 2008-04-02 14:56:23 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -28,8 +28,8 @@ package org.cougaar.test.knode.experiment;
 import java.util.Collections;
 import java.util.Set;
 
-import org.cougaar.test.ping.SummaryReport;
 import org.cougaar.test.sequencer.Report;
+import org.cougaar.test.sequencer.StatisticsReport;
 import org.cougaar.test.sequencer.experiment.ExperimentStep;
 
 /**
@@ -52,7 +52,7 @@ public class KnodeSequencerPlugin
     }
 
     protected Set<Report> makeNodeTimoutFailureReport(ExperimentStep step, String reason) {
-        Report report = new SummaryReport(agentId.getAddress(), reason);
+        Report report = new StatisticsReport(agentId.getAddress(), reason);
         return Collections.singleton(report);
     }
 }

@@ -15,34 +15,33 @@
 * =============================================================================
 *
 * Created : Aug 15, 2007
-* Workfile: SummaryReport.java
-* $Revision: 1.4 $
-* $Date: 2008-04-02 13:42:58 $
+* Workfile: StatisticsReport.java
+* $Revision: 1.1 $
+* $Date: 2008-04-02 14:56:24 $
 * $Author: jzinky $
 *
 * =============================================================================
 */
  
-package org.cougaar.test.ping;
+package org.cougaar.test.sequencer;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.cougaar.core.qos.stats.Statistic;
-import org.cougaar.test.sequencer.ReportBase;
 
-public class SummaryReport extends ReportBase {
+public class StatisticsReport extends ReportBase {
     private List<Statistic> rawStats;
     
     /**
      * Use this constructor if there was a failure (no stats)
      */
-    public SummaryReport(String worker, String reason) {
+    public StatisticsReport(String worker, String reason) {
         super(worker, false, reason);
     }
     
-    public SummaryReport(String worker, String reason, 
+    public StatisticsReport(String worker, String reason, 
                          Map<String, Statistic> initialStats, 
                          Map<String, Statistic> finalStats) {
         super(worker,true,"no reason");

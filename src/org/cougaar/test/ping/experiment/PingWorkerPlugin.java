@@ -16,8 +16,8 @@
 *
 * Created : Aug 14, 2007
 * Workfile: PingWorkerPlugin.java
-* $Revision: 1.8 $
-* $Date: 2008-04-02 13:42:58 $
+* $Revision: 1.9 $
+* $Date: 2008-04-02 14:56:23 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -34,10 +34,10 @@ import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.test.ping.PingQuery;
 import org.cougaar.test.ping.StartRequest;
 import org.cougaar.test.ping.StopRequest;
-import org.cougaar.test.ping.SummaryReport;
 import org.cougaar.test.sequencer.Context;
 import org.cougaar.test.sequencer.Report;
 import org.cougaar.test.sequencer.ReportBase;
+import org.cougaar.test.sequencer.StatisticsReport;
 import org.cougaar.test.sequencer.experiment.ExperimentStep;
 import org.cougaar.test.sequencer.experiment.ExperimentWorkerPlugin;
 import org.cougaar.util.TypedProperties;
@@ -77,7 +77,7 @@ public class PingWorkerPlugin extends ExperimentWorkerPlugin implements PingStep
             blackboard.publishAdd(stopRequest);
             // defer until all Stop requests have returned
         } else if (SUMMARY_TEST.equals(step)) {
-            Report report = new SummaryReport(workerId, reason, initialStatistics, finalStatistics);
+            Report report = new StatisticsReport(workerId, reason, initialStatistics, finalStatistics);
             stepCompeleted(SUMMARY_TEST, report);
         } else {
             stepCompeleted(step, new ReportBase(workerId, true, reason));
