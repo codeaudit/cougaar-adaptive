@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.18 $
- * $Date: 2008-03-31 10:29:41 $
+ * $Revision: 1.19 $
+ * $Date: 2008-04-02 13:42:58 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -31,9 +31,10 @@ import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
 
-import org.cougaar.test.ping.Anova;
-import org.cougaar.test.ping.CsvWriter;
-import org.cougaar.test.ping.StatisticKind;
+import org.cougaar.core.qos.stats.Anova;
+import org.cougaar.core.qos.stats.CsvWriter;
+import org.cougaar.core.qos.stats.Statistic;
+import org.cougaar.core.qos.stats.StatisticKind;
 import org.cougaar.test.ping.SummaryReport;
 import org.cougaar.test.ping.experiment.PingSteps;
 import org.cougaar.test.sequencer.Report;
@@ -242,8 +243,8 @@ public class KnodeDiffServSequencerPlugin
     }
     
     private void processStats(Collection<Set<Report>> reportsCollection, Properties props) {
-        Anova thrpSummary = new Anova("Throughput");
-        Anova delaySummary = new Anova("Delay");
+        Anova thrpSummary = (Anova) StatisticKind.ANOVA.makeStatistic("Throughput");
+        Anova delaySummary = (Anova) StatisticKind.ANOVA.makeStatistic("Delay");
 
         for (Set<Report> reports : reportsCollection) {
             for (Report report : reports) {
@@ -252,8 +253,9 @@ public class KnodeDiffServSequencerPlugin
                 }
                 log.info(report.toString());
                 if (report instanceof SummaryReport) {
-                    for (Anova stat : ((SummaryReport) report).getRawStats()) {
-                        thrpSummary.newValue(stat.itemPerSec());
+                    for (Statistic stat : ((SummaryReport) report).getRawStats()) {
+                        double itemPerSec = ((Anova) stat).itemPerSec();
+                        thrpSummary.newValue(itemPerSec);
                         delaySummary.accumulate(stat);
                     }
                 }

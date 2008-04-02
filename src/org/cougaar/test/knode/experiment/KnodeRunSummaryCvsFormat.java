@@ -3,7 +3,7 @@ package org.cougaar.test.knode.experiment;
 import java.beans.IntrospectionException;
 import java.text.DecimalFormat;
 
-import org.cougaar.test.ping.CsvFormat;
+import org.cougaar.core.qos.stats.CsvFormat;
 
 public class KnodeRunSummaryCvsFormat extends CsvFormat<KnodeRunSummaryBean> {
 

@@ -29,6 +29,7 @@ import java.io.StringWriter;
 import java.text.DecimalFormat;
 import java.util.Properties;
 
+import org.cougaar.core.qos.stats.Anova;
 import org.cougaar.test.ping.experiment.PingSteps;
 
 public class PingRunSummaryBean {

@@ -16,8 +16,8 @@
 *
 * Created : Aug 14, 2007
 * Workfile: PingWorkerPlugin.java
-* $Revision: 1.6 $
-* $Date: 2008-04-01 09:19:54 $
+* $Revision: 1.7 $
+* $Date: 2008-04-02 13:42:58 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -29,11 +29,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.cougaar.core.qos.stats.Statistic;
+import org.cougaar.core.qos.stats.StatisticKind;
 import org.cougaar.core.relay.SimpleRelay;
-import org.cougaar.test.ping.Anova;
 import org.cougaar.test.ping.PingQuery;
 import org.cougaar.test.ping.StartRequest;
-import org.cougaar.test.ping.StatisticKind;
 import org.cougaar.test.ping.StopRequest;
 import org.cougaar.test.ping.SummaryReport;
 import org.cougaar.test.sequencer.Context;
@@ -48,7 +48,7 @@ import org.cougaar.util.annotations.Subscribe;
 public class PingTesterPlugin extends AbstractRegressionTesterPlugin<Report> {
     private StopRequest stopRequest;
     private StartRequest startRequest;
-    private Map<String, Anova> initialStatistics, finalStatistics;
+    private Map<String, Statistic> initialStatistics, finalStatistics;
     private boolean failed = false;
     private String reason = "no reason";
     
@@ -115,13 +115,13 @@ public class PingTesterPlugin extends AbstractRegressionTesterPlugin<Report> {
         super.doShutdown(context);
     }
     
-    protected Map<String, Anova> gatherStatistics() {
-		Map<String, Anova> statistics = new HashMap<String, Anova>();
+    protected Map<String, Statistic> gatherStatistics() {
+		Map<String, Statistic> statistics = new HashMap<String, Statistic>();
 		@SuppressWarnings("unchecked")
 		Collection<SimpleRelay> relays = blackboard.query(new IsQueryRelay());
 		for (SimpleRelay relay : relays) {
 			PingQuery query = (PingQuery) relay.getQuery();
-			Anova statistic = (Anova) query.getStatistic();
+			Statistic statistic = query.getStatistic();
 			String sessionName = statistic.getName();
 			statistics.put(sessionName, statistic.snapshot());
 		}

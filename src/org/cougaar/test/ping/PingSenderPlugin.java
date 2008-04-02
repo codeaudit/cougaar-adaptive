@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingSenderPlugin.java
- * $Revision: 1.3 $
- * $Date: 2008-03-21 18:46:21 $
+ * $Revision: 1.4 $
+ * $Date: 2008-04-02 13:42:58 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -30,6 +30,8 @@ import java.util.Collections;
 
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.plugin.TodoPlugin;
+import org.cougaar.core.qos.stats.Statistic;
+import org.cougaar.core.qos.stats.StatisticKind;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.relay.SimpleRelaySource;
 import org.cougaar.core.util.UID;
@@ -77,7 +79,8 @@ public class PingSenderPlugin extends TodoPlugin {
         // TODO initialize array to something that compresses normally
          UID uid = uids.nextUID();
         // Ping count starts negative, when zero the pinger has started
-        Object query = new PingQuery(uids, -preambleCount, new Anova(sessionName),
+        Object query = new PingQuery(uids, -preambleCount, 
+                                     StatisticKind.ANOVA.makeStatistic(sessionName),
                                      agentId, pluginId, targetAgent, targetPlugin,
                                      payload);
         sendRelay = new SimpleRelaySource(uid, agentId, targetAgent, query);
@@ -106,7 +109,7 @@ public class PingSenderPlugin extends TodoPlugin {
             }
         }
         // Update statistics from incoming ack
-        Statistic<?> stat = query.getStatistic();
+        Statistic stat = query.getStatistic();
         long now = System.nanoTime();
         stat.newValue(now-lastQueryTime);
         // check if pinger has finished starting

@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingSenderPlugin.java
- * $Revision: 1.6 $
- * $Date: 2008-03-28 20:49:19 $
+ * $Revision: 1.7 $
+ * $Date: 2008-04-02 13:42:58 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -30,6 +30,7 @@ import java.util.Collections;
 
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.plugin.TodoPlugin;
+import org.cougaar.core.qos.stats.Statistic;
 import org.cougaar.util.annotations.Cougaar;
 import org.cougaar.util.annotations.Subscribe;
 
@@ -111,7 +112,7 @@ public class PingBBSenderPlugin extends TodoPlugin {
             }
         }
         // Update statistics from incoming ack
-        Statistic<?> stat = sendQuery.getStatistic();
+        Statistic stat = sendQuery.getStatistic();
         long now = System.nanoTime();
         stat.newValue(now - lastQueryTime);
         // check if pinger has finished starting

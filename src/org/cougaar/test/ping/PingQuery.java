@@ -16,8 +16,8 @@
 *
 * Created : Aug 14, 2007
 * Workfile: PingQuery.java
-* $Revision: 1.3 $
-* $Date: 2008-03-21 22:12:03 $
+* $Revision: 1.4 $
+* $Date: 2008-04-02 13:42:58 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -26,12 +26,13 @@
 package org.cougaar.test.ping;
 
 import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.core.qos.stats.Statistic;
 import org.cougaar.core.service.UIDService;
 import org.cougaar.core.util.UniqueObjectBase;
 
 public class PingQuery  extends UniqueObjectBase {
     private int count;
-    private transient Statistic<?> statistic;
+    private transient Statistic statistic;
     private MessageAddress senderAgent;
     private String senderPlugin;
     private MessageAddress receiverAgent;
@@ -40,7 +41,7 @@ public class PingQuery  extends UniqueObjectBase {
  
     public PingQuery(UIDService uids,
                      int count,
-                     Statistic<?> statistic,
+                     Statistic statistic,
                      MessageAddress senderAgent,
                      String senderPlugin,
                      MessageAddress receiverAgent,
@@ -64,11 +65,11 @@ public class PingQuery  extends UniqueObjectBase {
         ++count;
     }
     
-    public Statistic<?> getStatistic() {
+    public Statistic getStatistic() {
         return statistic;
     }
     
-    public void setStatistic(Statistic<?> statistic) {
+    public void setStatistic(Statistic statistic) {
         this.statistic = statistic;
     }
 

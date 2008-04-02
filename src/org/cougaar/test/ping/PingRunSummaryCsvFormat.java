@@ -28,6 +28,8 @@ package org.cougaar.test.ping;
 import java.beans.IntrospectionException;
 import java.text.DecimalFormat;
 
+import org.cougaar.core.qos.stats.CsvFormat;
+
 /**
  *
  */

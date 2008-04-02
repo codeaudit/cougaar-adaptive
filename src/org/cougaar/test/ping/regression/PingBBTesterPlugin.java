@@ -16,8 +16,8 @@
 *
 * Created : Sep 28, 2007
 * Workfile: PingBBTesterPlugin.java
-* $Revision: 1.2 $
-* $Date: 2008-04-01 09:19:54 $
+* $Revision: 1.3 $
+* $Date: 2008-04-02 13:42:58 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -29,18 +29,18 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cougaar.test.ping.Anova;
+import org.cougaar.core.qos.stats.Statistic;
 import org.cougaar.test.ping.PingQuery;
 import org.cougaar.util.UnaryPredicate;
 
 public class PingBBTesterPlugin extends PingTesterPlugin {
     
-    protected Map<String, Anova> gatherStatistics() {
-		Map<String, Anova> statistics = new HashMap<String, Anova>();
+    protected Map<String, Statistic> gatherStatistics() {
+		Map<String, Statistic> statistics = new HashMap<String, Statistic>();
 		@SuppressWarnings("unchecked")
 		Collection<PingQuery> querys = blackboard.query(new IsPingQuery());
 		for (PingQuery query : querys) {
-			Anova statistic = (Anova) query.getStatistic();
+			Statistic statistic = query.getStatistic();
 			String sessionName = statistic.getName();
 			statistics.put(sessionName, statistic.snapshot());
 		}

@@ -2,7 +2,7 @@ package org.cougaar.test.knode.experiment;
 
 import java.util.Properties;
 
-import org.cougaar.test.ping.Anova;
+import org.cougaar.core.qos.stats.Anova;
 import org.cougaar.test.ping.PingRunSummaryBean;
 
 public class KnodeRunSummaryBean extends PingRunSummaryBean implements KnodeSteps {
@@ -15,7 +15,7 @@ public class KnodeRunSummaryBean extends PingRunSummaryBean implements KnodeStep
 	private double minDelay;
 	private double pingCount;
 
-	public KnodeRunSummaryBean(Anova thrpSummary,Anova delaySummary, Properties props, String suiteName) {
+	public KnodeRunSummaryBean(Anova thrpSummary, Anova delaySummary, Properties props, String suiteName) {
 		super(thrpSummary, props, suiteName);
 		if (props != null) {
 			this.hops = props.getProperty(KNODE_HOPS_PROPERTY);

@@ -16,8 +16,8 @@
 *
 * Created : Aug 15, 2007
 * Workfile: SummaryReport.java
-* $Revision: 1.3 $
-* $Date: 2008-04-01 09:19:52 $
+* $Revision: 1.4 $
+* $Date: 2008-04-02 13:42:58 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -29,10 +29,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.cougaar.core.qos.stats.Statistic;
 import org.cougaar.test.sequencer.ReportBase;
 
 public class SummaryReport extends ReportBase {
-    private List<Anova> rawStats;
+    private List<Statistic> rawStats;
     
     /**
      * Use this constructor if there was a failure (no stats)
@@ -42,17 +43,17 @@ public class SummaryReport extends ReportBase {
     }
     
     public SummaryReport(String worker, String reason, 
-                         Map<String, Anova> initialStats, 
-                         Map<String, Anova> finalStats) {
+                         Map<String, Statistic> initialStats, 
+                         Map<String, Statistic> finalStats) {
         super(worker,true,"no reason");
-        rawStats = new ArrayList<Anova>(initialStats.size());
+        rawStats = new ArrayList<Statistic>(initialStats.size());
         if (initialStats.size() != finalStats.size()) {
             setSuccessful(false);
             return;
         }
-        for (Map.Entry<String, Anova> entry : initialStats.entrySet()) {
-            Anova initStat = entry.getValue();
-            Anova finalStat = finalStats.get(entry.getKey());
+        for (Map.Entry<String, Statistic> entry : initialStats.entrySet()) {
+            Statistic initStat = entry.getValue();
+            Statistic finalStat = finalStats.get(entry.getKey());
             if (finalStat == null) {
                 // no match for this address
                 setSuccessful(false);
@@ -70,13 +71,13 @@ public class SummaryReport extends ReportBase {
         }
         StringBuffer buf = new StringBuffer();
         buf.append("Statistics");
-        for (Anova statistic : rawStats) {
+        for (Statistic statistic : rawStats) {
             buf.append(statistic.getSummaryString());
         } 
         return buf.toString();
     }
 
-    public List<Anova> getRawStats() {
+    public List<Statistic> getRawStats() {
         return rawStats;
     }
 }

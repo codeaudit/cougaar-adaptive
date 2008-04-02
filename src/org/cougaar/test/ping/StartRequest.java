@@ -16,8 +16,8 @@
 *
 * Created : Aug 14, 2007
 * Workfile: StartRequest.java
-* $Revision: 1.3 $
-* $Date: 2008-03-21 22:02:54 $
+* $Revision: 1.4 $
+* $Date: 2008-04-02 13:42:58 $
 * $Author: jzinky $
 *
 * =============================================================================
@@ -25,6 +25,8 @@
  
 package org.cougaar.test.ping;
 
+import org.cougaar.core.qos.stats.Statistic;
+import org.cougaar.core.qos.stats.StatisticKind;
 import org.cougaar.core.util.UID;
 
 
@@ -52,7 +54,7 @@ public class StartRequest extends RunRequest {
 		return payloadBytes;
 	}
 	
-	public Statistic<?> makeStatistic(String name) {
+	public Statistic makeStatistic(String name) {
 		return statisticKind.makeStatistic(name);
 	}
 
