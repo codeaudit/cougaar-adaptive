@@ -37,7 +37,8 @@ import org.cougaar.util.annotations.Cougaar.ObtainService;
 
 /**
  * This Components uses the {@link DataFeedRegistrationService} to register an
- * RSS properties feed that uses the {@link ConfigFinder} to resolve the URL.
+ * an R-OSPF DataFeed. The advantanage is that the parameters are checked as 
+ *  Cougaar arguments, instead having to parse them string args
  */
 public class RospfDataFeedComponent extends QosComponent {
 
