@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingSenderPlugin.java
- * $Revision: 1.7 $
- * $Date: 2008-04-02 13:42:58 $
+ * $Revision: 1.8 $
+ * $Date: 2008-04-04 10:50:19 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -55,7 +55,7 @@ public class PingBBSenderPlugin extends TodoPlugin {
     private boolean failed = false;
     private long waitTime;
     private int payloadBytes;
-
+    
     public void load() {
         super.load();
         sessionName =
@@ -66,6 +66,26 @@ public class PingBBSenderPlugin extends TodoPlugin {
         }
 
     }
+    
+    // These methods can be overridden to send interesting payloads based on the reply payload
+    // The default implementation just sends the same array of bytes all the time.
+    private byte[] staticPayload;
+
+	protected byte[] initialPayload() {
+		// TODO intialize payload to something less compressable
+        staticPayload= new byte[payloadBytes];
+        for (int i=0; i< payloadBytes; i++) {
+        	staticPayload[i]=64;
+        }
+        log.shout("Length =" + staticPayload.length + "spec=" +payloadBytes );
+		return staticPayload;
+	}
+
+	private byte[] nextPayload(byte[] replyPayload) {
+		return staticPayload;
+	}
+
+	
 
     @Cougaar.Execute(on = Subscribe.ModType.ADD)
     public void executeStartRun(StartRequest request) {
@@ -74,13 +94,6 @@ public class PingBBSenderPlugin extends TodoPlugin {
         waitTime=startRequest.getWaitTimeMillis();
         payloadBytes=startRequest.getPayloadBytes();
         Statistic stat= request.makeStatistic(sessionName);
-        // Todo intialize to something compressable
-        byte[] payload= new byte[payloadBytes];
-        for (int i=0; i< payloadBytes; i++) {
-        	payload[i]=64;
-        }
-        log.shout("Length =" + payload.length + "spec=" +payloadBytes );
-        // TODO initialize array to something that compresses normally
         sendQuery =
                 new PingQuery(uids,
                               -preambleCount,
@@ -89,10 +102,12 @@ public class PingBBSenderPlugin extends TodoPlugin {
                               pluginId,
                               targetAgentId,
                               targetPluginId,
-                              payload);
+                              initialPayload());
         lastQueryTime = System.nanoTime();
         blackboard.publishAdd(sendQuery);
     }
+
+
 
     @Cougaar.Execute(on = Subscribe.ModType.ADD)
     public void executeStopRun(StopRequest request) {
@@ -135,23 +150,30 @@ public class PingBBSenderPlugin extends TodoPlugin {
         }
         // Do the next ping
         if (waitTime == 0) {
-        	sendNextQuery();
+        	sendNextQuery(reply.getPayload());
         }	else {
-        	Runnable work = new Runnable() {
-        		public void run() {
-        			sendNextQuery();
-        		}
-        	};
-        	executeLater(waitTime, work);
+        	executeLater(waitTime, new sendNextQueryRunnable(reply.getPayload()));
         }
     }
 
-	private void sendNextQuery() {
+	private void sendNextQuery(byte[] replyPayload) {
 		sendQuery.inc();
+		sendQuery.setPayload(nextPayload(replyPayload));
         lastQueryTime = System.nanoTime();
         // Note the change in Query
         Collection<?> changeList = Collections.singleton(sendQuery.getCount());
         blackboard.publishChange(sendQuery, changeList);
+	}
+	
+
+	private class sendNextQueryRunnable implements Runnable {
+		byte [] replyPayload;
+		public sendNextQueryRunnable(byte [] replyPayload) {
+			this.replyPayload = replyPayload;
+		}
+		public void run() {
+			sendNextQuery(replyPayload);			
+		}
 	}
 
     public boolean isMyPingReply(PingReply reply) {

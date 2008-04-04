@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingReceiverPlugin.java
- * $Revision: 1.2 $
- * $Date: 2008-03-21 18:46:21 $
+ * $Revision: 1.3 $
+ * $Date: 2008-04-04 10:50:19 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -45,12 +45,18 @@ public class PingBBReceiverPlugin extends AnnotatedSubscriptionsPlugin {
 
     @Cougaar.Arg(name = "pluginId", defaultValue = "a", description = "Receiver Plugin Id")
     public String pluginId;
+    
+    //This method can be overridden to send interesting payloads based on the reply payload
+    // The default behavior is to reflect the query payload back
+	protected byte[] nextPayload(byte[] queryPayload) {
+		return queryPayload;
+	}
+
 
     @Cougaar.Execute(on = {Subscribe.ModType.ADD, Subscribe.ModType.CHANGE}, when = "isMyPingQuery")
     public void executeNewQueryRelay(PingQuery query) {
         String senderPluginId = query.getSenderPlugin();
         MessageAddress senderAgentId = query.getSenderAgent();
-        byte[] payload =query.getPayload();
         String senderKey = makeSenderKey(senderAgentId, senderPluginId);
         PingReply reply = returnRelays.get(senderKey);
         if (reply == null) {
@@ -61,17 +67,19 @@ public class PingBBReceiverPlugin extends AnnotatedSubscriptionsPlugin {
                                   senderPluginId,
                                   agentId,
                                   pluginId,
-                                  payload);
+                                  nextPayload(query.getPayload()));
             returnRelays.put(senderKey, reply);
             blackboard.publishAdd(reply);
         } else {
             int count = query.getCount();
             reply.setCount(count);
-            reply.setPayload(payload);
+            reply.setPayload(nextPayload(query.getPayload()));
             Collection<?> changes = Collections.singleton(count);
             blackboard.publishChange(reply, changes);            
         }
     }
+
+
 
 
     public boolean isMyPingQuery(PingQuery query) {
