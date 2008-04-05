@@ -8,8 +8,14 @@ import java.util.Enumeration;
 
 import org.cougaar.test.ping.PingBBReceiverPlugin;
 import org.cougaar.util.ConfigFinder;
+import org.cougaar.util.annotations.Cougaar;
 
-public class SlideDisplayReceiverPlugin extends PingBBReceiverPlugin {
+public class ImageDisplayReceiverPlugin extends PingBBReceiverPlugin {
+	
+    @Cougaar.Arg(name = "cacheImages", defaultValue = "true", 
+    		description = "Should Images be cashed in memory after first read from disk ")
+    public boolean  isCasheGifs;
+
 	
 	// TODO get the images from dynamically Directory
 	private final String[] gifs = { "davisb00.jpg","davisb01.jpg", "davisb02.jpg","davisb03.jpg","davisb04.jpg",
@@ -20,17 +26,20 @@ public class SlideDisplayReceiverPlugin extends PingBBReceiverPlugin {
 	// Return gif as payload.
 	// use query payload as index into the images	
 	protected byte[] nextPayload(byte[] queryPayload) {
-		// TODO convert whole byte array into index
 		int gifNumber = 0;
 		if (queryPayload != null && queryPayload.length >= 1) {
+			// TODO convert whole byte array into index
 			gifNumber=queryPayload[0] % gifs.length;
 		}
-		if (gifCache[gifNumber] != null) {
+		if (isCasheGifs && gifCache[gifNumber] != null) {
 			return gifCache[gifNumber];
 		} else {
 			byte[] replyPayload = null;
 			try {
 				replyPayload = readImageFromResource(gifNumber);
+				if (isCasheGifs) {
+					gifCache[gifNumber] = replyPayload;
+				}
 			} catch (Exception e) {
 				log.error("Could not get gif #" + gifNumber);
 			}

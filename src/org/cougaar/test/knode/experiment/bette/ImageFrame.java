@@ -2,17 +2,17 @@ package org.cougaar.test.knode.experiment.bette;
 
 import javax.swing.JFrame;
 
-public class SlideFrame extends JFrame {
+public class ImageFrame extends JFrame {
     private int frameWidth;
     private int frameHeight;
     private int imageWidth;
     private int imageHeight;
     private javax.swing.JLabel imgLabel;
     private boolean showSlides = true;
-    private SlideDisplaySenderPlugin client;
+    private ImageDisplaySenderPlugin client;
 
 	 
-	 SlideFrame(String title,  String[] args, SlideDisplaySenderPlugin client)
+	 ImageFrame(String title,  String[] args, ImageDisplaySenderPlugin client)
 	    {
 		super(title);
 
@@ -42,7 +42,7 @@ public class SlideFrame extends JFrame {
 		// Make nice quit
 		addWindowListener(new java.awt.event.WindowAdapter() {
 			public void windowClosing(java.awt.event.WindowEvent e) {
-			    SlideFrame.this.client.quit();
+			    ImageFrame.this.client.quit();
 			}
 		    });
 

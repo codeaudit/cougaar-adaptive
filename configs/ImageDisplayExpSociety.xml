@@ -56,7 +56,7 @@
 				<argument name="defaultWorkerTimeout" value="10001000" />
 				<argument name="defaultNodeTimeout" value="100001000" />
 				<argument name="csvFileName" value="test.csv" />
-				<argument name="collectionLength" value="15000100" />
+				<argument name="collectionLength" value="15000" />
 				<argument name="steadyStateWait" value="1000" />
 			</component>
 
@@ -74,7 +74,7 @@
 
 		<agent name="Client">
 			<component
-				class="org.cougaar.test.knode.experiment.bette.SlideDisplaySenderPlugin">
+				class="org.cougaar.test.knode.experiment.bette.ImageDisplaySenderPlugin">
 				<argument name="pluginId" value="Src1" />
 				<argument name="targetAgent" value="Server" />
 				<argument name="targetPlugin" value="Snk1" />
@@ -86,8 +86,10 @@
 				<argument name="selectionPolicy" value="CLOSEST" />
 				<argument name="logicalServerName" value="Server" />
 				<argument name="serverName" value="Server3" />
+				<!--  
 				<argument name="serverName" value="Server1" />
 				<argument name="serverName" value="Server2" />
+				-->
 			</component>
 			<component
 				class="org.cougaar.test.ping.experiment.PingBBWorkerPlugin">
@@ -98,8 +100,9 @@
 
 		<agent name="Server1">
 			<component
-				class="org.cougaar.test.knode.experiment.bette.SlideDisplayReceiverPlugin">
+				class="org.cougaar.test.knode.experiment.bette.ImageDisplayReceiverPlugin">
 				<argument name="pluginId" value="Snk1" />
+				<argument name="cacheImages" value="true" />
 			</component>
 			<component
 				class="org.cougaar.test.ping.PingSSServerFacePlugin">
@@ -108,8 +111,9 @@
 
 		<agent name="Server2">
 			<component
-				class="org.cougaar.test.knode.experiment.bette.SlideDisplayReceiverPlugin">
+				class="org.cougaar.test.knode.experiment.bette.ImageDisplayReceiverPlugin">
 				<argument name="pluginId" value="Snk1" />
+				<argument name="cacheImages" value="true" />
 			</component>
 			<component
 				class="org.cougaar.test.ping.PingSSServerFacePlugin">
@@ -121,8 +125,9 @@
 	<node name="Node2">
 		<agent name="Server3">
 			<component
-				class="org.cougaar.test.knode.experiment.SlideDisplayReceiverPlugin">
+				class="org.cougaar.test.knode.experiment.bette.ImageDisplayReceiverPlugin">
 				<argument name="pluginId" value="Snk1" />
+				<argument name="cacheImages" value="true" />
 			</component>
 			<component
 				class="org.cougaar.test.ping.PingSSServerFacePlugin">
