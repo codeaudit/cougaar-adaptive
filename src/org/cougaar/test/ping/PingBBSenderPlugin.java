@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingSenderPlugin.java
- * $Revision: 1.8 $
- * $Date: 2008-04-04 10:50:19 $
+ * $Revision: 1.9 $
+ * $Date: 2008-04-05 03:55:47 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -81,7 +81,7 @@ public class PingBBSenderPlugin extends TodoPlugin {
 		return staticPayload;
 	}
 
-	private byte[] nextPayload(byte[] replyPayload) {
+	protected byte[] nextPayload(byte[] replyPayload) {
 		return staticPayload;
 	}
 

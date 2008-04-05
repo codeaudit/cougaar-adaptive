@@ -9,10 +9,10 @@ public class SlideFrame extends JFrame {
     private int imageHeight;
     private javax.swing.JLabel imgLabel;
     private boolean showSlides = true;
-    private SlideDisplayPlugin client;
+    private SlideDisplaySenderPlugin client;
 
 	 
-	 SlideFrame(String title,  String[] args, SlideDisplayPlugin client)
+	 SlideFrame(String title,  String[] args, SlideDisplaySenderPlugin client)
 	    {
 		super(title);
 
