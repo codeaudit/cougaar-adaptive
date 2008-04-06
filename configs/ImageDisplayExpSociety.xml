@@ -58,6 +58,7 @@
 				<argument name="csvFileName" value="test.csv" />
 				<argument name="collectionLength" value="15000" />
 				<argument name="steadyStateWait" value="1000" />
+				<argument name="interPingDelay" value="0" />
 			</component>
 
 			<component
@@ -79,7 +80,6 @@
 				<argument name="targetAgent" value="Server" />
 				<argument name="targetPlugin" value="Snk1" />
 				<argument name="preambleCount" value="50" />
-				<argument name="waitTime" value="0" />
 			</component>
 			<component
 				class="org.cougaar.test.ping.PingSSClientFacePlugin">
@@ -102,6 +102,9 @@
 			<component
 				class="org.cougaar.test.knode.experiment.bette.ImageDisplayReceiverPlugin">
 				<argument name="pluginId" value="Snk1" />
+			</component>
+			<component
+				class="org.cougaar.test.knode.experiment.bette.TimedImagePlugin">
 				<argument name="cacheImages" value="true" />
 			</component>
 			<component
@@ -113,6 +116,9 @@
 			<component
 				class="org.cougaar.test.knode.experiment.bette.ImageDisplayReceiverPlugin">
 				<argument name="pluginId" value="Snk1" />
+			</component>
+			<component
+				class="org.cougaar.test.knode.experiment.bette.TimedImagePlugin">
 				<argument name="cacheImages" value="true" />
 			</component>
 			<component
@@ -127,6 +133,9 @@
 			<component
 				class="org.cougaar.test.knode.experiment.bette.ImageDisplayReceiverPlugin">
 				<argument name="pluginId" value="Snk1" />
+			</component>
+			<component
+				class="org.cougaar.test.knode.experiment.bette.TimedImagePlugin">
 				<argument name="cacheImages" value="true" />
 			</component>
 			<component
