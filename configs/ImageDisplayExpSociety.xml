@@ -104,7 +104,7 @@
 				<argument name="pluginId" value="Snk1" />
 			</component>
 			<component
-				class="org.cougaar.test.knode.experiment.bette.TimedImagePlugin">
+				class="org.cougaar.test.knode.experiment.bette.TimedImageBasePlugin">
 				<argument name="cacheImages" value="true" />
 			</component>
 			<component
@@ -118,7 +118,7 @@
 				<argument name="pluginId" value="Snk1" />
 			</component>
 			<component
-				class="org.cougaar.test.knode.experiment.bette.TimedImagePlugin">
+				class="org.cougaar.test.knode.experiment.bette.TimedImageBasePlugin">
 				<argument name="cacheImages" value="true" />
 			</component>
 			<component
@@ -135,8 +135,9 @@
 				<argument name="pluginId" value="Snk1" />
 			</component>
 			<component
-				class="org.cougaar.test.knode.experiment.bette.TimedImagePlugin">
+				class="org.cougaar.test.knode.experiment.bette.TimedImageFromResourcePlugin">
 				<argument name="cacheImages" value="true" />
+				<argument name="imageDirectory" value="/org/cougaar/test/knode/experiment/bette/images" />
 			</component>
 			<component
 				class="org.cougaar.test.ping.PingSSServerFacePlugin">

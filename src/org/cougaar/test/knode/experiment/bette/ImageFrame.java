@@ -2,6 +2,7 @@ package org.cougaar.test.knode.experiment.bette;
 
 import javax.swing.JFrame;
 
+@SuppressWarnings("serial")
 public class ImageFrame extends JFrame {
     private int frameWidth;
     private int frameHeight;
@@ -92,7 +93,8 @@ public class ImageFrame extends JFrame {
 
 
 	    // We're not using this at the moment
-	    private void resize() {
+	    @SuppressWarnings("unused")
+		private void resize() {
 		java.awt.Dimension now = getSize();
 		java.awt.Dimension pref = getPreferredSize();
 		int newWidth = now.width;

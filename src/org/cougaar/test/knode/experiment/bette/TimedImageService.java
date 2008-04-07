@@ -1,6 +1,5 @@
 package org.cougaar.test.knode.experiment.bette;
 
-import org.cougaar.core.component.ServiceBroker;
 
 /*
  * Service which supplies images for a specific time. 
