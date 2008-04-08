@@ -14,7 +14,7 @@ public class TimedImageBasePlugin extends AnnotatedSubscriptionsPlugin implement
     		description = "Should Images be cached in memory after first read from disk ")
     public boolean  isCacheImages;
 	
-	@Cougaar.Arg(name = "imageDirectory", defaultValue = "/org/cougaar/test/knode/experiment/bette/images", 
+	@Cougaar.Arg(name = "imageDirectory", defaultValue = "/org/cougaar/test/knode/experiment/bette/images/big", 
     		description = "Directory where images are stored. Use the appropriate format based on where the images are stored")
     public String  imageDirectory;
 	

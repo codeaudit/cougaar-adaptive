@@ -137,7 +137,7 @@
 			<component
 				class="org.cougaar.test.knode.experiment.bette.TimedImageFromResourcePlugin">
 				<argument name="cacheImages" value="true" />
-				<argument name="imageDirectory" value="/org/cougaar/test/knode/experiment/bette/images" />
+				<argument name="imageDirectory" value="/org/cougaar/test/knode/experiment/bette/images/big" />
 			</component>
 			<component
 				class="org.cougaar.test.ping.PingSSServerFacePlugin">
