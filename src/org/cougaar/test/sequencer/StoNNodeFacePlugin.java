@@ -16,8 +16,8 @@
  *
  * Created : Aug 13, 2007
  * Workfile: NodeLocalSequencerPlugin.java
- * $Revision: 1.1 $
- * $Date: 2007-11-02 19:24:05 $
+ * $Revision: 1.2 $
+ * $Date: 2008-04-25 21:30:42 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -25,9 +25,9 @@
 
 package org.cougaar.test.sequencer;
 
+import org.cougaar.core.qos.coordinations.multicast.rir.RIRMulticastResponseFacePlugin;
+import org.cougaar.core.qos.coordinations.multicast.rir.RIRMulticast.EventType;
 import org.cougaar.core.util.UniqueObject;
-import org.cougaar.test.coordinations.multicast.rir.RIRMulticastResponseFacePlugin;
-import org.cougaar.test.coordinations.multicast.rir.RIRMulticast.EventType;
 
 /*
  * Send registrations and completions to sequencer agent and receive requests

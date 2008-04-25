@@ -1,8 +1,8 @@
 package org.cougaar.test.ping;
 
+import org.cougaar.core.qos.coordinations.selectserver.ServerSelectionServerFacePlugin;
+import org.cougaar.core.qos.coordinations.selectserver.ServerSelection.EventType;
 import org.cougaar.core.util.UniqueObject;
-import org.cougaar.test.coordinations.selectserver.ServerSelectionServerFacePlugin;
-import org.cougaar.test.coordinations.selectserver.ServerSelection.EventType;
 
 public class PingSSServerFacePlugin extends ServerSelectionServerFacePlugin {
 
