@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.1 $
- * $Date: 2008-04-29 17:41:10 $
+ * $Revision: 1.2 $
+ * $Date: 2008-04-29 19:01:38 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -80,50 +80,42 @@ public class KnodeImageSequencerPlugin
     		description="Kind of statistics to collect (ANOVA, TRACE, or BOTH)")
     public StatisticKind statisticsKind; 
     
+   
     
-    private void addPingSteps(String runName, String hops, String minSlots, String topology)
-    {
-    	addPingSteps(payloadSize, interPingDelay, statisticsKind, runName, hops, minSlots, topology);
-    }
-	
-	private void addPingSteps(long size, long delay, StatisticKind statKind,
-			String runName, String hops, String minSlots, String topology) {
-		long collectionTimeMillis= true? collectionLengthMillis : 180000;
-        addStep(START_TEST, steadyStateWaitMillis, null,
-        		PING_SIZE_PROPERTY+"="+size,
-        		PING_DELAY_PROPERTY+"="+ delay,
-        		PING_STATISTICS_PROPERTY+"="+statKind );
-        addStep(START_STEADY_STATE, collectionTimeMillis, null);
+	private void addPingSteps(String runName, String hops, String minSlots, String topology) {
+		addStep(START_STEADY_STATE, collectionLengthMillis, null);
         addStep(END_STEADY_STATE, 0, null);
-        addStep(END_TEST, 0, null);
         addStep(SUMMARY_TEST, 0, summaryWork, 
         		PING_RUN_PROPERTY+"="+runName,
-        		PING_SIZE_PROPERTY+"="+size,
         		KNODE_HOPS_PROPERTY+"="+hops,
         		KNODE_MIN_SLOTS_PROPERTY+"="+minSlots,
         		KNODE_TOPOLOGY_TYPE_PROPERTY+"="+topology);
  	}
 	
-	private void addTeeShapedExperimentSteps() {	
-		addRestartKnodeSteps();
-		addPingSteps("5hops", "5", "33","Tee");
-		addMoveLinkSteps("163","164","40.0");
-		addPingSteps("4hops", "4", "25","Tee");
-		addMoveLinkSteps("164","165","50.0");
-		addPingSteps("3hops", "3", "25","Tee");
-		addMoveLinkSteps("165","166","60.0");
-		addPingSteps("2hops", "2", "25","Tee");
-		addMoveLinkSteps("166","167","70.0");
-		addPingSteps("1hop", "1", "33","Tee");
-		addStep(SHUTDOWN, 0, null);
-		logExperimentDescription();
-	}
-	
 
     public void load() {
         super.load();
-        suiteName="Length";
-        addTeeShapedExperimentSteps();
+        addRestartKnodeSteps();
+        addStep(START_TEST, steadyStateWaitMillis, null);
+        addPingSteps("1hop", "1", "50", "Image");
+        addMoveLinkSteps("163","164","40.0");
+        addPingSteps("2hop", "2", "50", "Image");
+        addMoveLinkSteps("164","165","50.0");
+        addPingSteps("3hop", "3", "50", "Image");
+        addMoveLinkSteps("165","166","60.0");
+        addPingSteps("4hop", "4", "50", "Image");
+        addMoveLinkSteps("166","167","70.0");
+        addPingSteps("5hop", "5", "50", "Image");
+        addMoveLinkSteps("167","166","60.0");
+        addPingSteps("4hop", "4", "50", "Image");
+        addMoveLinkSteps("166","165","50.0");
+        addPingSteps("3hop", "3", "50", "Image");
+        addMoveLinkSteps("165","164","40.0");
+        addPingSteps("2hop", "2", "50", "Image");
+        addMoveLinkSteps("164","163","30.0");
+        addPingSteps("1hop", "1", "50", "Image");
+        addStep(END_TEST, 0, null);
+		addStep(SHUTDOWN, 0, null);
     }
     
     private void processStats(Collection<Set<Report>> reportsCollection, Properties props) {
