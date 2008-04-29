@@ -1,0 +1,156 @@
+<?xml version='1.0'?>
+
+<!--
+	Example regression test society
+-->
+<society>
+	<node name="Node168">
+		<!-- An optional society monitor servlet, which is based on framesets -->
+		<component
+			class='org.cougaar.core.qos.frame.topology.TopologyFrameUpdaterPlugin'>
+			<argument name="frame-set-files"
+				value="org/cougaar/core/qos/frame/topology/cougaar-topology-protos.xml" />
+			<argument name="frame-set" value="societyTopology" />
+		</component>
+		<component
+			class='org.cougaar.core.qos.frame.topology.MonitorServletPlugin' />
+		<component
+			class='org.cougaar.core.qos.frame.FrameSetServicePlugin' />
+		<component
+			class='org.cougaar.core.qos.frame.FrameViewerServlet'>
+			<argument>/frames</argument>
+		</component>
+
+		<component
+			class="org.cougaar.test.sequencer.experiment.ExperimentAggregatorPlugin">
+			<argument name="workerCount" value="1" />
+			<argument name="maxIdleTime" value="600010" />
+		</component>
+		<component
+			class="org.cougaar.test.sequencer.StoNNodeFacePlugin">
+			<argument name="sequencerName" value="Sequencer" />
+		</component>
+
+		<component
+			class="org.cougaar.core.qos.rss.ConfigFinderDataFeedComponent"
+			insertionpoint="Node.AgentManager.Agent.MetricsServices.Component">
+			<argument name="name" value="sites" />
+			<argument name="url" value="file:sites.conf" />
+		</component>
+
+		<component class="org.cougaar.core.qos.metrics.FeedLoader"
+			insertionpoint="Node.AgentManager.Agent.MetricsServices.Component">
+			<argument name="name" value="dynamic-sites" />
+			<argument name="class"
+				value="org.cougaar.qos.qrs.PollUrlDataFeed" />
+			<argument name="args"
+				value="-url file:metric_values.conf -poll 5000" />
+		</component>
+
+
+		<agent name="Sequencer">
+			<component
+				class="org.cougaar.test.knode.experiment.KnodeImageSequencerPlugin">
+				<argument name="suiteName" value="KnodeImage" />
+				<argument name="nodeCount" value="1" />
+				<argument name="defaultWorkerTimeout" value="10001000" />
+				<argument name="defaultNodeTimeout" value="100001000" />
+				<argument name="csvFileName" value="image.csv" />
+				<argument name="collectionLength" value="5000" />
+				<argument name="steadyStateWait" value="1000" />
+				<argument name="interPingDelay" value="0" />
+			</component>
+
+			<component
+				class="org.cougaar.test.sequencer.StoNSequencerFacePlugin">
+			</component>
+		</agent>
+
+		<agent name='NameServer'
+			class='org.cougaar.core.agent.SimpleAgent'>
+			<facet role='NameServer' />
+			<component class='org.cougaar.core.wp.server.Server'>
+			</component>
+		</agent>
+
+		<agent name="Client">
+			<component
+				class="org.cougaar.test.knode.experiment.bette.ImageDisplaySenderPlugin">
+				<argument name="pluginId" value="Src1" />
+				<argument name="targetAgent" value="Server" />
+				<argument name="targetPlugin" value="Snk1" />
+				<argument name="preambleCount" value="50" />
+			</component>
+			<component
+				class="org.cougaar.test.ping.PingSSClientFacePlugin">
+				<argument name="selectionPolicy" value="CLOSEST" />
+				<argument name="logicalServerName" value="Server" />
+				<argument name="serverName" value="Server169" />
+				<!--  
+					<argument name="serverName" value="Server169" />
+					<argument name="serverName" value="Server170" />
+				-->
+			</component>
+			<component
+				class="org.cougaar.test.ping.experiment.PingBBWorkerPlugin">
+				<argument name="workerId" value="source1" />
+				<argument name="pingerCount" value="1" />
+			</component>
+		</agent>
+
+		<agent name="Server168">
+			<component
+				class="org.cougaar.test.knode.experiment.bette.ImageDisplayReceiverPlugin">
+				<argument name="pluginId" value="Snk1" />
+			</component>
+			<component
+				class="org.cougaar.test.knode.experiment.bette.TimedImageBasePlugin">
+				<argument name="cacheImages" value="true" />
+				
+			</component>
+			<component
+				class="org.cougaar.test.ping.PingSSServerFacePlugin">
+			</component>
+		</agent>
+
+	</node>
+
+	<node name="Node169">
+		<agent name="Server169">
+			<component
+				class="org.cougaar.test.knode.experiment.bette.ImageDisplayReceiverPlugin">
+				<argument name="pluginId" value="Snk1" />
+			</component>
+			<component
+				class="org.cougaar.test.knode.experiment.bette.TimedImageFromResourcePlugin">
+				<argument name="cacheImages" value="true" />
+				<argument name="imageDirectory"
+					value="/org/cougaar/test/knode/experiment/bette/images/big" />
+			</component>
+			<component
+				class="org.cougaar.test.ping.PingSSServerFacePlugin">
+			</component>
+		</agent>
+	</node>
+
+	<node name="Node170">
+		<agent name="Server170">
+			<component
+				class="org.cougaar.test.knode.experiment.bette.ImageDisplayReceiverPlugin">
+				<argument name="pluginId" value="Snk1" />
+			</component>
+			<component
+				class="org.cougaar.test.knode.experiment.bette.TimedImageFromResourcePlugin">
+				<argument name="cacheImages" value="true" />
+				<argument name="imageDirectory"
+					value="/org/cougaar/test/knode/experiment/bette/images/bigneg" />
+			</component>
+			<component
+				class="org.cougaar.test.ping.PingSSServerFacePlugin">
+			</component>
+		</agent>
+
+
+	</node>
+
+</society>
