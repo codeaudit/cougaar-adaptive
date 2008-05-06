@@ -51,7 +51,7 @@
 		<agent name="Sequencer">
 			<component
 				class="org.cougaar.test.ping.experiment.PingSequencerPlugin">
-				<argument name="suiteName" value="Ping BB Bundled" />
+				<argument name="suiteName" value="Image Display" />
 				<argument name="nodeCount" value="1" />
 				<argument name="defaultWorkerTimeout" value="10001000" />
 				<argument name="defaultNodeTimeout" value="100001000" />
