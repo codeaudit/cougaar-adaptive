@@ -9,6 +9,11 @@ public class ImageDisplaySenderPlugin extends PingBBSenderPlugin {
     @Cougaar.Arg(name = "displayImages", defaultValue = "true", 
     		description = "Images should be displayed on GUI")
     public boolean  isDisplayGifs;
+    
+    @Cougaar.Arg(name = "realTime", defaultValue = "false", 
+    		description = "When false, image sequence will start from begining (time=0.0)")
+    public boolean  isRealTime;
+
 
 	private ImageFrame frame;
 	private long startTime;
@@ -24,7 +29,7 @@ public class ImageDisplaySenderPlugin extends PingBBSenderPlugin {
 		frame = new ImageFrame(title, args, this);
 		frame.setVisible(true);
 		// initalize Payload array
-		startTime = System.currentTimeMillis();
+		startTime = isRealTime ? 0 : System.currentTimeMillis();
 		sentTime=0;
 		byte [] queryPayload = TimeBytesConverter.timeToBytes(sentTime);
 		return queryPayload;
