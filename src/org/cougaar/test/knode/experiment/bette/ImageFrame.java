@@ -80,13 +80,13 @@ public class ImageFrame extends JFrame {
 	    }
 
 
-	    void update(byte[] pixels, int count) {
+	    void update(byte[] pixels, long count) {
 		if (pixels == null) {
 		    return;
 		} else if (showSlides) {
 		    imgLabel.setIcon(new javax.swing.ImageIcon(pixels));
 		} else {
-		    imgLabel.setText(Integer.toString(count));
+		    imgLabel.setText(Long.toString(count));
 		}
 	    }
 

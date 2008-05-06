@@ -11,8 +11,8 @@ public class ImageDisplaySenderPlugin extends PingBBSenderPlugin {
     public boolean  isDisplayGifs;
 
 	private ImageFrame frame;
-	private byte gifCount = 0;
-	
+	private long startTime;
+	private long sentTime;
 	
 
 	protected byte[] initialPayload() {
@@ -24,17 +24,17 @@ public class ImageDisplaySenderPlugin extends PingBBSenderPlugin {
 		frame = new ImageFrame(title, args, this);
 		frame.setVisible(true);
 		// initalize Payload array
-		byte [] queryPayload = new byte[1];
-		queryPayload[0] = gifCount;
+		startTime = System.currentTimeMillis();
+		sentTime=0;
+		byte [] queryPayload = TimeBytesConverter.timeToBytes(sentTime);
 		return queryPayload;
 	}
 
 	protected byte[] nextPayload(byte[] replyPayload) {
 		// Display an image
-		frame.update(replyPayload, gifCount);
-		gifCount= (byte) ((gifCount +1) % 128);
-		byte [] queryPayload = new byte[1];
-		queryPayload[0] = gifCount;
+		frame.update(replyPayload, sentTime);
+		sentTime= System.currentTimeMillis()- startTime;
+		byte [] queryPayload = TimeBytesConverter.timeToBytes(sentTime);
 		return queryPayload;
 	}
 

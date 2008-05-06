@@ -80,6 +80,7 @@
 				<argument name="targetAgent" value="Server" />
 				<argument name="targetPlugin" value="Snk1" />
 				<argument name="preambleCount" value="50" />
+				<argument name="displayImages" value="false"/>
 			</component>
 			<component
 				class="org.cougaar.test.ping.PingSSClientFacePlugin">
@@ -138,6 +139,8 @@
 				class="org.cougaar.test.knode.experiment.bette.TimedImageFromResourcePlugin">
 				<argument name="cacheImages" value="true" />
 				<argument name="imageDirectory" value="/org/cougaar/test/knode/experiment/bette/images/big" />
+				<argument name="imageFileExtension" value=".jpg" />
+				<argument name="imageFrameRate" value="0.5" />
 			</component>
 			<component
 				class="org.cougaar.test.ping.PingSSServerFacePlugin">

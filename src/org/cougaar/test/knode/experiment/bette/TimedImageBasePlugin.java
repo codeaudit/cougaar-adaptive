@@ -22,6 +22,11 @@ public class TimedImageBasePlugin extends AnnotatedSubscriptionsPlugin implement
     		description = "File extension of image files")
     public String  imageFileExtension;
 	
+	@Cougaar.Arg(name = "imageFrameRate", defaultValue = "5.0", 
+    		description = "Frames per Second")
+    public float frameRate;
+
+	
 	private String[] imageNames;
 	private byte[][] imageCache;
     private ServiceProvider provider;
@@ -41,7 +46,9 @@ public class TimedImageBasePlugin extends AnnotatedSubscriptionsPlugin implement
     public void start() {
     	super.start();
     	for(String imageName : imageNames) {
-			log.shout(imageName);
+    		if (log.isInfoEnabled()) {
+    			log.info(imageName);
+    		}
 		}
     }
 
@@ -57,8 +64,10 @@ public class TimedImageBasePlugin extends AnnotatedSubscriptionsPlugin implement
 		if (imageNames.length==0) {
 			return new byte[0];
 		}
-		int imageNumber= (int) time % imageNames.length;
-		log.shout("Requested Image #" + imageNumber + " at " + time);
+		int imageNumber=  (int) ((time * frameRate/1000 ) % imageNames.length);
+		if (log.isInfoEnabled()) {
+			log.info("Requested Image #" + imageNumber + " at " + time);
+		}
 		if (isCacheImages && imageCache[imageNumber] != null) {
 			return imageCache[imageNumber];
 		} else {
