@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.2 $
- * $Date: 2008-04-29 19:01:38 $
+ * $Revision: 1.3 $
+ * $Date: 2008-05-06 20:50:25 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -39,6 +39,7 @@ import org.cougaar.test.sequencer.Report;
 import org.cougaar.test.sequencer.StatisticsAccumulator;
 import org.cougaar.test.sequencer.StatisticsReport;
 import org.cougaar.test.sequencer.experiment.ExperimentStep;
+import org.cougaar.test.sequencer.experiment.LoopDescriptor;
 import org.cougaar.util.annotations.Cougaar;
 
 /**
@@ -82,38 +83,50 @@ public class KnodeImageSequencerPlugin
     
    
     
-	private void addPingSteps(String runName, String hops, String minSlots, String topology) {
-		addStep(START_STEADY_STATE, collectionLengthMillis, null);
-        addStep(END_STEADY_STATE, 0, null);
-        addStep(SUMMARY_TEST, 0, summaryWork, 
+	private void addPingSteps(LoopDescriptor<ExperimentStep, Report>  loop, String runName, String hops, String minSlots, String topology) {
+		loop.addStep(START_STEADY_STATE, collectionLengthMillis, null);
+        loop.addStep(END_STEADY_STATE, 0, null);
+        loop.addStep(SUMMARY_TEST, 0, summaryWork, 
         		PING_RUN_PROPERTY+"="+runName,
         		KNODE_HOPS_PROPERTY+"="+hops,
         		KNODE_MIN_SLOTS_PROPERTY+"="+minSlots,
         		KNODE_TOPOLOGY_TYPE_PROPERTY+"="+topology);
  	}
 	
+	protected void addMoveLinkSteps(LoopDescriptor<ExperimentStep, Report>  loop,String from, String to, String desiredCapacity) {
+        loop.addStep(KNODE_ADD_LINK, 0, null, LINK_PROPERTY+"= 162 " + to);
+        loop.addStep(KNODE_DEL_LINK, 0, null, LINK_PROPERTY+"= 162 " +from);
+        loop.addStep(KNODE_WAIT_METRIC, 0, null, METRIC_VALUE_PROPERTY+"="+desiredCapacity);
+ 	}
+
+	
+	private  LoopDescriptor<ExperimentStep, Report> teeLoop(int maxLoops) {
+		LoopDescriptor<ExperimentStep, Report> loop = makeLoopDescriptor(maxLoops);
+		addPingSteps(loop,"1hop", "1", "50", "Image");
+		addMoveLinkSteps(loop,"163","164","40.0");
+		addPingSteps(loop, "2hop", "2", "50", "Image");
+		addMoveLinkSteps(loop,"164","165","50.0");
+		addPingSteps(loop, "3hop", "3", "50", "Image");
+		addMoveLinkSteps(loop,"165","166","60.0");
+		addPingSteps(loop,"4hop", "4", "50", "Image");
+		addMoveLinkSteps(loop,"166","167","70.0");
+		addPingSteps(loop,"5hop", "5", "50", "Image");
+		addMoveLinkSteps(loop,"167","166","60.0");
+		addPingSteps(loop,"4hop", "4", "50", "Image");
+		addMoveLinkSteps(loop,"166","165","50.0");
+		addPingSteps(loop,"3hop", "3", "50", "Image");
+		addMoveLinkSteps(loop,"165","164","40.0");
+		addPingSteps(loop,"2hop", "2", "50", "Image");
+		addMoveLinkSteps(loop,"164","163","30.0");
+		addPingSteps(loop,"1hop", "1", "50", "Image");
+		return loop;
+	}
 
     public void load() {
         super.load();
         addRestartKnodeSteps();
         addStep(START_TEST, steadyStateWaitMillis, null);
-        addPingSteps("1hop", "1", "50", "Image");
-        addMoveLinkSteps("163","164","40.0");
-        addPingSteps("2hop", "2", "50", "Image");
-        addMoveLinkSteps("164","165","50.0");
-        addPingSteps("3hop", "3", "50", "Image");
-        addMoveLinkSteps("165","166","60.0");
-        addPingSteps("4hop", "4", "50", "Image");
-        addMoveLinkSteps("166","167","70.0");
-        addPingSteps("5hop", "5", "50", "Image");
-        addMoveLinkSteps("167","166","60.0");
-        addPingSteps("4hop", "4", "50", "Image");
-        addMoveLinkSteps("166","165","50.0");
-        addPingSteps("3hop", "3", "50", "Image");
-        addMoveLinkSteps("165","164","40.0");
-        addPingSteps("2hop", "2", "50", "Image");
-        addMoveLinkSteps("164","163","30.0");
-        addPingSteps("1hop", "1", "50", "Image");
+        addLoop(teeLoop(100));
         addStep(END_TEST, 0, null);
 		addStep(SHUTDOWN, 0, null);
     }
