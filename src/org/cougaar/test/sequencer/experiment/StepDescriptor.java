@@ -6,8 +6,10 @@
 
 package org.cougaar.test.sequencer.experiment;
 
+import java.util.Map;
 import java.util.Properties;
 
+import org.cougaar.core.service.LoggingService;
 import org.cougaar.test.sequencer.Report;
 import org.cougaar.test.sequencer.SocietyCompletionEvent;
 
@@ -25,41 +27,64 @@ import org.cougaar.test.sequencer.SocietyCompletionEvent;
  * 
  * @param <R> the report type
  */
-public class StepDescriptor<S extends ExperimentStep, R extends Report> {
-    private final S step;
-    private final long deferMillis;
-    private final StepBody<S, R> body;
-    private final Properties properties;
-    
-    public StepDescriptor(S step, long millis, StepBody<S, R> body, Properties properties) {
-        this.step = step;
-        this.deferMillis = millis;
-        this.body = body;
-        this.properties = properties;
-    }
-    
-    public S getStep() {
-        return step;
-    }
+public class StepDescriptor<S extends ExperimentStep, R extends Report>
+		implements Descriptor<S, R> {
+	private final S step;
+	private final long deferMillis;
+	private final StepBody<S, R> body;
+	private final Properties properties;
 
-    public long getDeferMillis() {
-        return deferMillis;
-    }
-    
-    public Properties getProperties() {
-        return properties;
-    }
-    
-    public boolean hasWork() {
-        return body  != null;
-    }
+	public StepDescriptor(S step, long millis, StepBody<S, R> body,
+			Properties properties) {
+		this.step = step;
+		this.deferMillis = millis;
+		this.body = body;
+		this.properties = properties;
+	}
 
-    public void doWork(SocietyCompletionEvent<S, R> event) {
-        if (body != null) {
-            body.setEvent(event);
-            body.setProps(properties);
-            body.run();
-        }
-    }
-    
+	public S getStep() {
+		return step;
+	}
+
+	public long getDeferMillis() {
+		return deferMillis;
+	}
+
+	public Properties getProperties() {
+		return properties;
+	}
+
+	public boolean hasWork() {
+		return body != null;
+	}
+
+	public void doWork(SocietyCompletionEvent<S, R> event) {
+		if (body != null) {
+			body.setEvent(event);
+			body.setProps(properties);
+			body.run();
+		}
+	}
+	
+	// No substeps
+	public S getNextStep() {
+	 return null;
+	}
+	
+	public void logDescription(LoggingService log, StringBuffer buf, int indent) {
+		for (int i = 1; i < indent; i++) {
+			buf.append(" ");
+		}
+		buf.append(step).append(", ");
+		buf.append(deferMillis);
+		if (hasWork()) {
+			buf.append(" with work");
+		}
+		for (Map.Entry<Object, Object> entry : getProperties().entrySet()) {
+			buf.append(", ").append(entry.getKey()).append("=").append(
+					entry.getValue());
+		}
+		buf.append('\n');
+	}
+
 }

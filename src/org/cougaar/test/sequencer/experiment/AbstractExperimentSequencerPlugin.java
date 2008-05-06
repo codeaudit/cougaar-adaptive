@@ -16,8 +16,8 @@
  *
  * Created : Aug 9, 2007
  * Workfile: AbstractExperimentSequencerPlugin.java
- * $Revision: 1.6 $
- * $Date: 2008-03-03 22:48:09 $
+ * $Revision: 1.7 $
+ * $Date: 2008-05-06 19:33:05 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -53,18 +53,26 @@ abstract public class AbstractExperimentSequencerPlugin<R extends Report>
                         String... properties) {
         experimentDescriptor.addStep(step, millis, body, properties);
     }
+    
+    public void addLoop(LoopDescriptor<ExperimentStep,R> loopDescriptor) {
+    	experimentDescriptor.addLoop(loopDescriptor);
+    }
+
+    public LoopDescriptor<ExperimentStep, R> makeLoopDescriptor(int maxLoops) {
+    	return new LoopDescriptor<ExperimentStep, R> (maxLoops);
+    }
    
     public void logExperimentDescription() {
         experimentDescriptor.logDescription(log);
     }
     
     protected Context makeContext(ExperimentStep step, boolean hasFailed, int workerTimeout) {
-        ExperimentStep descriptorStep = experimentDescriptor.getCurrentStep();
+        ExperimentStep descriptorStep = experimentDescriptor.getStep();
         if (!step.equals(descriptorStep)) {
             log.shout("Event has step " +step+ " but descriptor has step " +descriptorStep);
             // FIXME: should force a failure
         }
-        Properties props = experimentDescriptor.getCurrentProperties();
+        Properties props = experimentDescriptor.getProperties();
         return new ContextBase(workerTimeout, hasFailed, props);
     }
 
@@ -82,7 +90,7 @@ abstract public class AbstractExperimentSequencerPlugin<R extends Report>
     public void executeSocietyCompletion(SocietyCompletionEvent<ExperimentStep, R> event) {
         // Sanity check
         ExperimentStep eventStep = event.getStep();
-        ExperimentStep descriptorStep = experimentDescriptor.getCurrentStep();
+        ExperimentStep descriptorStep = experimentDescriptor.getStep();
         if (!eventStep.equals(descriptorStep)) {
             log.error("Event has step " +eventStep+ " but descriptor has step " +descriptorStep);
             sequenceFailed(event);
@@ -92,8 +100,8 @@ abstract public class AbstractExperimentSequencerPlugin<R extends Report>
             sequenceFailed(event);
             return;
         }
-        experimentDescriptor.runCurrentBody(event);
-        long deferMillis = experimentDescriptor.getCurrentDelay();
+        experimentDescriptor.doWork(event);
+        long deferMillis = experimentDescriptor.getDeferMillis();
         if (deferMillis > 0) {
             deferSocietyCompletion(event, deferMillis);
         } else {

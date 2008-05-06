@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.10 $
- * $Date: 2008-04-02 14:56:23 $
+ * $Revision: 1.11 $
+ * $Date: 2008-05-06 19:33:05 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -25,7 +25,6 @@
 
 package org.cougaar.test.ping.experiment;
 
-import java.beans.IntrospectionException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Properties;
@@ -42,6 +41,7 @@ import org.cougaar.test.sequencer.StatisticsAccumulator;
 import org.cougaar.test.sequencer.StatisticsReport;
 import org.cougaar.test.sequencer.experiment.AbstractExperimentSequencerPlugin;
 import org.cougaar.test.sequencer.experiment.ExperimentStep;
+import org.cougaar.test.sequencer.experiment.LoopDescriptor;
 import org.cougaar.util.annotations.Cougaar;
 
 /**
@@ -90,10 +90,12 @@ public class PingSequencerPlugin
         		PING_SIZE_PROPERTY+"="+payloadSize,
         		PING_DELAY_PROPERTY+"="+ interPingDelay,
         		PING_STATISTICS_PROPERTY+"="+statisticsKind );
-        addStep(START_STEADY_STATE, collectionLengthMillis, null);
-        addStep(END_STEADY_STATE, 0, null);
+        LoopDescriptor<ExperimentStep, Report> loop = makeLoopDescriptor(2);
+        loop.addStep(START_STEADY_STATE, collectionLengthMillis, null);
+        loop.addStep(END_STEADY_STATE, 0, null);
+        loop.addStep(SUMMARY_TEST, 0, summaryWork, PING_RUN_PROPERTY+"="+RUN_NAME);
+        addLoop(loop);
         addStep(END_TEST, 0, null);
-        addStep(SUMMARY_TEST, 0, summaryWork, PING_RUN_PROPERTY+"="+RUN_NAME);
         addStep(SHUTDOWN, 0, null);
         logExperimentDescription();
     }
