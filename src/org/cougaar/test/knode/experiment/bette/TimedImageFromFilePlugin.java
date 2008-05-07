@@ -9,7 +9,9 @@ public class TimedImageFromFilePlugin extends TimedImageBasePlugin{
 	protected String[] listImages(String dirName) {
 		File dir = new File(dirName);   
         String[] fileList = dir.list(new ImageFilter());
-        Arrays.sort(fileList);
+        if (fileList != null) {
+        	Arrays.sort(fileList);
+        }
 		return fileList;
 	}
 

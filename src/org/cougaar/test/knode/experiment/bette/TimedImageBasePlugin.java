@@ -35,7 +35,7 @@ public class TimedImageBasePlugin extends AnnotatedSubscriptionsPlugin implement
         super.load();
         // Find the Image Files
         imageNames=listImages(imageDirectory);
-        if (isCacheImages) {
+        if (isCacheImages && imageNames !=null) {
 			imageCache= new byte [imageNames.length][];	
 		}
         // Advertise the Timed Image service
@@ -45,11 +45,15 @@ public class TimedImageBasePlugin extends AnnotatedSubscriptionsPlugin implement
     
     public void start() {
     	super.start();
-    	for(String imageName : imageNames) {
-    		if (log.isInfoEnabled()) {
-    			log.info(imageName);
+    	if (imageNames == null || imageNames.length == 0) {
+    		log.warn("No images found in " + imageDirectory+ " extension " + imageFileExtension);
+    	} else {
+    		for(String imageName : imageNames) {
+    			if (log.isInfoEnabled()) {
+    				log.info(imageName);
+    			}
     		}
-		}
+    	}
     }
 
     public void unload() {
@@ -61,7 +65,7 @@ public class TimedImageBasePlugin extends AnnotatedSubscriptionsPlugin implement
     
     // Timed Image Service Interface
 	public byte[] getImage(long time) {
-		if (imageNames.length==0) {
+		if (imageNames == null || imageNames.length==0) {
 			return new byte[0];
 		}
 		int imageNumber=  (int) ((time * frameRate/1000 ) % imageNames.length);
