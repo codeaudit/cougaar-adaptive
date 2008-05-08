@@ -13,6 +13,11 @@ public class ImageDisplaySenderPlugin extends PingBBSenderPlugin {
     @Cougaar.Arg(name = "realTime", defaultValue = "false", 
     		description = "When false, image sequence will start from begining (time=0.0)")
     public boolean  isRealTime;
+    
+    @Cougaar.Arg(name = "title", defaultValue = "Slide Client", 
+    		description = "text for title on slide viewer frame")
+    public String  title;
+   
 
 
 	private ImageFrame frame;
@@ -22,7 +27,6 @@ public class ImageDisplaySenderPlugin extends PingBBSenderPlugin {
 
 	protected byte[] initialPayload() {
 		// Setup Swing frame
-		String title = "SlideClient";
 		String[] args = new String[2];
 		args[0] = "-show-slides";
 		args[1] = Boolean.toString(isDisplayGifs);
