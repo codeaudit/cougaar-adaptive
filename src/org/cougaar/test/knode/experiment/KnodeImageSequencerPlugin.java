@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.3 $
- * $Date: 2008-05-06 20:50:25 $
+ * $Revision: 1.4 $
+ * $Date: 2008-05-09 20:54:23 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -50,6 +50,16 @@ public class KnodeImageSequencerPlugin
     implements PingSteps {
 	
 	
+	private static final String R2_ROUTER = "167";
+
+	private static final String R1_ROUTER = "166";
+
+	private static final String L1_ROUTER = "164";
+
+	private static final String M0_ROUTER = "165";
+
+	private static final String L2_ROUTER = "163";
+
 	@Cougaar.Arg(name="collectionLength", defaultValue="3000",
 			description="Milliseconds to run collection")
 			public long collectionLengthMillis; 
@@ -103,21 +113,21 @@ public class KnodeImageSequencerPlugin
 	private  LoopDescriptor<ExperimentStep, Report> teeLoop(int maxLoops) {
 		LoopDescriptor<ExperimentStep, Report> loop = makeLoopDescriptor(maxLoops);
 		addPingSteps(loop,"1hop", "1", "50", "Image");
-		addMoveLinkSteps(loop,"163","164","40.0");
+		addMoveLinkSteps(loop,L2_ROUTER,L1_ROUTER,"40.0");
 		addPingSteps(loop, "2hop", "2", "50", "Image");
-		addMoveLinkSteps(loop,"164","165","50.0");
+		addMoveLinkSteps(loop,L1_ROUTER,M0_ROUTER,"50.0");
 		addPingSteps(loop, "3hop", "3", "50", "Image");
-		addMoveLinkSteps(loop,"165","166","60.0");
+		addMoveLinkSteps(loop,M0_ROUTER,R1_ROUTER,"60.0");
 		addPingSteps(loop,"4hop", "4", "50", "Image");
-		addMoveLinkSteps(loop,"166","167","70.0");
+		addMoveLinkSteps(loop,R1_ROUTER,R2_ROUTER,"70.0");
 		addPingSteps(loop,"5hop", "5", "50", "Image");
-		addMoveLinkSteps(loop,"167","166","60.0");
+		addMoveLinkSteps(loop,R2_ROUTER,R1_ROUTER,"60.0");
 		addPingSteps(loop,"4hop", "4", "50", "Image");
-		addMoveLinkSteps(loop,"166","165","50.0");
+		addMoveLinkSteps(loop,R1_ROUTER,M0_ROUTER,"50.0");
 		addPingSteps(loop,"3hop", "3", "50", "Image");
-		addMoveLinkSteps(loop,"165","164","40.0");
+		addMoveLinkSteps(loop,M0_ROUTER,L1_ROUTER,"40.0");
 		addPingSteps(loop,"2hop", "2", "50", "Image");
-		addMoveLinkSteps(loop,"164","163","30.0");
+		addMoveLinkSteps(loop,L1_ROUTER,L2_ROUTER,"30.0");
 		addPingSteps(loop,"1hop", "1", "50", "Image");
 		return loop;
 	}
