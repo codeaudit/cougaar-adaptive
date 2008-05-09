@@ -52,12 +52,10 @@ public class TimedImageBasePlugin extends AnnotatedSubscriptionsPlugin implement
     	super.start();
     	if (imageNames == null || imageNames.length == 0) {
     		log.warn("No images found in " + imageDirectory+ " extension " + imageFileExtension);
-    	} else {
-    		for(String imageName : imageNames) {
-    			if (log.isInfoEnabled()) {
-    				log.info(imageName);
-    			}
-    		}
+    		return;
+    	}
+    	if (log.isInfoEnabled()) {
+    		log.info(imageNames.length + " images are available in " + imageDirectory);
     	}
     }
 
