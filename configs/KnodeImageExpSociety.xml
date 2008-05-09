@@ -100,6 +100,7 @@
 				<argument name="targetAgent" value="Server" />
 				<argument name="targetPlugin" value="Snk1" />
 				<argument name="preambleCount" value="2" />
+				<argument name="title" value="K-Node Server Selection"/>
 			</component>
 			<component
 				class="org.cougaar.test.ping.PingSSClientFacePlugin">
@@ -139,10 +140,12 @@
 				<argument name="pluginId" value="Snk1" />
 			</component>
 			<component
-				class="org.cougaar.test.knode.experiment.bette.TimedImageFromResourcePlugin">
-				<argument name="cacheImages" value="true" />
-				<argument name="imageDirectory"
-					value="/org/cougaar/test/knode/experiment/bette/images/big" />
+				class="org.cougaar.test.knode.experiment.bette.TimedImageFromConfigPlugin">
+				<argument name="imageDirectory"	value="tuav3-left-jpeg" />
+				<argument name="cacheImages" value="false" />
+				<argument name="imageFileExtension" value=".jpg" />
+				<argument name="imageFrameRate" value="15" />
+				<argument name="loopBackwards" value="true" />
 			</component>
 			<component
 				class="org.cougaar.test.ping.PingSSServerFacePlugin">
@@ -157,10 +160,12 @@
 				<argument name="pluginId" value="Snk1" />
 			</component>
 			<component
-				class="org.cougaar.test.knode.experiment.bette.TimedImageFromResourcePlugin">
-				<argument name="cacheImages" value="true" />
-				<argument name="imageDirectory"
-					value="/org/cougaar/test/knode/experiment/bette/images/bigneg" />
+				class="org.cougaar.test.knode.experiment.bette.TimedImageFromConfigPlugin">
+				<argument name="imageDirectory"	value="tuav3-right-jpeg" />
+				<argument name="cacheImages" value="false" />
+				<argument name="imageFileExtension" value=".jpg" />
+				<argument name="imageFrameRate" value="15" />
+				<argument name="loopBackwards" value="true" />
 			</component>
 			<component
 				class="org.cougaar.test.ping.PingSSServerFacePlugin">
