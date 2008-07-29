@@ -9,6 +9,10 @@ Example regression test society
             insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
             <argument name="rootDirectory" value="/tmp/cougaarTest" />
         </component>
+        <component class="org.cougaar.mts.base.LoopbackLinkProtocol"
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
+            <argument name="rootDirectory" value="/tmp/cougaarTest" />
+        </component>
 		<component class="org.cougaar.test.ping.regression.PingSequencerPlugin">
 			<argument name="suiteName" value="File Zink Protocol" />
 			<argument name="nodeCount" value="1" />
