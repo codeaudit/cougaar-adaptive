@@ -5,16 +5,30 @@ Example regression test society
 -->
 <society>
 	<node name="Node1">
+	
+	    <vm_parameter name="-Dorg.cougaar.name.server.NameServer" 
+	                  value="-FILE:file:///tmp/cougaarTest/Node1"/>
+	                  
+        <vm_parameter name="-Dorg.cougaar.name.server" 
+                      value="NameServer@"/>
+	                  
+	    <!-- Detect messages from Old incarnations of agents. This detection is at the Message Layer,
+        as opposed to the traditional Name Service.
+        -->
+        <component class='org.cougaar.mts.std.OldIncarnationAspect'
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component"/>
+	                  
 		<component class="org.cougaar.mts.file.FileLinkProtocol"
             insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
             <argument name="rootDirectory" value="/tmp/cougaarTest" />
         </component>
+        
         <component class="org.cougaar.mts.base.LoopbackLinkProtocol"
             insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
-            <argument name="rootDirectory" value="/tmp/cougaarTest" />
         </component>
+        
 		<component class="org.cougaar.test.ping.regression.PingSequencerPlugin">
-			<argument name="suiteName" value="File Zink Protocol" />
+			<argument name="suiteName" value="File Link Protocol" />
 			<argument name="nodeCount" value="1" />
 			<argument name="defaultWorkerTimeout" value="1001001" />
 			<argument name="defaultNodeTimeout" value="1001001" />
@@ -54,11 +68,32 @@ Example regression test society
 		    	<argument name="interPingDelay" value="0"/>
 			</component>
 		</agent>
+
+	 </node>
+	 
+	 <node name="Node2">
+    
+        <vm_parameter name="-Dorg.cougaar.name.server.NameServer" 
+                      value="-FILE:file:///tmp/cougaarTest/Node1"/>
+        <vm_parameter name="-Dorg.cougaar.name.server" 
+                      value="NameServer@"/>
+                      
+        <!-- Detect messages from Old incarnations of agents. This detection is at the Message Layer,
+        as opposed to the traditional Name Service.
+        -->
+        <component class='org.cougaar.mts.std.OldIncarnationAspect'
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component"/>
+                      
+        <component class="org.cougaar.mts.file.FileLinkProtocol"
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
+            <argument name="rootDirectory" value="/tmp/cougaarTest" />
+        </component>
+        
+        <component class="org.cougaar.mts.base.LoopbackLinkProtocol"
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
+        </component>
+  
 		<agent name="sink1">
-			<component class="org.cougaar.test.ping.PingReceiverPlugin">
-		    </component>
-		</agent>
-		<agent name="sink2">
 			<component class="org.cougaar.test.ping.PingReceiverPlugin">
 		    </component>
 		</agent>
