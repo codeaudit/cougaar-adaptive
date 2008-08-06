@@ -1,0 +1,118 @@
+<?xml version='1.0'?>
+
+<!--
+	Example regression test society
+-->
+<society>
+	<node name="Node1">
+	
+	    <vm_parameter name="-Dorg.cougaar.name.server.NameServer" 
+                      value="-XMPP:xmpp://esb.dsl.bbn.com/Node1"/>
+        <vm_parameter name="-Dorg.cougaar.name.server" 
+                      value="NameServer@"/>
+                      
+        <!-- Detect messages from Old incarnations of agents. This detection is at the Message Layer,
+        as opposed to the traditional Name Service.
+        -->
+        <component class='org.cougaar.mts.std.OldIncarnationAspect'
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component"/>
+            
+        <component class='org.cougaar.mts.std.SequenceAspect'
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component"/>
+        
+        <component class="org.cougaar.mts.xmpp.XmppLinkProtocol"
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
+            <argument name="server" value="esb.dsl.bbn.com" />
+            <argument name="user" value="Node1" />
+        </component>
+        
+    
+        <component class="org.cougaar.mts.base.LoopbackLinkProtocol"
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
+        </component>
+        
+		<component class="org.cougaar.test.sequencer.regression.RegressionAggregatorPlugin">
+			<argument name="workerCount" value="1" />
+			<argument name="maxIdleTime" value="600010" />
+		</component>
+		<component
+			class="org.cougaar.test.sequencer.StoNNodeFacePlugin">
+			<argument name="sequencerName" value="Sequencer" />
+		</component>
+
+		<agent name="Sequencer">
+		<component
+			class="org.cougaar.test.ping.regression.PingSequencerPlugin">
+			<argument name="suiteName" value="Two UDP Node Ping" />
+			<argument name="nodeCount" value="1" />
+			<argument name="defaultWorkerTimeout" value="1000100" />
+			<argument name="defaultNodeTimeout" value="100100" />
+			<argument name="csvFileName" value="test.csv" />
+			<argument name="collectionLength" value="100000" />
+			<argument name="steadyStateWait" value="1000" />
+		</component>
+		<component
+			class="org.cougaar.test.sequencer.StoNSequencerFacePlugin">
+		</component>
+		
+		</agent>
+		<agent name='NameServer'
+			class='org.cougaar.core.agent.SimpleAgent'>
+			<facet role='NameServer' />
+			<component class='org.cougaar.core.wp.server.Server'>
+			</component>
+		</agent>
+
+		<agent name="source1">
+			<component
+				class="org.cougaar.test.ping.PingSenderPlugin">
+				<argument name="pluginId" value="A"/>
+				<argument name="targetAgent" value="sink" />
+				<argument name="targetPlugin" value="Z"/>
+				<argument name="preambleCount" value="50" />
+			</component>
+			<component
+				class="org.cougaar.test.ping.regression.PingTesterPlugin">
+				<argument name="workerId" value="source1" />
+				<argument name="pingerCount" value="1" />
+			</component>
+		</agent>
+
+
+	</node>
+
+	<node name="Node2">
+		<vm_parameter name="-Dorg.cougaar.name.server.NameServer" 
+                      value="-XMPP:xmpp://esb.dsl.bbn.com/Node1"/>
+        <vm_parameter name="-Dorg.cougaar.name.server" 
+                      value="NameServer@"/>
+                      
+        <!-- Detect messages from Old incarnations of agents. This detection is at the Message Layer,
+        as opposed to the traditional Name Service.
+        -->
+        <component class='org.cougaar.mts.std.OldIncarnationAspect'
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component"/>
+            
+        <component class='org.cougaar.mts.std.SequenceAspect'
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component"/>
+        
+        <component class="org.cougaar.mts.xmpp.XmppLinkProtocol"
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
+            <argument name="server" value="esb.dsl.bbn.com" />
+            <argument name="user" value="Node2" />
+        </component>
+		
+		<agent name="sink">
+			<component
+				class="org.cougaar.test.ping.PingReceiverPlugin">
+				<argument name="pluginId" value="Z"/>
+			</component>
+			<component
+				class="org.cougaar.test.ping.PingReceiverPlugin">
+				<argument name="pluginId" value="Y"/>
+			</component>
+		</agent>
+		
+	</node>
+
+</society>
