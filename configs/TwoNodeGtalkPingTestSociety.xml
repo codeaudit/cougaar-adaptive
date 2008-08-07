@@ -7,7 +7,7 @@
 	<node name="Node1">
 	
 	    <vm_parameter name="-Dorg.cougaar.name.server.NameServer" 
-                      value="-XMPP:xmpp://Node1@esb.dsl.bbn.com"/>
+                      value="-XMPP:xmpp://CougaarNode1@gmail.com"/>
         <vm_parameter name="-Dorg.cougaar.name.server" 
                       value="NameServer@"/>
                       
@@ -22,8 +22,8 @@
         
         <component class="org.cougaar.mts.xmpp.XmppLinkProtocol"
             insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
-            <argument name="server" value="esb.dsl.bbn.com" />
-            <argument name="jabberId" value="Node1@esb.dsl.bbn.com" />
+            <argument name="server" value="talk.google.com" />
+            <argument name="jabberId" value="CougaarNode1@gmail.com" />
             <argument name="passwordsUri" value="file:jabber-passwords.props"/>
         </component>
         
@@ -44,7 +44,7 @@
 		<agent name="Sequencer">
 		<component
 			class="org.cougaar.test.ping.regression.PingSequencerPlugin">
-			<argument name="suiteName" value="Two UDP Node Ping" />
+			<argument name="suiteName" value="Two Xmpp Node Ping" />
 			<argument name="nodeCount" value="1" />
 			<argument name="defaultWorkerTimeout" value="1000100" />
 			<argument name="defaultNodeTimeout" value="100100" />
@@ -84,7 +84,7 @@
 
 	<node name="Node2">
 		<vm_parameter name="-Dorg.cougaar.name.server.NameServer" 
-                      value="-XMPP:xmpp://Node1@esb.dsl.bbn.com"/>
+                      value="-XMPP:xmpp://CougaarNode1@gmail.com"/>
         <vm_parameter name="-Dorg.cougaar.name.server" 
                       value="NameServer@"/>
                       
@@ -99,8 +99,8 @@
         
         <component class="org.cougaar.mts.xmpp.XmppLinkProtocol"
             insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
-            <argument name="server" value="esb.dsl.bbn.com" />
-            <argument name="jabberId" value="Node2@esb.dsl.bbn.com" />
+            <argument name="server" value="talk.google.com" />
+            <argument name="jabberId" value="CougaarNode2@gmail.com" />
             <argument name="passwordsUri" value="file:jabber-passwords.props"/>
         </component>
 		
@@ -109,11 +109,7 @@
 				class="org.cougaar.test.ping.PingReceiverPlugin">
 				<argument name="pluginId" value="Z"/>
 			</component>
-			<component
-				class="org.cougaar.test.ping.PingReceiverPlugin">
-				<argument name="pluginId" value="Y"/>
-			</component>
-		</agent>
+	   </agent>
 		
 	</node>
 
