@@ -18,7 +18,7 @@ Example regression test society
         <component class='org.cougaar.mts.std.OldIncarnationAspect'
             insertionpoint="Node.AgentManager.Agent.MessageTransport.Component"/>
 	                  
-		<component class="org.cougaar.mts.file.FileLinkProtocol"
+		<component class="org.cougaar.mts.stream.FileLinkProtocol"
             insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
             <argument name="rootDirectory" value="/tmp/cougaarTest" />
         </component>
@@ -84,7 +84,7 @@ Example regression test society
         <component class='org.cougaar.mts.std.OldIncarnationAspect'
             insertionpoint="Node.AgentManager.Agent.MessageTransport.Component"/>
                       
-        <component class="org.cougaar.mts.file.FileLinkProtocol"
+        <component class="org.cougaar.mts.stream.FileLinkProtocol"
             insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
             <argument name="rootDirectory" value="/tmp/cougaarTest" />
         </component>
