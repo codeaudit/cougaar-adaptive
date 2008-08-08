@@ -21,8 +21,10 @@ public class TimedImageFromFilePlugin extends TimedImageBasePlugin{
 		String[] imageNames=getImageNames();
 		File imageFile = new File(imageDirectory +File.separator + imageNames[imageNumber]);
 		imageLength = imageFile.length();
-		log.shout("Image Number=" + imageNumber+ "Image Length="+imageLength);
-		FileInputStream imageStream = new FileInputStream(imageFile);
+		if (log.isDebugEnabled()) {
+            log.debug("Image Number=" + imageNumber + "Image Length=" + imageLength);
+        }
+        FileInputStream imageStream = new FileInputStream(imageFile);
 
 		if (imageLength > Integer.MAX_VALUE) {
 			imageStream.close();
