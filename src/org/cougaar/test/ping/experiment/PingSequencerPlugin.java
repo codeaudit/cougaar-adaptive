@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.11 $
- * $Date: 2008-05-06 19:33:05 $
+ * $Revision: 1.12 $
+ * $Date: 2008-08-08 16:17:15 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -67,6 +67,11 @@ public class PingSequencerPlugin
     @Cougaar.Arg(name="interPingDelay", defaultValue="0", 
     		description="Time between sending next ping after receiving reply (in milliseconds)")
     public long interPingDelay; 
+    
+    @Cougaar.Arg(name="loops", defaultValue="3", 
+                 description="Number of Steady State Collection Loops")
+         public int loops; 
+
 
     // TODO JAZ why can't I use StatisticKind.ANOVA.toString()
     @Cougaar.Arg(name="statisticsKind", defaultValue="ANOVA", 
@@ -90,7 +95,7 @@ public class PingSequencerPlugin
         		PING_SIZE_PROPERTY+"="+payloadSize,
         		PING_DELAY_PROPERTY+"="+ interPingDelay,
         		PING_STATISTICS_PROPERTY+"="+statisticsKind );
-        LoopDescriptor<ExperimentStep, Report> loop = makeLoopDescriptor(2);
+        LoopDescriptor<ExperimentStep, Report> loop = makeLoopDescriptor(loops);
         loop.addStep(START_STEADY_STATE, collectionLengthMillis, null);
         loop.addStep(END_STEADY_STATE, 0, null);
         loop.addStep(SUMMARY_TEST, 0, summaryWork, PING_RUN_PROPERTY+"="+RUN_NAME);
