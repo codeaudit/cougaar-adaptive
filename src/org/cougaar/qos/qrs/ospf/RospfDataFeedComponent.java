@@ -31,7 +31,6 @@ import java.net.InetAddress;
 import org.cougaar.core.qos.metrics.DataFeedRegistrationService;
 import org.cougaar.core.qos.metrics.QosComponent;
 import org.cougaar.core.service.LoggingService;
-import org.cougaar.util.ConfigFinder;
 import org.cougaar.util.annotations.Cougaar.Arg;
 import org.cougaar.util.annotations.Cougaar.ObtainService;
 
