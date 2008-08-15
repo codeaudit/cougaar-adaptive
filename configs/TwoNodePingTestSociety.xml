@@ -5,7 +5,6 @@
 -->
 <society>
 	<node name="Node1">
-	    <vm_parameter name="-Dorg.cougaar.name.server" value="NameServer@localhost:8888"/>
 		<component class="org.cougaar.test.sequencer.regression.RegressionAggregatorPlugin">
 			<argument name="workerCount" value="3" />
 			<argument name="maxIdleTime" value="600010" />
@@ -94,7 +93,6 @@
 	</node>
 
 	<node name="Node2">
-	    <vm_parameter name="-Dorg.cougaar.name.server" value="NameServer@localhost:8888"/>
 		<component class="org.cougaar.test.sequencer.regression.RegressionAggregatorPlugin">
 			<argument name="workerCount" value="1" />
 			<argument name="maxIdleTime" value="600010" />
