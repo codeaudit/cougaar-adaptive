@@ -23,5 +23,8 @@
 	<!-- Optional log4j config file -->
 	<vm_parameter name="-Dorg.cougaar.core.logging.config.filename"
 		value="logging.props" />
+		
+	<!--  Prepend tools.jar to the standard CIP jar path (trailing colon) -->	
+    <vm_parameter name="-Dorg.cougaar.jar.path" value="../lib/tools.jar:"/>
 
 </runtime>
