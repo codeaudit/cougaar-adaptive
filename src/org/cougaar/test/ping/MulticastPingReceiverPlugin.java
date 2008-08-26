@@ -16,9 +16,9 @@
 *
 * Created : Aug 14, 2007
 * Workfile: PingReceiverPlugin.java
-* $Revision: 1.1 $
-* $Date: 2008-08-25 21:51:44 $
-* $Author: jzinky $
+* $Revision: 1.2 $
+* $Date: 2008-08-26 13:19:54 $
+* $Author: rshapiro $
 *
 * =============================================================================
 */
@@ -107,7 +107,7 @@ public class MulticastPingReceiverPlugin extends AnnotatedSubscriptionsPlugin {
     }
     
     public boolean isMyPingQuery(SimpleRelay relay) {
-        if (multicastAddress.equals(relay.getTarget())) {
+        if (targetMulticastGroup.equals(relay.getTarget())) {
             if (relay.getQuery() instanceof PingQuery) {
                PingQuery pingQuery = (PingQuery) relay.getQuery();
                return pluginId.equals(pingQuery.getReceiverPlugin());
