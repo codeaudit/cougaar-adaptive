@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingSenderPlugin.java
- * $Revision: 1.2 $
- * $Date: 2008-08-26 13:31:56 $
+ * $Revision: 1.3 $
+ * $Date: 2008-08-26 13:47:23 $
  * $Author: rshapiro $
  *
  * =============================================================================
@@ -161,7 +161,7 @@ public class MulticastPingSenderPlugin
     }
 
     public boolean isMyPingReply(SimpleRelay relay) {
-        if (agentId.equals(relay.getTarget()) && targetMulticastGroup.equals(relay.getSource())) {
+        if (agentId.equals(relay.getTarget())) {
             if (relay.getQuery() instanceof PingReply) {
                 PingReply pingReply = (PingReply) relay.getQuery();
                 return pluginId.equals(pingReply.getSenderPlugin())
