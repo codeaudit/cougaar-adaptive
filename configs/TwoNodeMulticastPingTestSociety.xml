@@ -7,17 +7,11 @@
 	<node name="Node1">
 	
         <vm_parameter name="-Dorg.cougaar.name.server" 
-                      value="NameServer@cranberry.bbn.com:8888"/>
+                      value="NameServer@localhost:8888"/>
                       
-        <!-- Detect messages from Old incarnations of agents. This detection is at the Message Layer,
-        as opposed to the traditional Name Service.
-        -->
         <component class='org.cougaar.mts.std.OldIncarnationAspect'
             insertionpoint="Node.AgentManager.Agent.MessageTransport.Component"/>
             
-        <component class='org.cougaar.mts.std.SequenceAspect'
-            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component"/>
-        
         <component class="org.cougaar.mts.udp.UdpMulticastLinkProtocol"
             insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
         </component>
@@ -25,8 +19,6 @@
         <component class="org.cougaar.mts.rmi.RMILinkProtocol"
             insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
         </component>
- 
-        
     
         <component class="org.cougaar.mts.base.LoopbackLinkProtocol"
             insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
@@ -85,26 +77,23 @@
 
 	<node name="Node2">
          <vm_parameter name="-Dorg.cougaar.name.server" 
-                      value="NameServer@cranberry.bbn.com:8888"/>
-                     
+                      value="NameServer@localhost:8888"/>
                       
-        <!-- Detect messages from Old incarnations of agents. This detection is at the Message Layer,
-        as opposed to the traditional Name Service.
-        -->
         <component class='org.cougaar.mts.std.OldIncarnationAspect'
             insertionpoint="Node.AgentManager.Agent.MessageTransport.Component"/>
-            
-        <component class='org.cougaar.mts.std.SequenceAspect'
-            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component"/>
-        
-         <component class="org.cougaar.mts.udp.UdpMulticastLinkProtocol"
+                          
+        <component class="org.cougaar.mts.udp.UdpMulticastLinkProtocol"
             insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
         </component>
         
         <component class="org.cougaar.mts.rmi.RMILinkProtocol"
             insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
         </component>
-		
+        
+		<component class="org.cougaar.mts.base.LoopbackLinkProtocol"
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
+        </component>
+        
 		<agent name="sink">
 			<component
 				class="org.cougaar.test.ping.MulticastPingReceiverPlugin">
