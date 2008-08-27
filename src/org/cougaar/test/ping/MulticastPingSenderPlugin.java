@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingSenderPlugin.java
- * $Revision: 1.3 $
- * $Date: 2008-08-26 13:47:23 $
+ * $Revision: 1.4 $
+ * $Date: 2008-08-27 11:33:52 $
  * $Author: rshapiro $
  *
  * =============================================================================
@@ -29,7 +29,7 @@ import java.net.InetAddress;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.cougaar.core.mts.InetMessageAddress;
+import org.cougaar.core.mts.InetMulticastMessageAddress;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.plugin.TodoPlugin;
 import org.cougaar.core.qos.stats.Statistic;
@@ -70,7 +70,7 @@ public class MulticastPingSenderPlugin
 
     public void start() {
         super.start();
-        targetMulticastGroup = new InetMessageAddress(multicastAddress, multicastPort);
+        targetMulticastGroup = new InetMulticastMessageAddress(multicastAddress, multicastPort);
     }
 
     @Cougaar.Execute(on = Subscribe.ModType.ADD)

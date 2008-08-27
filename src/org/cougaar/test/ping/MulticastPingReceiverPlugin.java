@@ -16,8 +16,8 @@
 *
 * Created : Aug 14, 2007
 * Workfile: PingReceiverPlugin.java
-* $Revision: 1.2 $
-* $Date: 2008-08-26 13:19:54 $
+* $Revision: 1.3 $
+* $Date: 2008-08-27 11:33:52 $
 * $Author: rshapiro $
 *
 * =============================================================================
@@ -33,7 +33,7 @@ import java.util.Map;
 
 import org.cougaar.core.agent.service.MessageSwitchService;
 import org.cougaar.core.component.ServiceBroker;
-import org.cougaar.core.mts.InetMessageAddress;
+import org.cougaar.core.mts.InetMulticastMessageAddress;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.plugin.AnnotatedSubscriptionsPlugin;
 import org.cougaar.core.relay.SimpleRelay;
@@ -56,12 +56,12 @@ public class MulticastPingReceiverPlugin extends AnnotatedSubscriptionsPlugin {
     @Cougaar.Arg(name = "pluginId", defaultValue="a", description = "Receiver Plugin Id")
     public String pluginId;
     
-    private InetMessageAddress targetMulticastGroup;
+    private InetMulticastMessageAddress targetMulticastGroup;
 
     
     public void start() {
         super.start();
-        targetMulticastGroup = new InetMessageAddress(multicastAddress, multicastPort);
+        targetMulticastGroup = new InetMulticastMessageAddress(multicastAddress, multicastPort);
         ServiceBroker sb = getServiceBroker();
         MessageSwitchService mss = sb.getService(this, MessageSwitchService.class, null);
         mss.joinGroup(targetMulticastGroup);
