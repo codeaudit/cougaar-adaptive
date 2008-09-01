@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.4 $
- * $Date: 2008-05-09 20:54:23 $
+ * $Revision: 1.5 $
+ * $Date: 2008-09-01 13:22:26 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -49,16 +49,17 @@ public class KnodeImageSequencerPlugin
     extends AbstractKnodExpSequencerPlugin
     implements PingSteps {
 	
-	
+	/*
+	 *    L2--L1--M0--R1--R2
+	 *            |
+	 *            C
+	 */
 	private static final String R2_ROUTER = "167";
-
 	private static final String R1_ROUTER = "166";
-
-	private static final String L1_ROUTER = "164";
-
 	private static final String M0_ROUTER = "165";
-
+	private static final String L1_ROUTER = "164";
 	private static final String L2_ROUTER = "163";
+	private static final String C_ROUTER = "162";
 
 	@Cougaar.Arg(name="collectionLength", defaultValue="3000",
 			description="Milliseconds to run collection")
@@ -93,7 +94,7 @@ public class KnodeImageSequencerPlugin
     
    
     
-	private void addPingSteps(LoopDescriptor<ExperimentStep, Report>  loop, String runName, String hops, String minSlots, String topology) {
+	private void addPingSteps(LoopDescriptor<ExperimentStep, Report> loop, String runName, String hops, String minSlots, String topology) {
 		loop.addStep(START_STEADY_STATE, collectionLengthMillis, null);
         loop.addStep(END_STEADY_STATE, 0, null);
         loop.addStep(SUMMARY_TEST, 0, summaryWork, 
@@ -103,9 +104,9 @@ public class KnodeImageSequencerPlugin
         		KNODE_TOPOLOGY_TYPE_PROPERTY+"="+topology);
  	}
 	
-	protected void addMoveLinkSteps(LoopDescriptor<ExperimentStep, Report>  loop,String from, String to, String desiredCapacity) {
-        loop.addStep(KNODE_ADD_LINK, 0, null, LINK_PROPERTY+"= 162 " + to);
-        loop.addStep(KNODE_DEL_LINK, 0, null, LINK_PROPERTY+"= 162 " +from);
+	protected void addMoveLinkSteps(LoopDescriptor<ExperimentStep, Report> loop, String from, String to, String desiredCapacity) {
+        loop.addStep(KNODE_ADD_LINK, 0, null, LINK_PROPERTY+"= " +C_ROUTER+ " "+ to);
+        loop.addStep(KNODE_DEL_LINK, 0, null, LINK_PROPERTY+"= " +C_ROUTER+ " "+ from);
         loop.addStep(KNODE_WAIT_METRIC, 0, null, METRIC_VALUE_PROPERTY+"="+desiredCapacity);
  	}
 
