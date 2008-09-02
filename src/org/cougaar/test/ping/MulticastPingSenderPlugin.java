@@ -16,9 +16,9 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingSenderPlugin.java
- * $Revision: 1.4 $
- * $Date: 2008-08-27 11:33:52 $
- * $Author: rshapiro $
+ * $Revision: 1.5 $
+ * $Date: 2008-09-02 09:17:35 $
+ * $Author: jzinky $
  *
  * =============================================================================
  */
@@ -29,9 +29,11 @@ import java.net.InetAddress;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.cougaar.core.agent.service.alarm.Alarm;
 import org.cougaar.core.mts.InetMulticastMessageAddress;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.plugin.TodoPlugin;
+import org.cougaar.core.qos.stats.Anova;
 import org.cougaar.core.qos.stats.Statistic;
 import org.cougaar.core.qos.stats.StatisticKind;
 import org.cougaar.core.relay.SimpleRelay;
@@ -42,9 +44,18 @@ import org.cougaar.util.annotations.Subscribe;
 
 public class MulticastPingSenderPlugin
         extends TodoPlugin {
-    @Cougaar.Arg(name = "preambleCount", defaultValue = "10", 
+    @Cougaar.Arg(name = "preambleCount", defaultValue = "1", 
                  description = "Number of pings to send before declaring the pinger has started")
     public int preambleCount;
+    
+    @Cougaar.Arg(name = "minInterPingMillis", defaultValue = "1000", 
+            description = "Milliseconds between pings")
+    public int minIntraPingMillis;
+    
+    @Cougaar.Arg(name = "expectedRepliesPerPing", defaultValue = "1", 
+            description = "Expected Number of Replies per Ping")
+    public int expectedRepliesPerPing;
+
 
     @Cougaar.Arg(name = "multicastAddress", required = true, description = "Multicast Address")
     public InetAddress multicastAddress;
@@ -58,7 +69,6 @@ public class MulticastPingSenderPlugin
     @Cougaar.Arg(name = "pluginId", defaultValue = "a", description = "Sender Plugin Id")
     public String pluginId;
 
-    private long lastQueryTime;
     private SimpleRelay sendRelay;
     private StartRequest startRequest;
     private StopRequest stopRequest;
@@ -66,7 +76,12 @@ public class MulticastPingSenderPlugin
     private boolean failed = false;
     private int payloadBytes;
     private long waitTime;
+    private Alarm sendNextAlarm;
+    private long lastQueryTime;
+    private Anova responseTimeStats;
+    private Anova lateResponseTimeStats;
     private MessageAddress targetMulticastGroup;
+
 
     public void start() {
         super.start();
@@ -77,13 +92,13 @@ public class MulticastPingSenderPlugin
     public void executeStartRun(StartRequest request) {
         startRequest = request;
         // Ping count starts negative, when zero the pinger has started
-        waitTime = startRequest.getWaitTimeMillis();
+        waitTime = Math.max(minIntraPingMillis, startRequest.getWaitTimeMillis());
         payloadBytes = startRequest.getPayloadBytes();
         byte[] payload = new byte[payloadBytes];
         // TODO initialize array to something that compresses normally
         UID uid = uids.nextUID();
         // Ping count starts negative, when zero the pinger has started
-        Object query =
+        PingQuery query =
                 new PingQuery(uids,
                               -preambleCount,
                               StatisticKind.ANOVA.makeStatistic(sessionName),
@@ -95,6 +110,7 @@ public class MulticastPingSenderPlugin
         sendRelay = new SimpleRelaySource(uid, agentId, targetMulticastGroup, query);
         lastQueryTime = System.nanoTime();
         blackboard.publishAdd(sendRelay);
+        sendNextAlarm=executeLater(waitTime, new sendNextQueryRunnable(query));
     }
 
     @Cougaar.Execute(on = Subscribe.ModType.ADD)
@@ -104,61 +120,86 @@ public class MulticastPingSenderPlugin
 
     @Cougaar.Execute(on = {Subscribe.ModType.ADD,Subscribe.ModType.CHANGE}, when = "isMyPingReply")
     public void executePingResponse(SimpleRelay recvRelay) {
-        if (log.isInfoEnabled()) {
-            log.info("Received response from " + recvRelay.getSource());
+        if (log.isDebugEnabled()) {
+            log.debug("Received response from " + recvRelay.getSource());
         }
         PingReply reply = (PingReply) recvRelay.getQuery();
         final PingQuery query = (PingQuery) sendRelay.getQuery();
+        final long now = System.nanoTime();
+        final long responseTime=now-lastQueryTime;
+        final int distanceFromCurrent = reply.getCount() - query.getCount();
 
         // Validate that the counts match
-        if (reply.getCount() != query.getCount()) {
+        if (distanceFromCurrent > 0) {
+        	// Something is wrong
             failed = true;
-            log.warn("Counts don't match reply=" + reply.getCount() + " query=" + query.getCount());
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Count=" + reply.getCount());
-            }
-        }
-        // Update statistics from incoming ack
-        Statistic stat = query.getStatistic();
-        long now = System.nanoTime();
-        stat.newValue(now - lastQueryTime);
-        // check if pinger has finished starting
-        if (query.getCount() == 0) {
-            stat.reset();
-            startRequest.inc();
-            blackboard.publishChange(startRequest);
-        }
-        // check if test should stop
-        if (stopRequest != null) {
-            stopRequest.inc();
-            if (failed) {
-                stopRequest.forceFailed();
-            }
-            blackboard.publishChange(stopRequest);
-            blackboard.publishRemove(sendRelay);
-            return;
-        }
-        // Do the next ping
-        if (waitTime == 0) {
-            sendNextQuery(query);
-        } else {
-            Runnable work = new Runnable() {
-                public void run() {
-                    sendNextQuery(query);
-                }
-            };
-            executeLater(waitTime, work);
-        }
+            log.warn("Reply for future query=" + reply.getCount() + " query=" + query.getCount());
+        } else if (distanceFromCurrent < 0){
+        	// Update statistic for late reply
+        	lateResponseTimeStats.newValue((waitTime * distanceFromCurrent) + responseTime );
+	    } else {
+	    	// Update statistics from incoming reply
+	    	responseTimeStats.newValue(responseTime);
+	    }
     }
 
-    private void sendNextQuery(PingQuery sendQuery) {
-        sendQuery.inc();
-        lastQueryTime = System.nanoTime();
-        // Note the change in Query
-        Collection<?> changeList = Collections.singleton(sendQuery);
-        blackboard.publishChange(sendRelay, changeList);
-    }
+   
+	private class sendNextQueryRunnable implements Runnable {
+		PingQuery lastQuery;
+		public sendNextQueryRunnable(PingQuery sendQuery) {
+			this.lastQuery = sendQuery;
+		}
+		public void run() {
+			// calculate results from last query
+			int replyCount = responseTimeStats.getValueCount();
+			int percentReplies = (100 * replyCount) / expectedRepliesPerPing;
+			int lateCount = lateResponseTimeStats.getValueCount();
+			int percentLate = (100 * lateCount) / expectedRepliesPerPing ;
+			double responseTime=responseTimeStats.max(); // worst case
+			
+			// remember results
+	        lastQuery.getStatistic().newValue(responseTime);
+	        if (log.isInfoEnabled()){
+	        	log.info(responseTimeStats.getSummaryString() + 
+	        			" replyCount=" + replyCount + " (" + percentReplies + "%)" +
+	        			" lateCount=" + lateCount + " (" + percentLate + "%)");
+	        }
+	        
+	        // check if pinger has finished starting
+	        if (lastQuery.getCount() == 0) {
+	            lastQuery.getStatistic().reset();
+	            startRequest.inc();
+	            blackboard.publishChange(startRequest);
+	        }
+	        
+	        // check if test should stop
+	        if (stopRequest != null) {
+	            stopRequest.inc();
+	            if (failed) {
+	                stopRequest.forceFailed();
+	            }
+	            blackboard.publishChange(stopRequest);
+	            blackboard.publishRemove(sendRelay);
+	            return;
+	        }
+
+	        
+			// Setup next Query	
+			lastQuery.inc();
+			// TODO statistics should really be stored in query
+			responseTimeStats=(Anova) StatisticKind.ANOVA.makeStatistic("responseTime:" + lastQuery.getCount());
+			lateResponseTimeStats=(Anova) StatisticKind.ANOVA.makeStatistic("lateTime:" + lastQuery.getCount());
+			lastQueryTime = System.nanoTime();
+			
+			// publish Query
+			Collection<?> changeList = Collections.singleton(lastQuery);
+			blackboard.publishChange(sendRelay, changeList);
+			
+			// Schedule Query after Next
+			sendNextAlarm=executeLater(waitTime, new sendNextQueryRunnable(lastQuery));
+		}
+	}
+
 
     public boolean isMyPingReply(SimpleRelay relay) {
         if (agentId.equals(relay.getTarget())) {

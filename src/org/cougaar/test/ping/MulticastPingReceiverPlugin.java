@@ -16,9 +16,9 @@
 *
 * Created : Aug 14, 2007
 * Workfile: PingReceiverPlugin.java
-* $Revision: 1.3 $
-* $Date: 2008-08-27 11:33:52 $
-* $Author: rshapiro $
+* $Revision: 1.4 $
+* $Date: 2008-09-02 09:17:34 $
+* $Author: jzinky $
 *
 * =============================================================================
 */
@@ -58,9 +58,9 @@ public class MulticastPingReceiverPlugin extends AnnotatedSubscriptionsPlugin {
     
     private InetMulticastMessageAddress targetMulticastGroup;
 
-    
-    public void start() {
-        super.start();
+
+    public void setupSubscriptions() {
+        super.setupSubscriptions();
         targetMulticastGroup = new InetMulticastMessageAddress(multicastAddress, multicastPort);
         ServiceBroker sb = getServiceBroker();
         MessageSwitchService mss = sb.getService(this, MessageSwitchService.class, null);
