@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingSenderPlugin.java
- * $Revision: 1.5 $
- * $Date: 2008-09-02 09:17:35 $
+ * $Revision: 1.6 $
+ * $Date: 2008-09-02 15:38:35 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -108,7 +108,7 @@ public class MulticastPingSenderPlugin
                               targetPlugin,
                               payload);
         sendRelay = new SimpleRelaySource(uid, agentId, targetMulticastGroup, query);
-        lastQueryTime = System.nanoTime();
+        initializeStatisticsForNewQuery(-preambleCount);
         blackboard.publishAdd(sendRelay);
         sendNextAlarm=executeLater(waitTime, new sendNextQueryRunnable(query));
     }
@@ -144,61 +144,70 @@ public class MulticastPingSenderPlugin
     }
 
    
-	private class sendNextQueryRunnable implements Runnable {
-		PingQuery lastQuery;
-		public sendNextQueryRunnable(PingQuery sendQuery) {
-			this.lastQuery = sendQuery;
-		}
-		public void run() {
-			// calculate results from last query
-			int replyCount = responseTimeStats.getValueCount();
-			int percentReplies = (100 * replyCount) / expectedRepliesPerPing;
-			int lateCount = lateResponseTimeStats.getValueCount();
-			int percentLate = (100 * lateCount) / expectedRepliesPerPing ;
-			double responseTime=responseTimeStats.max(); // worst case
-			
-			// remember results
-	        lastQuery.getStatistic().newValue(responseTime);
-	        if (log.isInfoEnabled()){
-	        	log.info(responseTimeStats.getSummaryString() + 
-	        			" replyCount=" + replyCount + " (" + percentReplies + "%)" +
-	        			" lateCount=" + lateCount + " (" + percentLate + "%)");
-	        }
-	        
-	        // check if pinger has finished starting
-	        if (lastQuery.getCount() == 0) {
-	            lastQuery.getStatistic().reset();
-	            startRequest.inc();
-	            blackboard.publishChange(startRequest);
-	        }
-	        
-	        // check if test should stop
-	        if (stopRequest != null) {
-	            stopRequest.inc();
-	            if (failed) {
-	                stopRequest.forceFailed();
-	            }
-	            blackboard.publishChange(stopRequest);
-	            blackboard.publishRemove(sendRelay);
-	            return;
-	        }
+	private class sendNextQueryRunnable
+            implements Runnable {
+        PingQuery lastQuery;
 
-	        
-			// Setup next Query	
-			lastQuery.inc();
-			// TODO statistics should really be stored in query
-			responseTimeStats=(Anova) StatisticKind.ANOVA.makeStatistic("responseTime:" + lastQuery.getCount());
-			lateResponseTimeStats=(Anova) StatisticKind.ANOVA.makeStatistic("lateTime:" + lastQuery.getCount());
-			lastQueryTime = System.nanoTime();
-			
-			// publish Query
-			Collection<?> changeList = Collections.singleton(lastQuery);
-			blackboard.publishChange(sendRelay, changeList);
-			
-			// Schedule Query after Next
-			sendNextAlarm=executeLater(waitTime, new sendNextQueryRunnable(lastQuery));
-		}
-	}
+        public sendNextQueryRunnable(PingQuery lastQuery) {
+            this.lastQuery = lastQuery;
+        }
+
+        public void run() {
+            // calculate results from last query
+            int replyCount = responseTimeStats.getValueCount();
+            int percentReplies = (100 * replyCount) / expectedRepliesPerPing;
+            int lateCount = lateResponseTimeStats.getValueCount();
+            int percentLate = (100 * lateCount) / expectedRepliesPerPing;
+            double responseTime = responseTimeStats.max(); // worst case
+
+            // remember results
+            lastQuery.getStatistic().newValue(responseTime);
+            if (log.isInfoEnabled()) {
+                log.info(responseTimeStats.getSummaryString() + " replyCount=" + replyCount + " ("
+                        + percentReplies + "%)" + " lateCount=" + lateCount + " (" + percentLate
+                        + "%)");
+            }
+
+            // check if pinger has finished starting
+            if (lastQuery.getCount() == 0) {
+                lastQuery.getStatistic().reset();
+                startRequest.inc();
+                blackboard.publishChange(startRequest);
+            }
+
+            // check if test should stop
+            if (stopRequest != null) {
+                stopRequest.inc();
+                if (failed) {
+                    stopRequest.forceFailed();
+                }
+                blackboard.publishChange(stopRequest);
+                blackboard.publishRemove(sendRelay);
+                return;
+            }
+
+            // Setup next Query
+            lastQuery.inc();
+            initializeStatisticsForNewQuery(lastQuery.getCount());
+
+            // publish Query
+            Collection<?> changeList = Collections.singleton(lastQuery);
+            blackboard.publishChange(sendRelay, changeList);
+
+            // Schedule Query after Next
+            sendNextAlarm = executeLater(waitTime, new sendNextQueryRunnable(lastQuery));
+        }
+
+    }
+	
+	private void initializeStatisticsForNewQuery(int count) {
+        // TODO statistics should really be stored in query
+        responseTimeStats =
+                (Anova) StatisticKind.ANOVA.makeStatistic("responseTime:" + count);
+        lateResponseTimeStats =
+                (Anova) StatisticKind.ANOVA.makeStatistic("lateTime:" + count);
+        lastQueryTime = System.nanoTime();
+    }
 
 
     public boolean isMyPingReply(SimpleRelay relay) {
