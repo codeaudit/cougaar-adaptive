@@ -63,7 +63,8 @@
 				<argument name="multicastAddress" value="234.0.0.234" />
 				<argument name="multicastPort" value="6660" />
 				<argument name="targetPlugin" value="Z"/>
-				<argument name="preambleCount" value="50" />
+				<argument name="preambleCount" value="2" />
+				<argument name="expectedRepliesPerPing" value="3" />
 			</component>
 			<component
 				class="org.cougaar.test.ping.regression.PingTesterPlugin">
@@ -71,6 +72,24 @@
 				<argument name="pingerCount" value="1" />
 			</component>
 		</agent>
+		
+		<agent name="sink1">
+			<component
+				class="org.cougaar.test.ping.MulticastPingReceiverPlugin">
+				<argument name="pluginId" value="Z"/>
+				<argument name="multicastAddress" value="234.0.0.234" />
+                <argument name="multicastPort" value="6660" />
+				
+			</component>
+			<component
+				class="org.cougaar.test.ping.MulticastPingReceiverPlugin">
+				<argument name="pluginId" value="Y"/>
+				<argument name="multicastAddress" value="234.0.0.234" />
+                <argument name="multicastPort" value="6660" />
+				
+			</component>
+		</agent>
+		
 
 
 	</node>
@@ -94,7 +113,7 @@
             insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
         </component>
         
-		<agent name="sink">
+		<agent name="sink2">
 			<component
 				class="org.cougaar.test.ping.MulticastPingReceiverPlugin">
 				<argument name="pluginId" value="Z"/>
@@ -112,5 +131,47 @@
 		</agent>
 		
 	</node>
+	
+	<node name="Node3">
+	
+       <vm_parameter name="-Dorg.cougaar.name.server" 
+                      value="NameServer@localhost:8888"/>
+                      
+        <component class='org.cougaar.mts.std.OldIncarnationAspect'
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component"/>
+            
+        <component class="org.cougaar.mts.udp.UdpMulticastLinkProtocol"
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
+        </component>
+        
+        <component class="org.cougaar.mts.rmi.RMILinkProtocol"
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
+        </component>
+    
+        <component class="org.cougaar.mts.base.LoopbackLinkProtocol"
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
+        </component>
+        
+        <agent name="sink3">
+			<component
+				class="org.cougaar.test.ping.MulticastPingReceiverPlugin">
+				<argument name="pluginId" value="Z"/>
+				<argument name="multicastAddress" value="234.0.0.234" />
+                <argument name="multicastPort" value="6660" />
+				
+			</component>
+			<component
+				class="org.cougaar.test.ping.MulticastPingReceiverPlugin">
+				<argument name="pluginId" value="Y"/>
+				<argument name="multicastAddress" value="234.0.0.234" />
+                <argument name="multicastPort" value="6660" />
+				
+			</component>
+		</agent>
+        
+        
+	</node>
+	
+	
 
 </society>
