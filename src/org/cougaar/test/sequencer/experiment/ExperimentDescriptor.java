@@ -6,14 +6,8 @@
 
 package org.cougaar.test.sequencer.experiment;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.test.sequencer.Report;
-import org.cougaar.test.sequencer.SocietyCompletionEvent;
 
 /**
  * Specification of experiment as an ordered sequence of {@link StepDescriptor}.

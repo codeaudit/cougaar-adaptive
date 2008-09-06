@@ -15,6 +15,7 @@ public abstract class AbstractKnodExpSequencerPlugin
 	//                        |
 	//                   MovingClient
 
+	@SuppressWarnings("unused")
 	private static final String LEFT_SERVER = "192.168.163.100";
 	private static final String RIGHT_SERVER = "192.168.167.100";
 	private static final String MOVING_CLIENT = "192.168.162.100";

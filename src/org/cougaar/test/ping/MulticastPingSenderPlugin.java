@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingSenderPlugin.java
- * $Revision: 1.6 $
- * $Date: 2008-09-02 15:38:35 $
+ * $Revision: 1.7 $
+ * $Date: 2008-09-06 22:47:12 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -34,7 +34,6 @@ import org.cougaar.core.mts.InetMulticastMessageAddress;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.plugin.TodoPlugin;
 import org.cougaar.core.qos.stats.Anova;
-import org.cougaar.core.qos.stats.Statistic;
 import org.cougaar.core.qos.stats.StatisticKind;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.relay.SimpleRelaySource;
@@ -181,6 +180,7 @@ public class MulticastPingSenderPlugin
                 if (failed) {
                     stopRequest.forceFailed();
                 }
+                sendNextAlarm.cancel();
                 blackboard.publishChange(stopRequest);
                 blackboard.publishRemove(sendRelay);
                 return;

@@ -16,8 +16,8 @@
  *
  * Created : Aug 14, 2007
  * Workfile: PingNodeLocalSequencerPlugin.java
- * $Revision: 1.8 $
- * $Date: 2008-04-02 14:56:24 $
+ * $Revision: 1.9 $
+ * $Date: 2008-09-06 22:47:12 $
  * $Author: jzinky $
  *
  * =============================================================================
@@ -30,7 +30,6 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.cougaar.core.qos.stats.Anova;
-import org.cougaar.core.qos.stats.CsvFormat;
 import org.cougaar.core.qos.stats.CsvWriter;
 import org.cougaar.core.qos.stats.Statistic;
 import org.cougaar.core.qos.stats.StatisticKind;
