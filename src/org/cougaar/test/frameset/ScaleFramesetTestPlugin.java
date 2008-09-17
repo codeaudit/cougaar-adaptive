@@ -57,7 +57,7 @@ public class ScaleFramesetTestPlugin extends TodoPlugin implements
 		super.start();
 		//TODO use Annotated Service lookup
 		ServiceBroker sb = getServiceBroker();
-		FrameSetService fss = (FrameSetService) sb.getService(this,
+		FrameSetService fss = sb.getService(this,
 				FrameSetService.class, null);
 		if (fss == null) {
 			log.error("Couldn't find FrameSetService");
