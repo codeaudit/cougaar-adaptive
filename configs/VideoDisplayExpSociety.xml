@@ -51,7 +51,7 @@
 				class="org.cougaar.test.knode.experiment.bette.ImageOnewaySenderFacePlugin">
 				<argument name="clientName" value="Client"/>
 				<argument name="defaultTimeoutMillis" value="1000"/>
-				<argument name="deleteOnSend" value="false"/>
+				<argument name="deleteOnSend" value="true"/>
 			</component>
 			
             <component
