@@ -10,10 +10,10 @@ public class ImageFrame extends JFrame {
     private int imageHeight;
     private javax.swing.JLabel imgLabel;
     private boolean showSlides = true;
-    private ImageDisplaySenderPlugin client;
+    private Quitable client;
 
 	 
-	 ImageFrame(String title,  String[] args, ImageDisplaySenderPlugin client)
+	 ImageFrame(String title,  String[] args, Quitable client)
 	    {
 		super(title);
 

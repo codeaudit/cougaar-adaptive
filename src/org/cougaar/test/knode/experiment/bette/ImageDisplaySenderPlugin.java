@@ -4,7 +4,7 @@ import org.cougaar.test.ping.PingBBSenderPlugin;
 import org.cougaar.util.annotations.Cougaar;
 
 
-public class ImageDisplaySenderPlugin extends PingBBSenderPlugin {
+public class ImageDisplaySenderPlugin extends PingBBSenderPlugin  implements Quitable{
 	
     @Cougaar.Arg(name = "displayImages", defaultValue = "true", 
     		description = "Images should be displayed on GUI")
