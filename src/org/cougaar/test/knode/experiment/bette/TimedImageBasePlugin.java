@@ -24,7 +24,7 @@ public class TimedImageBasePlugin extends AnnotatedSubscriptionsPlugin implement
 	
 	@Cougaar.Arg(name = "imageFrameRate", defaultValue = "5.0", 
     		description = "Frames per Second")
-    public float frameRate;
+    public double frameRate;
 	
 	@Cougaar.Arg(name = "loopBackwards", defaultValue = "false", 
     		description = "Run the image sequence backwards, instead of jumping back to the beginning")
@@ -68,16 +68,17 @@ public class TimedImageBasePlugin extends AnnotatedSubscriptionsPlugin implement
     
     // Timed Image Service Interface
 	public byte[] getImage(long time) {
-		if (imageNames == null || imageNames.length==0) {
+	int numberImages = imageNames.length;
+        if (imageNames == null || numberImages==0) {
 			return new byte[0];
 		}
-		int imageNumber =  (int) ((time * frameRate/1000 ) % imageNames.length);
+		int imageNumber =  (int) ((time * frameRate/1000 ) % numberImages);
 		if (isLoopBackwards) {
 			// loop by running backwards through list until the beginning
-			long cycle = (long)((time * frameRate/1000 ) / imageNames.length);
+			long cycle = (long)((time * frameRate/1000 ) / numberImages);
 			if (cycle % 2 == 1) {
 				// odd cycle count backwards
-				imageNumber=(imageNames.length-1) - imageNumber ;
+				imageNumber=(numberImages-1) - imageNumber ;
 			}
 		}
 		if (log.isInfoEnabled()) {
