@@ -92,14 +92,14 @@ public class VideoStreamCreaterPlugin
         public void run() {
             if (myIncarnation==0) {
                 myIncarnation=getMyInarnation();
-                if (myIncarnation == 0) {
+ /*               if (myIncarnation == 0) {
                     // Agent not registered in WP wait
                     Runnable nextRunnable = 
                         new sendNextImageRunnable(uids,System.currentTimeMillis(),waitTimeMillis,1);
                     sendNextAlarm =  executeLater(waitTimeMillis, nextRunnable);
                    return;
                 }
-            }
+  */          }
             // check if test should stop
             if (stopRequest != null) {
                 stopRequest.inc();

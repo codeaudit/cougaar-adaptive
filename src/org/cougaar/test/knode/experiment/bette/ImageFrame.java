@@ -1,14 +1,25 @@
 package org.cougaar.test.knode.experiment.bette;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
 public class ImageFrame extends JFrame {
+    private static final DecimalFormat f2_1 = new DecimalFormat("0.0");
+    private static final DateFormat dateFormatter = DateFormat.getDateTimeInstance();
     private int frameWidth;
     private int frameHeight;
     private int imageWidth;
     private int imageHeight;
     private javax.swing.JLabel imgLabel;
+    private javax.swing.JLabel timeLabel;
     private boolean showSlides = true;
     private Quitable client;
 
@@ -50,6 +61,8 @@ public class ImageFrame extends JFrame {
 		getContentPane().setLayout(new java.awt.BorderLayout());
 
 		addPictureArea();
+		//addTimeArea();
+		getContentPane().validate();
 
 		pack();
 
@@ -65,16 +78,26 @@ public class ImageFrame extends JFrame {
 
 
 	    private void addPictureArea() {
-		imgLabel = new javax.swing.JLabel();
+	        GridBagLayout bag = new GridBagLayout();
+	        JPanel imgPanel = new JPanel();
+	        imgPanel.setLayout(bag);
+	        GridBagConstraints c = new GridBagConstraints();
+	        c.insets = new Insets(20,20,20,20);
+	        c.fill = GridBagConstraints.BOTH;
+	        c.weightx = 1.0;
+	        c.gridwidth = GridBagConstraints.LINE_END;
+	        
+	        imgLabel = new JLabel();
 		imgLabel.setSize(new java.awt.Dimension(imageWidth, imageHeight));
-		java.awt.GridBagLayout bag = new java.awt.GridBagLayout();
-		java.awt.GridBagConstraints c = new java.awt.GridBagConstraints();
-		c.insets = new java.awt.Insets(20,20,20,20);
 		bag.setConstraints(imgLabel, c);
-		javax.swing.JPanel imgPanel = new javax.swing.JPanel();
-		imgPanel.setLayout(bag);
 		imgPanel.add(imgLabel);
-
+		
+		timeLabel = new javax.swing.JLabel();
+		timeLabel.setSize(new java.awt.Dimension(200, 20));
+		timeLabel.setText("hello world");
+		bag.setConstraints(timeLabel, c);
+		imgPanel.add(timeLabel);
+		
 		getContentPane().add(imgPanel, "Center");
 
 	    }
@@ -85,8 +108,10 @@ public class ImageFrame extends JFrame {
 		    return;
 		} else if (showSlides) {
 		    imgLabel.setIcon(new javax.swing.ImageIcon(pixels));
+		    timeLabel.setText(dateFormatter.format(count));
 		} else {
 		    imgLabel.setText(Long.toString(count));
+		    timeLabel.setText(f2_1.format((count%100000)/1000.0));
 		}
 	    }
 
