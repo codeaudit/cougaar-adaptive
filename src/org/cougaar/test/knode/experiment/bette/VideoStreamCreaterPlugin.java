@@ -7,7 +7,9 @@
 package org.cougaar.test.knode.experiment.bette;
 
 import org.cougaar.core.agent.service.alarm.Alarm;
+import org.cougaar.core.component.ServiceBroker;
 import org.cougaar.core.plugin.TodoPlugin;
+import org.cougaar.core.service.IncarnationService;
 import org.cougaar.core.service.UIDService;
 import org.cougaar.test.ping.StartRequest;
 import org.cougaar.test.ping.StopRequest;
@@ -17,8 +19,13 @@ import org.cougaar.util.annotations.Subscribe;
 public class VideoStreamCreaterPlugin
         extends TodoPlugin {
     
-    @Cougaar.Arg(name = "frameRate", defaultValue = "15", description = "frames per second (max is 10fps)")
+    @Cougaar.Arg(name = "frameRate", defaultValue = "10", 
+                 description = "frames per second (max is 10fps)")
     public float frameRate;
+    
+    @Cougaar.Arg(name = "streamName", defaultValue = "DefaultStream", 
+                 description = "Name of the Stream")
+    public String streamName;
 
     // TODO Cougaar Alarm has granularity of 100ms, so can't go faster than 10fps
     // TODO use Annotated Service lookup
@@ -27,10 +34,12 @@ public class VideoStreamCreaterPlugin
     private StopRequest stopRequest;
     private boolean failed = false;
     private Alarm sendNextAlarm;
+    private long myIncarnation;
 
     public void start() {
         super.start();
-        imageService = getServiceBroker().getService(this, TimedImageService.class, null);
+        ServiceBroker sb = getServiceBroker();
+        imageService = sb.getService(this, TimedImageService.class, null);
     }
 
     @Cougaar.Execute(on = Subscribe.ModType.ADD)
@@ -41,9 +50,13 @@ public class VideoStreamCreaterPlugin
         blackboard.publishChange(startRequest);
         // schedule the first frame
         long waitTime = (int) (1000 / frameRate);
+        if (waitTime < 100) {
+            log.warn("Frame rate too fast. Maximum frame rate is 10fps");
+            waitTime = 100;
+        }
         sendNextAlarm =
                 executeLater(waitTime, 
-                             new sendNextImageRunnable(uids, System.currentTimeMillis(), waitTime));
+                             new sendNextImageRunnable(uids, System.currentTimeMillis(), waitTime,1));
     }
 
     @Cougaar.Execute(on = Subscribe.ModType.ADD)
@@ -51,19 +64,42 @@ public class VideoStreamCreaterPlugin
         stopRequest = request;
     }
 
+    
+    private long getMyInarnation() {
+        ServiceBroker sb = getServiceBroker();
+        IncarnationService incarnationService = sb.getService(this, IncarnationService.class, null);
+        long myIncarnation = incarnationService.getIncarnation(agentId);
+        if (log.isInfoEnabled()) {
+            log.info("Agent "+ agentId + " has incarnation number "+ myIncarnation);
+        }
+        return myIncarnation;
+    }
+    
     private class sendNextImageRunnable
             implements Runnable {
         private long expectedCaptureTime;
         private long  waitTimeMillis;
         private UIDService uids;
+        private int count;
 
-        public sendNextImageRunnable(UIDService uids, long time, long waitTimeMillis) {
+        public sendNextImageRunnable(UIDService uids, long time, long waitTimeMillis, int count) {
             this.expectedCaptureTime = time;
             this.uids = uids;
             this.waitTimeMillis=waitTimeMillis;
+            this.count = count;
         }
 
         public void run() {
+            if (myIncarnation==0) {
+                myIncarnation=getMyInarnation();
+                if (myIncarnation == 0) {
+                    // Agent not registered in WP wait
+                    Runnable nextRunnable = 
+                        new sendNextImageRunnable(uids,System.currentTimeMillis(),waitTimeMillis,1);
+                    sendNextAlarm =  executeLater(waitTimeMillis, nextRunnable);
+                   return;
+                }
+            }
             // check if test should stop
             if (stopRequest != null) {
                 stopRequest.inc();
@@ -78,7 +114,8 @@ public class VideoStreamCreaterPlugin
             long now =System.currentTimeMillis();
             byte[] image = imageService.getImage(expectedCaptureTime);
             if (image.length > 0) {
-                ImageHolder imageHolder = new ImageHolder(uids, expectedCaptureTime, image);
+                ImageHolder imageHolder = new ImageHolder(uids, expectedCaptureTime, image, 
+                                                          streamName, count, myIncarnation);
                 blackboard.publishAdd(imageHolder);
             } else {
                 log.warn("Image empty");
@@ -94,6 +131,7 @@ public class VideoStreamCreaterPlugin
                 int numberOfMissedCaptures= (int) Math.floor((now-expectedCaptureTime)/waitTimeMillis);
                 nextCaptureTime = expectedCaptureTime + ((numberOfMissedCaptures + 1) * waitTimeMillis);
                 triggerDelayMillis = nextCaptureTime - now;
+                count += numberOfMissedCaptures;
                 if (log.isWarnEnabled()) {
                     log.warn("Missed some captures, Skipping ahead " + (triggerDelayMillis) + " millis");
                 }
@@ -109,7 +147,8 @@ public class VideoStreamCreaterPlugin
             sendNextAlarm =
                     executeLater(triggerDelayMillis, new sendNextImageRunnable(uids,
                                                                                nextCaptureTime,
-                                                                               waitTimeMillis));
+                                                                               waitTimeMillis,
+                                                                               count+1));
         }
 
     }

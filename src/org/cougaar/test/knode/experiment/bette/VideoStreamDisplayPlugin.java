@@ -13,6 +13,8 @@ public class VideoStreamDisplayPlugin
         extends TodoPlugin
         implements Quitable {
     private ImageFrame frame;
+    private long lastCount = 0;
+    private long streamIncarnation=0;
 
     @Cougaar.Arg(name = "displayImages", defaultValue = "true", description = "Images should be displayed on GUI")
     public boolean isDisplayGifs;
@@ -32,13 +34,53 @@ public class VideoStreamDisplayPlugin
 
     @Cougaar.Execute(on = Subscribe.ModType.ADD, when = "isMyImageHolder")
     public void executeNewQueryRelay(ImageHolder imageHolder) {
-        // Display an image
-        frame.update(imageHolder.getImage(), imageHolder.getTimeStamp());
-        if (log.isInfoEnabled()) {
-            long now = System.currentTimeMillis();
-            log.info("Image transfer delay =" + (now - imageHolder.getTimeStamp()));
+        long newIncarnation = imageHolder.getCreatorIncarnation();
+        long newCount = imageHolder.getCount();
+        long newTimeStamp = imageHolder.getTimeStamp();
+        if (streamIncarnation == newIncarnation) {
+
+            if (newCount == lastCount + 1) {
+                // Normal case
+                lastCount = newCount;
+                frame.update(imageHolder.getImage(), newTimeStamp);
+                if (log.isInfoEnabled()) {
+                    long now = System.currentTimeMillis();
+                    log.info("Image " + imageHolder.getCount() + " transfer delay ="
+                            + (now - newTimeStamp));
+                }
+            } else if (newCount > lastCount + 1) {
+                // Dropped case
+                long numberDropped = (newCount - lastCount);
+                log.warn("Dropped " + numberDropped + " Images at " + newCount);
+                lastCount = newCount;
+                frame.update(imageHolder.getImage(), newTimeStamp);
+            } else if (newCount == lastCount) {
+                // Duplicate Case
+                log.warn("Duplicate Image " + newCount);
+                // don't display or update lastCount
+            } else if (newCount < lastCount) {
+                // Out of Order Case
+                log.warn("Old image " + newCount + ". last was " + lastCount);
+                // don't display or update lastCount
+            }
+
+        } else if (newIncarnation > streamIncarnation) {
+            // Start of New Stream
+            // initialize new stream incarnation
+            streamIncarnation = newIncarnation;
+            lastCount = newCount;
+            frame.update(imageHolder.getImage(), newTimeStamp);
+            if (log.isInfoEnabled()) {
+                log.info("Start new image stream " + imageHolder.getStreamName() + " incarnation="
+                        + newIncarnation);
+            }
+        } else if (newIncarnation < streamIncarnation) {
+            // Image from old Stream
+            // ignore
+            log.warn("Old incarnation " + newIncarnation + " image " + newCount);
+
         }
-        // removeImage
+        // Clean up: remove Image Holder
         blackboard.publishRemove(imageHolder);
     }
 
