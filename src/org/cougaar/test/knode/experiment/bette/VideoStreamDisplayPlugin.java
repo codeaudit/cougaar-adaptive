@@ -34,6 +34,10 @@ public class VideoStreamDisplayPlugin
     public void executeNewQueryRelay(ImageHolder imageHolder) {
         // Display an image
         frame.update(imageHolder.getImage(), imageHolder.getTimeStamp());
+        if (log.isInfoEnabled()) {
+            long now = System.currentTimeMillis();
+            log.info("Image transfer delay =" + (now - imageHolder.getTimeStamp()));
+        }
         // removeImage
         blackboard.publishRemove(imageHolder);
     }

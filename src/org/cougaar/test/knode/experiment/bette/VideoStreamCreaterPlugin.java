@@ -53,12 +53,12 @@ public class VideoStreamCreaterPlugin
 
     private class sendNextImageRunnable
             implements Runnable {
-        private long time;
+        private long expectedCaptureTime;
         private long  waitTimeMillis;
         private UIDService uids;
 
         public sendNextImageRunnable(UIDService uids, long time, long waitTimeMillis) {
-            this.time = time;
+            this.expectedCaptureTime = time;
             this.uids = uids;
             this.waitTimeMillis=waitTimeMillis;
         }
@@ -74,18 +74,42 @@ public class VideoStreamCreaterPlugin
                 blackboard.publishChange(stopRequest);
                 return;
             }
-            // Publish frame for time
-            byte[] image = imageService.getImage(time);
+            // Publish frame for capture time
+            long now =System.currentTimeMillis();
+            byte[] image = imageService.getImage(expectedCaptureTime);
             if (image.length > 0) {
-                ImageHolder imageHolder = new ImageHolder(uids, time, image);
+                ImageHolder imageHolder = new ImageHolder(uids, expectedCaptureTime, image);
                 blackboard.publishAdd(imageHolder);
             } else {
                 log.warn("Image empty");
             }
 
             // Schedule Query after Next
-            long nextTime = System.currentTimeMillis() + waitTimeMillis;
-            sendNextAlarm = executeLater(waitTimeMillis, new sendNextImageRunnable(uids, nextTime, waitTimeMillis));
+            long nextCaptureTime = expectedCaptureTime+ waitTimeMillis;
+
+            long triggerDelayMillis = nextCaptureTime-now;
+            if (triggerDelayMillis <= 0) {
+                // Missed the next Capture time
+                // fast forward to next time, keeping the phase
+                int numberOfMissedCaptures= (int) Math.floor((now-expectedCaptureTime)/waitTimeMillis);
+                nextCaptureTime = expectedCaptureTime + ((numberOfMissedCaptures + 1) * waitTimeMillis);
+                triggerDelayMillis = nextCaptureTime - now;
+                if (log.isWarnEnabled()) {
+                    log.warn("Missed some captures, Skipping ahead " + (triggerDelayMillis) + " millis");
+                }
+            } else if (triggerDelayMillis > waitTimeMillis) {
+                if (log.isWarnEnabled()) {
+                    log.warn("Next Capture in distant future");
+                }
+            }
+            if (log.isInfoEnabled()) {
+                log.info("Capture late by " + (now - expectedCaptureTime) + " millis."  +
+                		"Triggering in " + triggerDelayMillis + " millis. " );
+            }
+            sendNextAlarm =
+                    executeLater(triggerDelayMillis, new sendNextImageRunnable(uids,
+                                                                               nextCaptureTime,
+                                                                               waitTimeMillis));
         }
 
     }

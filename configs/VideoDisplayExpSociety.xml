@@ -42,7 +42,8 @@
 			<component class='org.cougaar.core.wp.server.Server'>
 			</component>
 		</agent>
-				<agent name="Server">
+		
+		<agent name="Server">
 			<component
 				class="org.cougaar.test.knode.experiment.bette.VideoStreamCreaterPlugin">
 				<argument name="frameRate" value="10"/>

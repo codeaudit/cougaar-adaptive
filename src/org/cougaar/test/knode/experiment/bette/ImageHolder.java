@@ -10,6 +10,7 @@ public class ImageHolder extends UniqueObjectBase {
 			byte[] image) {
 		super(uids.nextUID());
 		this.image=image;
+		this.timeStamp=timeStamp;
 	}
 
 	private byte[] image;
