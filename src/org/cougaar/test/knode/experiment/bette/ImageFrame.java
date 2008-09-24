@@ -1,11 +1,16 @@
 package org.cougaar.test.knode.experiment.bette;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -13,11 +18,13 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class ImageFrame extends JFrame {
     private static final DecimalFormat f2_1 = new DecimalFormat("0.0");
-    private static final DateFormat dateFormatter = DateFormat.getDateTimeInstance();
+    private static final DecimalFormat f3_0 = new DecimalFormat("000");
+    private static final DateFormat dateFormatter = DateFormat.getDateTimeInstance(DateFormat.MEDIUM,DateFormat.MEDIUM);
     private int frameWidth;
     private int frameHeight;
     private int imageWidth;
     private int imageHeight;
+    private int xPos,yPos;
     private javax.swing.JLabel imgLabel;
     private javax.swing.JLabel timeLabel;
     private boolean showSlides = true;
@@ -34,6 +41,8 @@ public class ImageFrame extends JFrame {
 		frameHeight = 720;
 		imageWidth = 650;
 		imageHeight = 650;
+		xPos= 20;
+		yPos= 20;
 		showSlides = true;
 
 		for (int i=0; i < args.length; i++) {
@@ -46,31 +55,32 @@ public class ImageFrame extends JFrame {
 			imageWidth = Integer.parseInt(args[++i]);
 		    } else if (arg.equals("-image-height")) {
 			imageHeight = Integer.parseInt(args[++i]);
+		    } else if (arg.equals("-x-position")) {
+		        xPos = Integer.parseInt(args[++i]);
+		    } else if (arg.equals("-y-position")) {
+		        yPos = Integer.parseInt(args[++i]);
 		    } else if (arg.equals("-show-slides")) {
 			showSlides = (args[++i].equalsIgnoreCase("true"));
 		    }
 		}
 
 		// Make nice quit
-		addWindowListener(new java.awt.event.WindowAdapter() {
-			public void windowClosing(java.awt.event.WindowEvent e) {
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
 			    ImageFrame.this.client.quit();
 			}
 		    });
 
-		getContentPane().setLayout(new java.awt.BorderLayout());
-
+		getContentPane().setLayout(new BorderLayout());
 		addPictureArea();
-		//addTimeArea();
-		getContentPane().validate();
-
 		pack();
 
 		setSize(frameWidth, frameHeight);
-		setLocation(20, 20);
+		setLocation(xPos, yPos);
 
 	    }
 
+	 
 	    void quit() {
 		dispose();
 	    }
@@ -82,24 +92,22 @@ public class ImageFrame extends JFrame {
 	        JPanel imgPanel = new JPanel();
 	        imgPanel.setLayout(bag);
 	        GridBagConstraints c = new GridBagConstraints();
-	        c.insets = new Insets(20,20,20,20);
+	        c.insets = new Insets(5,5,5,5);
 	        c.fill = GridBagConstraints.BOTH;
-	        c.weightx = 1.0;
-	        c.gridwidth = GridBagConstraints.LINE_END;
 	        
+	        c.gridwidth = GridBagConstraints.REMAINDER; // Make new row after this cell
 	        imgLabel = new JLabel();
-		imgLabel.setSize(new java.awt.Dimension(imageWidth, imageHeight));
+		imgLabel.setSize(new Dimension(imageWidth, imageHeight));
 		bag.setConstraints(imgLabel, c);
 		imgPanel.add(imgLabel);
 		
-		timeLabel = new javax.swing.JLabel();
-		timeLabel.setSize(new java.awt.Dimension(200, 20));
-		timeLabel.setText("hello world");
+		timeLabel = new JLabel();
+		timeLabel.setSize(new Dimension(50, 20));
+		timeLabel.setText("Waiting for Video");
 		bag.setConstraints(timeLabel, c);
 		imgPanel.add(timeLabel);
 		
 		getContentPane().add(imgPanel, "Center");
-
 	    }
 
 
@@ -107,35 +115,35 @@ public class ImageFrame extends JFrame {
 		if (pixels == null) {
 		    return;
 		} else if (showSlides) {
-		    imgLabel.setIcon(new javax.swing.ImageIcon(pixels));
-		    timeLabel.setText(dateFormatter.format(count));
+		    imgLabel.setIcon(new ImageIcon(pixels));
+		    timeLabel.setText(dateFormatter.format(count) + " " +
+		                      f3_0.format(count %1000) + "ms");
 		} else {
 		    imgLabel.setText(Long.toString(count));
 		    timeLabel.setText(f2_1.format((count%100000)/1000.0));
 		}
+		resize();
 	    }
-
-
 
 	    // We're not using this at the moment
 	    @SuppressWarnings("unused")
 		private void resize() {
-		java.awt.Dimension now = getSize();
-		java.awt.Dimension pref = getPreferredSize();
+		Dimension now = getSize();
+		Dimension pref = getPreferredSize();
 		int newWidth = now.width;
 		int newHeight = now.height;
 		boolean change = false;
-		if (now.width < pref.width) {
+		if (now.width != pref.width) {
 		    change = true;
 		    newWidth = pref.width;
 		}
-		if (now.height < pref.height) {
+		if (now.height != pref.height) {
 		    change = true;
 		    newHeight = pref.height;
 		}
 		if (change) {
-		    setSize(new java.awt.Dimension(newWidth, newHeight));
-		    setLocation(20, 20);
+		    setSize(new Dimension(newWidth, newHeight));
+		    setLocation(xPos, yPos);
 		}
 	    }
 
