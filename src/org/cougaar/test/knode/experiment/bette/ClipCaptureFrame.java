@@ -11,11 +11,14 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class ImageFrame extends JFrame {
+import org.cougaar.core.service.BlackboardService;
+
+public class ClipCaptureFrame extends JFrame {
     private static final DecimalFormat f2_1 = new DecimalFormat("0.0");
     private static final DecimalFormat f3_0 = new DecimalFormat("000");
     private static final DateFormat dateFormatter = DateFormat.getDateTimeInstance(DateFormat.MEDIUM,DateFormat.MEDIUM);
@@ -24,22 +27,34 @@ public class ImageFrame extends JFrame {
     private int imageWidth;
     private int imageHeight;
     private int xPos,yPos;
-    private javax.swing.JLabel imgLabel;
-    private javax.swing.JLabel timeLabel;
+    private JLabel imgLabel;
+    private JLabel timeLabel;
+    private JButton captureButton;
+    private JButton sendButton;
+    private JButton clearButton;
     private boolean showSlides = true;
     private Quitable client;
+    private BlackboardService blackBoard;
+    private ClipCaptureState captureState;
 
 	 
-	 ImageFrame(String title,  String[] args, Quitable client)
+	 ClipCaptureFrame(String title,  
+	                  String[] args, 
+	                  Quitable client, 
+	                  BlackboardService blackBoard,
+	                  ClipCaptureState captureState)
 	    {
 		super(title);
 
 		this.client = client;
+		this.blackBoard=blackBoard;
+		this.captureState = captureState;
+		
 		// Defaults
-		frameWidth = 840;
-		frameHeight = 720;
-		imageWidth = 650;
-		imageHeight = 650;
+		frameWidth = 250;
+		frameHeight = 250;
+		imageWidth = 200;
+		imageHeight = 200;
 		xPos= 20;
 		yPos= 20;
 		showSlides = true;
@@ -66,7 +81,7 @@ public class ImageFrame extends JFrame {
 		// Make nice quit
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-			    ImageFrame.this.client.quit();
+			    ClipCaptureFrame.this.client.quit();
 			}
 		    });
 
@@ -76,7 +91,8 @@ public class ImageFrame extends JFrame {
 
 		setSize(frameWidth, frameHeight);
 		setLocation(xPos, yPos);
-
+		// This is being called in a setup subscription (no transaction needed)
+		blackBoard.publishAdd(captureState);
 	    }
 
 	 
@@ -94,11 +110,15 @@ public class ImageFrame extends JFrame {
 	        c.insets = new Insets(5,5,5,5);
 	        c.fill = GridBagConstraints.BOTH;
 	        
-	        c.gridwidth = GridBagConstraints.REMAINDER; // Make new row after this cell
 	        imgLabel = new JLabel();
 		imgLabel.setSize(new Dimension(imageWidth, imageHeight));
 		bag.setConstraints(imgLabel, c);
 		imgPanel.add(imgLabel);
+		
+		c.gridwidth = GridBagConstraints.REMAINDER; // Make new row after this cell
+		captureButton = new JButton("Capture");
+		bag.setConstraints(captureButton, c);
+                imgPanel.add(captureButton);
 		
 		timeLabel = new JLabel();
 		timeLabel.setSize(new Dimension(50, 20));
@@ -106,9 +126,26 @@ public class ImageFrame extends JFrame {
 		bag.setConstraints(timeLabel, c);
 		imgPanel.add(timeLabel);
 		
+		c.gridwidth = GridBagConstraints.REMAINDER; // Make new row after this cell
+		sendButton = new JButton("Send");
+		bag.setConstraints(sendButton, c);
+		imgPanel.add(sendButton);
+
+		c.gridwidth = GridBagConstraints.REMAINDER; // Make new row after this cell
+		clearButton = new JButton("Clear");
+		bag.setConstraints(clearButton, c);
+		imgPanel.add(clearButton);
+		
+		setupButtonCallbacks();
+
 		getContentPane().add(imgPanel, "Center");
+		
+		
 	    }
 
+            private void setupButtonCallbacks() {
+                          
+        }
 
 	    void update(byte[] pixels, long count) {
 		if (pixels == null) {
@@ -124,6 +161,7 @@ public class ImageFrame extends JFrame {
 		resize();
 	    }
 
+	    // We're not using this at the moment
 	    private void resize() {
 		Dimension now = getSize();
 		Dimension pref = getPreferredSize();
