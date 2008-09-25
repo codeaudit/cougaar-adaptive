@@ -67,38 +67,38 @@ public class TimedImageBasePlugin extends AnnotatedSubscriptionsPlugin implement
     }
     
     // Timed Image Service Interface
-	public byte[] getImage(long time) {
-	int numberImages = imageNames.length;
-        if (imageNames == null || numberImages==0) {
-			return new byte[0];
-		}
-		int imageNumber =  (int) ((time * frameRate/1000 ) % numberImages);
-		if (isLoopBackwards) {
-			// loop by running backwards through list until the beginning
-			long cycle = (long)((time * frameRate/1000 ) / numberImages);
-			if (cycle % 2 == 1) {
-				// odd cycle count backwards
-				imageNumber=(numberImages-1) - imageNumber ;
-			}
-		}
-		if (log.isInfoEnabled()) {
-			log.info("Requested Image #" + imageNumber + " at " + time);
-		}
-		if (isCacheImages && imageCache[imageNumber] != null) {
-			return imageCache[imageNumber];
-		} else {
-			byte[] replyPayload = null;
-			try {
-				replyPayload = readImage(imageNumber);
-				if (isCacheImages) {
-					imageCache[imageNumber] = replyPayload;
-				}
-			} catch (Exception e) {
-				log.error("Could not get image #" + imageNumber + "message="+ e.getMessage());
-			}
-			return replyPayload;
-		}
-	}
+    public byte[] getImage(long time) {
+        if (imageNames == null || imageNames.length == 0) {
+            return new byte[0];
+        }
+        int numberImages = imageNames.length;
+        int imageNumber = (int) ((time * frameRate / 1000) % numberImages);
+        if (isLoopBackwards) {
+            // loop by running backwards through list until the beginning
+            long cycle = (long) ((time * frameRate / 1000) / numberImages);
+            if (cycle % 2 == 1) {
+                // odd cycle count backwards
+                imageNumber = (numberImages - 1) - imageNumber;
+            }
+        }
+        if (log.isInfoEnabled()) {
+            log.info("Requested Image #" + imageNumber + " at " + time);
+        }
+        if (isCacheImages && imageCache[imageNumber] != null) {
+            return imageCache[imageNumber];
+        } else {
+            byte[] replyPayload = null;
+            try {
+                replyPayload = readImage(imageNumber);
+                if (isCacheImages) {
+                    imageCache[imageNumber] = replyPayload;
+                }
+            } catch (Exception e) {
+                log.error("Could not get image #" + imageNumber + "message=" + e.getMessage());
+            }
+            return replyPayload;
+        }
+    }
 	
 	// This method should be overridden by childern classes
 	protected byte[] readImage(int imageNumber) throws Exception {
