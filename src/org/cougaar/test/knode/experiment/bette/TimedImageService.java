@@ -24,4 +24,12 @@ public interface TimedImageService {
 	 */
 	public byte[] getImage(long time);
 	
+        /*
+         * Get Image of the current time. Equivalent of getImage(System.currentTimeMillis()), 
+         * but for image sources without memory
+         */
+	
+	public byte[] getCurrentImage();
+
+	
 }

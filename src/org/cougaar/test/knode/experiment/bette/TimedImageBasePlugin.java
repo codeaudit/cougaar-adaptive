@@ -66,6 +66,10 @@ public class TimedImageBasePlugin extends AnnotatedSubscriptionsPlugin implement
         super.unload();
     }
     
+    public byte[] getCurrentImage() {
+        return getImage(System.currentTimeMillis());
+    }
+        
     // Timed Image Service Interface
     public byte[] getImage(long time) {
         if (imageNames == null || imageNames.length == 0) {
