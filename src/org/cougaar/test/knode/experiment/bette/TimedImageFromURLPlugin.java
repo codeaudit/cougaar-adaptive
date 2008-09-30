@@ -19,6 +19,7 @@ public class TimedImageFromURLPlugin
         extends AnnotatedSubscriptionsPlugin
         implements TimedImageService {
     private static final long NOW_THRESHOLD = 1000;
+    private static final long SAME_THRESHOLD = 100;
 
     private static final int MAX_IMAGE_SIZE = 500000; // 500k 
 
@@ -26,6 +27,8 @@ public class TimedImageFromURLPlugin
     public URI imageURI;
 
     private ServiceProvider provider;
+    private byte[] lastImage; 
+    private long lastImageTime;
 
     public void load() {
         super.load();
@@ -43,6 +46,11 @@ public class TimedImageFromURLPlugin
     }
 
     public byte[] getCurrentImage() {
+        long now=System.currentTimeMillis();
+        // simple cache of last image
+        if (Math.abs(now - lastImageTime) < SAME_THRESHOLD) {
+            return lastImage;
+        }
         InputStream is = null; 
         DataInputStream dis =null; 
         byte[] image ;
@@ -54,6 +62,8 @@ public class TimedImageFromURLPlugin
             is = urlConnection.getInputStream();
             dis=new DataInputStream(new BufferedInputStream(is));
             dis.readFully(image);
+            lastImageTime = now;
+            lastImage=image;
             return image;
         } catch (EOFException e) {
             log.warn("Could not get image from url=" +imageURI + " EOF Reason=" +e.getMessage());
@@ -68,6 +78,7 @@ public class TimedImageFromURLPlugin
                 }
             }
         }
+        // Failed return empty array
         return new byte[0];
     }
     

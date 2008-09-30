@@ -23,7 +23,7 @@ public class VideoStreamCreaterPlugin
         extends TodoPlugin {
     
     @Cougaar.Arg(name = "frameRate", defaultValue = "10", 
-                 description = "frames per second (max is 10fps)")
+                 description = "frames per second (max is 100fps)")
     public float frameRate;
     
     @Cougaar.Arg(name = "streamName", defaultValue = "DefaultStream", 
@@ -55,9 +55,9 @@ public class VideoStreamCreaterPlugin
         blackboard.publishChange(startRequest);
         // schedule the first frame
         long waitTime = (int) (1000 / frameRate);
-        if (waitTime < 100) {
-            log.warn("Frame rate too fast. Maximum frame rate is 10fps");
-            waitTime = 100;
+        if (waitTime < 10) {
+            log.warn("Frame rate too fast. Maximum frame rate is 100fps");
+            waitTime = 10;
         }
         Runnable sendNext = new sendNextImageRunnable(uids, System.currentTimeMillis(), waitTime,1);
         sendNextSchedulable = threadService.getThread(this,sendNext,"VideoCapture",ThreadService.WILL_BLOCK_LANE);
@@ -112,35 +112,38 @@ public class VideoStreamCreaterPlugin
                     stopRequest.forceFailed();
                 }
                 sendNextSchedulable.cancel();
-                blackboard.publishChange(stopRequest);
+                publishChangeLater(stopRequest);
                 return;
             }
             // Publish frame for capture time
-            long now =System.currentTimeMillis();
+            long startTime =System.currentTimeMillis();
             SchedulableStatus.beginNetIO("CaptureImage");
             byte[] image = imageService.getImage(expectedCaptureTime);
             SchedulableStatus.endBlocking();
             if (image.length > 0) {
                 ImageHolder imageHolder = new ImageHolder(uids, expectedCaptureTime, image, 
                                                           streamName, count, myIncarnation);
-                blackboard.publishAdd(imageHolder);
+                publishAddLater(imageHolder);
             } else {
                 log.warn("Image empty");
             }
 
             // Schedule Query after Next
+            long now=System.currentTimeMillis();
             long nextCaptureTime = expectedCaptureTime+ waitTimeMillis;
-
+            count += 1;
             long triggerDelayMillis = nextCaptureTime-now;
             if (triggerDelayMillis <= 0) {
                 // Missed the next Capture time
                 // fast forward to next time, keeping the phase
                 int numberOfMissedCaptures= (int) Math.floor((now-expectedCaptureTime)/waitTimeMillis);
-                nextCaptureTime = expectedCaptureTime + ((numberOfMissedCaptures + 1) * waitTimeMillis);
-                triggerDelayMillis = nextCaptureTime - now;
                 count += numberOfMissedCaptures;
-                if (log.isWarnEnabled()) {
-                    log.warn("Missed some captures, Skipping ahead " + (triggerDelayMillis) + " millis");
+                nextCaptureTime = expectedCaptureTime + ((numberOfMissedCaptures+1) * waitTimeMillis);
+                triggerDelayMillis = nextCaptureTime - now;
+                if (log.isInfoEnabled()) {
+                    log.info(streamName +" Missed "+numberOfMissedCaptures+ 
+                             " captures, Skipping ahead " + (triggerDelayMillis) + " millis" +
+                             " count=" +count);
                 }
             } else if (triggerDelayMillis > waitTimeMillis) {
                 if (log.isWarnEnabled()) {
@@ -149,11 +152,12 @@ public class VideoStreamCreaterPlugin
             }
             if (log.isInfoEnabled()) {
                 log.info("Capture late by " + (now - expectedCaptureTime) + " millis."  +
-                		"Triggering in " + triggerDelayMillis + " millis. " );
+                		" Triggering in " + triggerDelayMillis + " millis. " +
+                		" Capture Delay " + (now -startTime));
             }
-            Runnable sendNext = new sendNextImageRunnable(uids, System.currentTimeMillis(), waitTimeMillis,1);
+            Runnable sendNext = new sendNextImageRunnable(uids, nextCaptureTime, waitTimeMillis,count);
             sendNextSchedulable = threadService.getThread(VideoStreamCreaterPlugin.this,sendNext,"VideoCapture",ThreadService.WILL_BLOCK_LANE);
-            sendNextSchedulable.schedule(waitTimeMillis);
+            sendNextSchedulable.schedule(triggerDelayMillis);
          }
     }
 }
