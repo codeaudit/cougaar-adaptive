@@ -10,7 +10,10 @@ import org.cougaar.core.agent.service.alarm.Alarm;
 import org.cougaar.core.component.ServiceBroker;
 import org.cougaar.core.plugin.TodoPlugin;
 import org.cougaar.core.service.IncarnationService;
+import org.cougaar.core.service.ThreadService;
 import org.cougaar.core.service.UIDService;
+import org.cougaar.core.thread.Schedulable;
+import org.cougaar.core.thread.SchedulableStatus;
 import org.cougaar.test.ping.StartRequest;
 import org.cougaar.test.ping.StopRequest;
 import org.cougaar.util.annotations.Cougaar;
@@ -30,16 +33,18 @@ public class VideoStreamCreaterPlugin
     // TODO Cougaar Alarm has granularity of 100ms, so can't go faster than 10fps
     // TODO use Annotated Service lookup
     private TimedImageService imageService;
+    private ThreadService threadService;
     private StartRequest startRequest;
     private StopRequest stopRequest;
     private boolean failed = false;
-    private Alarm sendNextAlarm;
+    private Schedulable sendNextSchedulable;
     private long myIncarnation;
 
     public void start() {
         super.start();
         ServiceBroker sb = getServiceBroker();
         imageService = sb.getService(this, TimedImageService.class, null);
+        threadService = sb.getService(this,ThreadService.class, null );
     }
 
     @Cougaar.Execute(on = Subscribe.ModType.ADD)
@@ -54,9 +59,9 @@ public class VideoStreamCreaterPlugin
             log.warn("Frame rate too fast. Maximum frame rate is 10fps");
             waitTime = 100;
         }
-        sendNextAlarm =
-                executeLater(waitTime, 
-                             new sendNextImageRunnable(uids, System.currentTimeMillis(), waitTime,1));
+        Runnable sendNext = new sendNextImageRunnable(uids, System.currentTimeMillis(), waitTime,1);
+        sendNextSchedulable = threadService.getThread(this,sendNext,"VideoCapture",ThreadService.WILL_BLOCK_LANE);
+        sendNextSchedulable.schedule(waitTime);
     }
 
     @Cougaar.Execute(on = Subscribe.ModType.ADD)
@@ -106,13 +111,15 @@ public class VideoStreamCreaterPlugin
                 if (failed) {
                     stopRequest.forceFailed();
                 }
-                sendNextAlarm.cancel();
+                sendNextSchedulable.cancel();
                 blackboard.publishChange(stopRequest);
                 return;
             }
             // Publish frame for capture time
             long now =System.currentTimeMillis();
+            SchedulableStatus.beginNetIO("CaptureImage");
             byte[] image = imageService.getImage(expectedCaptureTime);
+            SchedulableStatus.endBlocking();
             if (image.length > 0) {
                 ImageHolder imageHolder = new ImageHolder(uids, expectedCaptureTime, image, 
                                                           streamName, count, myIncarnation);
@@ -144,12 +151,9 @@ public class VideoStreamCreaterPlugin
                 log.info("Capture late by " + (now - expectedCaptureTime) + " millis."  +
                 		"Triggering in " + triggerDelayMillis + " millis. " );
             }
-            sendNextAlarm =
-                    executeLater(triggerDelayMillis, new sendNextImageRunnable(uids,
-                                                                               nextCaptureTime,
-                                                                               waitTimeMillis,
-                                                                               count+1));
-        }
-
+            Runnable sendNext = new sendNextImageRunnable(uids, System.currentTimeMillis(), waitTimeMillis,1);
+            sendNextSchedulable = threadService.getThread(VideoStreamCreaterPlugin.this,sendNext,"VideoCapture",ThreadService.WILL_BLOCK_LANE);
+            sendNextSchedulable.schedule(waitTimeMillis);
+         }
     }
 }
