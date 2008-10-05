@@ -6,7 +6,6 @@
 
 package org.cougaar.test.knode.experiment.bette;
 
-import org.cougaar.core.agent.service.alarm.Alarm;
 import org.cougaar.core.component.ServiceBroker;
 import org.cougaar.core.plugin.TodoPlugin;
 import org.cougaar.core.service.IncarnationService;
@@ -29,8 +28,12 @@ public class VideoStreamCreaterPlugin
     @Cougaar.Arg(name = "streamName", defaultValue = "DefaultStream", 
                  description = "Name of the Stream")
     public String streamName;
+    
+    @Cougaar.Arg(name = "waitForIncarnationNumber", defaultValue = "false", 
+                 description = "Wait to send video, until agent is assigned and IncarnationNumber")
+    public boolean waitForIncarnationNumber;
 
-    // TODO Cougaar Alarm has granularity of 100ms, so can't go faster than 10fps
+
     // TODO use Annotated Service lookup
     private TimedImageService imageService;
     private ThreadService threadService;
@@ -69,7 +72,7 @@ public class VideoStreamCreaterPlugin
         stopRequest = request;
     }
 
-    
+    // TODO why does it take tens of seconds to get incarnation number
     private long getMyInarnation() {
         ServiceBroker sb = getServiceBroker();
         IncarnationService incarnationService = sb.getService(this, IncarnationService.class, null);
@@ -97,14 +100,14 @@ public class VideoStreamCreaterPlugin
         public void run() {
             if (myIncarnation==0) {
                 myIncarnation=getMyInarnation();
- /*               if (myIncarnation == 0) {
-                    // Agent not registered in WP wait
-                    Runnable nextRunnable = 
-                        new sendNextImageRunnable(uids,System.currentTimeMillis(),waitTimeMillis,1);
-                    sendNextAlarm =  executeLater(waitTimeMillis, nextRunnable);
+                if (waitForIncarnationNumber && (myIncarnation == 0)) {
+                    // Agent still not registered in topology service: wait to send
+                    Runnable sendNext = new sendNextImageRunnable(uids, System.currentTimeMillis(), waitTimeMillis,1);
+                    sendNextSchedulable = threadService.getThread(this,sendNext,"VideoCapture",ThreadService.WILL_BLOCK_LANE);
+                    sendNextSchedulable.schedule(waitTimeMillis);
                    return;
                 }
-  */          }
+            }
             // check if test should stop
             if (stopRequest != null) {
                 stopRequest.inc();
