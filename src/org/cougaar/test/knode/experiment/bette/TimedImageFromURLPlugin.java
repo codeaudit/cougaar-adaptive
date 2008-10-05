@@ -19,7 +19,7 @@ public class TimedImageFromURLPlugin
         extends AnnotatedSubscriptionsPlugin
         implements TimedImageService {
     private static final long NOW_THRESHOLD = 1000;
-    private static final long SAME_THRESHOLD = 100;
+    private static final long SAME_THRESHOLD = 99; // max sample frame rate of 10fps
 
     private static final int MAX_IMAGE_SIZE = 500000; // 500k 
 
