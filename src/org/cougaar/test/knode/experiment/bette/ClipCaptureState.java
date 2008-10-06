@@ -9,12 +9,12 @@ import org.cougaar.core.util.UniqueObjectBase;
 public class ClipCaptureState
         extends UniqueObjectBase {
     
-    public enum StateKind { Grab, Store, Loop, Send, Clear   };
-    public enum CommandKind { StartCapture, EndCapture, Send, Clear  };    
+    public enum StateKind { Grabbing, Storing, Looping, Sending, NoClip   };
+    public enum CommandKind { StartCapture, StopCapture, Send, Clear  };    
 
     private long timeStamp;
     private String clipName;
-    private StateKind currentState = StateKind.Clear;
+    private StateKind currentState = StateKind.NoClip;
     private CommandKind outstandingCommand =null;
  
     public ClipCaptureState(UIDService uids,

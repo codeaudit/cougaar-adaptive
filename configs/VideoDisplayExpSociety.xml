@@ -46,8 +46,14 @@
 		<agent name="Server">
 			<component
 				class="org.cougaar.test.knode.experiment.bette.VideoStreamCreaterPlugin">
-				<argument name="frameRate" value="10"/>
+				<argument name="frameRate" value="1"/>
 			</component>
+			
+			<component
+				class="org.cougaar.test.knode.experiment.bette.ClipCapturePlugin">
+				<argument name="clipName" value="Clip"/>
+			</component>
+			
 			<component
 				class="org.cougaar.test.knode.experiment.bette.ImageOnewaySenderFacePlugin">
 				<argument name="clientName" value="Client"/>

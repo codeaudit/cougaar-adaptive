@@ -7,23 +7,25 @@ package org.cougaar.test.knode.experiment.bette;
 
 import org.cougaar.core.plugin.TodoPlugin;
 import org.cougaar.util.annotations.Cougaar;
-import org.cougaar.util.annotations.Subscribe;
 
 public class ClipCapturePlugin
         extends TodoPlugin
-        implements Quitable {
-    private ClipCaptureFrame frame;
+        implements ClipCaptureInterface {
+ 
+	private ClipCaptureFrame frame;
+	private ClipCaptureState clipCaptureState;
     private long lastCount = 0;
     private long streamIncarnation=0;
     
-    @Cougaar.Arg(name = "streamName", defaultValue = "DefaultStream", 
-                 description = "Name of the Stream")
-    public String streamName;
+    @Cougaar.Arg(name = "clipName", defaultValue = "DefaultClip", 
+                 description = "Name of the Clip")
+    public String clipName;
 
-    @Cougaar.Arg(name = "displayImages", defaultValue = "true", description = "Images should be displayed on GUI")
+    @Cougaar.Arg(name = "displayImages", defaultValue = "true", 
+    		description = "Images should be displayed on GUI during capture")
     public boolean isDisplayGifs;
 
-    @Cougaar.Arg(name = "title", defaultValue = "Slide Client", description = "text for title on slide viewer frame")
+    @Cougaar.Arg(name = "title", defaultValue = "Clip Capture", description = "text for title on clip capture frame")
     public String title;
     
     @Cougaar.Arg(name = "xPosition", defaultValue = "0", description = "X Position for Display window")
@@ -43,14 +45,70 @@ public class ClipCapturePlugin
         args[3] = Integer.toString(xPos);
         args[4] = "-y-position";
         args[5] = Integer.toString(yPos);
-        frame = new ClipCaptureFrame(title, args, this,
-                                     blackboard,
-                                     new ClipCaptureState(uids,streamName));
+        frame = new ClipCaptureFrame(title, args, this);
         frame.setVisible(true);
     }
+    
 
+    // Clip Capture interface
+    // Called by a swing thread
     public void quit() {
         log.warn("Got Quit Command, Ignoring");
     }
 
+    public void startCapture() {
+    	executeLater( new Runnable() {
+    		public void run (){	
+    			if (clipCaptureState == null) {
+    				clipCaptureState=new ClipCaptureState(uids,clipName);
+    				blackboard.publishAdd(clipCaptureState);
+    			}
+    			log.info("Got START Capture Command");
+    			clipCaptureState.setOutstandingCommand(ClipCaptureState.CommandKind.StartCapture);
+    			blackboard.publishChange(clipCaptureState);
+    		}
+    	}
+    	);
+    }
+
+    public void stopCapture() {
+    	executeLater( new Runnable() {
+    		public void run (){	
+    			log.info("Got STOP Capture Command");
+    			clipCaptureState.setOutstandingCommand(ClipCaptureState.CommandKind.StopCapture);
+    			blackboard.publishChange(clipCaptureState);
+    		}
+    	}
+    	);
+    }
+
+    public void clear() {
+    	executeLater( new Runnable() {
+    		public void run (){	
+    			if (clipCaptureState==null) {
+    				log.info("Got Clear Command, Ignoring because no Clip");
+    				return;
+    			}
+    			log.info("Got Clear Command");
+    			clipCaptureState.setOutstandingCommand(ClipCaptureState.CommandKind.Clear);
+    			blackboard.publishChange(clipCaptureState);
+    		}
+    	}
+    	);
+    }
+
+    public void send() {
+    	executeLater( new Runnable() {
+    		public void run (){	
+    			if (clipCaptureState==null) {
+    				log.info("Got Send Command, Ignoring because no Clip");
+    				return;
+    			}
+    			log.info("Got Send Command");
+    			clipCaptureState.setOutstandingCommand(ClipCaptureState.CommandKind.Send);
+    			blackboard.publishChange(clipCaptureState);
+    		}
+    	}
+    	);
+    }
 }
