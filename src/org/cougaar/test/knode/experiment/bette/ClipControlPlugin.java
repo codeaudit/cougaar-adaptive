@@ -8,19 +8,18 @@ package org.cougaar.test.knode.experiment.bette;
 import org.cougaar.core.plugin.TodoPlugin;
 import org.cougaar.util.annotations.Cougaar;
 
-public class ClipCapturePlugin
+public class ClipControlPlugin
         extends TodoPlugin
-        implements ClipCaptureInterface {
+        implements ClipControlInterface {
  
-	private ClipCaptureFrame frame;
+	private ClipControlFrame frame;
 	private ClipCaptureState clipCaptureState;
-    private long lastCount = 0;
-    private long streamIncarnation=0;
     
     @Cougaar.Arg(name = "clipName", defaultValue = "DefaultClip", 
                  description = "Name of the Clip")
     public String clipName;
 
+    //TODO should the clip be displayed in separate window or on control panel?
     @Cougaar.Arg(name = "displayImages", defaultValue = "true", 
     		description = "Images should be displayed on GUI during capture")
     public boolean isDisplayGifs;
@@ -45,7 +44,7 @@ public class ClipCapturePlugin
         args[3] = Integer.toString(xPos);
         args[4] = "-y-position";
         args[5] = Integer.toString(yPos);
-        frame = new ClipCaptureFrame(title, args, this);
+        frame = new ClipControlFrame(title, args, this);
         frame.setVisible(true);
     }
     

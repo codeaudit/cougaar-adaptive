@@ -1,6 +1,6 @@
 package org.cougaar.test.knode.experiment.bette;
 
-public interface ClipCaptureInterface extends Quitable{
+public interface ClipControlInterface extends Quitable{
 	public void startCapture();
 	public void stopCapture();
 	public void send();

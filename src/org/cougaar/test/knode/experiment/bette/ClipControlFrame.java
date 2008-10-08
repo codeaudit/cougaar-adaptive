@@ -21,7 +21,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class ClipCaptureFrame extends JFrame {
+public class ClipControlFrame extends JFrame {
 	private static final DecimalFormat f2_1 = new DecimalFormat("0.0");
 	private static final DecimalFormat f3_0 = new DecimalFormat("000");
 	private static final DateFormat dateFormatter = DateFormat
@@ -37,9 +37,9 @@ public class ClipCaptureFrame extends JFrame {
 	private JButton sendButton;
 	private JButton clearButton;
 	private boolean showSlides = true;
-	private ClipCaptureInterface client;
+	private ClipControlInterface client;
 
-	ClipCaptureFrame(String title, String[] args, ClipCaptureInterface client) {
+	ClipControlFrame(String title, String[] args, ClipControlInterface client) {
 		super(title);
 
 		this.client = client;
@@ -75,7 +75,7 @@ public class ClipCaptureFrame extends JFrame {
 		// Make nice quit
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				ClipCaptureFrame.this.client.quit();
+				ClipControlFrame.this.client.quit();
 			}
 		});
 
