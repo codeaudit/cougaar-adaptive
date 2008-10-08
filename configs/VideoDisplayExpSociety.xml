@@ -50,7 +50,7 @@
 			</component>
 			
 			<component
-				class="org.cougaar.test.knode.experiment.bette.ClipCapturePlugin">
+				class="org.cougaar.test.knode.experiment.bette.ClipControlPlugin">
 				<argument name="clipName" value="Clip"/>
 			</component>
 			
