@@ -13,6 +13,7 @@ import org.cougaar.core.service.ThreadService;
 import org.cougaar.core.service.UIDService;
 import org.cougaar.core.thread.Schedulable;
 import org.cougaar.core.thread.SchedulableStatus;
+import org.cougaar.test.knode.experiment.bette.ClipCaptureState.CommandKind;
 import org.cougaar.util.annotations.Cougaar;
 import org.cougaar.util.annotations.Subscribe;
 
@@ -48,28 +49,42 @@ public class ClipCreaterPlugin
 
     @Cougaar.Execute(on = Subscribe.ModType.CHANGE, when = "isMyStartCapture")
     public void executeStartRun(ClipCaptureState state) {
-        // Indicate that we have started
-        ClipCaptureState captureState = state;
+        // Indicate that we have started in capture state
+        captureState = state;
         captureState.setCurrentState(ClipCaptureState.StateKind.Grabbing);
         captureState.setOutstandingCommand(null);
         blackboard.publishChange(captureState);
+        // Create Clip blackboard object
+        long now = System.currentTimeMillis();
+        ClipHolder clip = new ClipHolder(uids, now, captureState.getClipName(), captureState.getClipId());
+        blackboard.publishAdd(clip);
         // schedule the first frame
         long waitTime = (int) (1000 / frameRate);
         if (waitTime < 10) {
             log.warn("Frame rate too fast. Maximum frame rate is 100fps");
             waitTime = 10;
         }
-        Runnable sendNext = new sendNextImageRunnable(uids, System.currentTimeMillis(), waitTime,1);
+        Runnable sendNext = new captureNextImageRunnable(uids, clip, now, waitTime, 1);
         captureNextSchedulable = threadService.getThread(this,sendNext,"ClipCapture",ThreadService.WILL_BLOCK_LANE);
         captureNextSchedulable.schedule(waitTime);
     }
 
     @Cougaar.Execute(on = Subscribe.ModType.CHANGE, when = "isMyStopCapture")
-    public void executeStopRun(ClipCaptureState request) {
-        captureState.setCurrentState(ClipCaptureState.StateKind.Looping);
-        captureState.setOutstandingCommand(null);
-        blackboard.publishChange(captureState);
+    public void executeStopRun(ClipCaptureState state) {
+        state.setCurrentState(ClipCaptureState.StateKind.Looping);
+        state.setOutstandingCommand(null);
+        blackboard.publishChange(state);
+        //TODO Finish up clip Holder
     }
+    
+    @Cougaar.Execute(on = Subscribe.ModType.CHANGE, when = "isMySendClip")
+    public void executeSendClip(ClipCaptureState state) {
+        state.setCurrentState(ClipCaptureState.StateKind.NoClip);
+        state.setOutstandingCommand(null);
+        blackboard.publishChange(state);
+        //TODO mark clip  Holder as to send
+    }
+
 
     // TODO why does it take tens of seconds to get incarnation number
     private long getMyInarnation() {
@@ -82,36 +97,41 @@ public class ClipCreaterPlugin
         return myIncarnation;
     }
     
-    private class sendNextImageRunnable
+    private class captureNextImageRunnable
             implements Runnable {
         private long expectedCaptureTime;
         private long  waitTimeMillis;
         private UIDService uids;
         private int count;
+        private ClipHolder clip;
 
-        public sendNextImageRunnable(UIDService uids, long time, long waitTimeMillis, int count) {
+        public captureNextImageRunnable(UIDService uids, ClipHolder clip, long time, long waitTimeMillis, int count) {
             this.expectedCaptureTime = time;
             this.uids = uids;
+            this.clip = clip;
             this.waitTimeMillis=waitTimeMillis;
             this.count = count;
         }
 
         public void run() {
-            if (myIncarnation==0) {
-                myIncarnation=getMyInarnation();
-                if (waitForIncarnationNumber && (myIncarnation == 0)) {
-                    // Agent still not registered in topology service: wait to send
-                    Runnable sendNext = new sendNextImageRunnable(uids, System.currentTimeMillis(), waitTimeMillis,1);
-                    captureNextSchedulable = threadService.getThread(this,sendNext,"VideoCapture",ThreadService.WILL_BLOCK_LANE);
-                    captureNextSchedulable.schedule(waitTimeMillis);
-                   return;
-                }
-            }
-            // check if test should stop
+              //wait for incarnation to be set
+//            if (myIncarnation==0) {
+//                myIncarnation=getMyInarnation();
+//                if (waitForIncarnationNumber && (myIncarnation == 0)) {
+//                    // Agent still not registered in topology service: wait to send
+//                    Runnable sendNext = new captureNextImageRunnable(uids, clip, System.currentTimeMillis(), waitTimeMillis,1);
+//                    captureNextSchedulable = threadService.getThread(this,sendNext,"VideoCapture",ThreadService.WILL_BLOCK_LANE);
+//                    captureNextSchedulable.schedule(waitTimeMillis);
+//                   return;
+//                }
+//            }
+//            // check if capture should stop
             if (captureState == null || 
                     !captureState.getCurrentState().equals(ClipCaptureState.StateKind.Grabbing)) {
-               captureNextSchedulable.cancel();
-               return;
+                clip.setEndTime(expectedCaptureTime);
+                publishChangeLater(clip);
+                captureNextSchedulable.cancel();
+                return;
             }
             // Publish frame for capture time
             long startTime =System.currentTimeMillis();
@@ -122,6 +142,8 @@ public class ClipCreaterPlugin
                 ImageHolder imageHolder = new ImageHolder(uids, expectedCaptureTime, image, 
                                                           clipName, count, myIncarnation);
                 publishAddLater(imageHolder);
+                clip.addImage(expectedCaptureTime - clip.getStartTime(), imageHolder);
+                publishChangeLater(clip);          
             } else {
                 log.warn("Image empty");
             }
@@ -153,21 +175,34 @@ public class ClipCreaterPlugin
                 		" Triggering in " + triggerDelayMillis + " millis. " +
                 		" Capture Delay " + (now -startTime));
             }
-            Runnable sendNext = new sendNextImageRunnable(uids, nextCaptureTime, waitTimeMillis,count);
+            Runnable sendNext = new captureNextImageRunnable(uids, clip, nextCaptureTime, waitTimeMillis,count);
             captureNextSchedulable = threadService.getThread(ClipCreaterPlugin.this,sendNext,"VideoCapture",ThreadService.WILL_BLOCK_LANE);
             captureNextSchedulable.schedule(triggerDelayMillis);
          }
     }
     
     public boolean isMyStartCapture(ClipCaptureState state) {
-        return state.getClipName().equals(clipName) && 
-        state.getOutstandingCommand().equals(ClipCaptureState.CommandKind.StartCapture);
+        CommandKind outstandingCommand = state.getOutstandingCommand();
+        return outstandingCommand !=null && state.getClipName().equals(clipName) && 
+        outstandingCommand.equals(ClipCaptureState.CommandKind.StartCapture);
     }
     
     public boolean isMyStopCapture(ClipCaptureState state) {
-        return state.getClipName().equals(clipName) && 
-        state.getOutstandingCommand().equals(ClipCaptureState.CommandKind.StopCapture);
+        if (state != captureState) {
+            return false;
+        }
+        CommandKind outstandingCommand = state.getOutstandingCommand();
+        return outstandingCommand !=null && 
+        outstandingCommand.equals(ClipCaptureState.CommandKind.StopCapture);
     }
 
+    public boolean isMySendClip(ClipCaptureState state) {
+        if (state != captureState) {
+            return false;
+        }
+        CommandKind outstandingCommand = state.getOutstandingCommand();
+        return outstandingCommand !=null && 
+        outstandingCommand.equals(ClipCaptureState.CommandKind.Send);
+    }
 
 }

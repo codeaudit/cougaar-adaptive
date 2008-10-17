@@ -14,6 +14,7 @@ public class ClipCaptureState
 
     private long timeStamp;
     private String clipName;
+    private long clipId;
     private StateKind currentState = StateKind.NoClip;
     private CommandKind outstandingCommand =null;
  
@@ -21,6 +22,7 @@ public class ClipCaptureState
                        String clipName) {
         super(uids.nextUID());
         this.clipName=clipName;
+        this.clipId=0;
     }
     
     public synchronized String  getClipName() {
@@ -47,6 +49,9 @@ public class ClipCaptureState
 
     public synchronized void setOutstandingCommand(CommandKind outstandingCommand) {
         this.outstandingCommand = outstandingCommand;
+        if (outstandingCommand != null && outstandingCommand.equals(CommandKind.StartCapture)) {
+            this.clipId += 1;
+        }
         captureTimeStamp();
     }
 
@@ -57,5 +62,10 @@ public class ClipCaptureState
     private void captureTimeStamp() {
         this.timeStamp=System.currentTimeMillis();
     }
+    
+    public long getClipId() {
+        return clipId;
+    }
+
 
 }

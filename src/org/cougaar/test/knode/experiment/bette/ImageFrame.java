@@ -144,6 +144,4 @@ public class ImageFrame extends JFrame {
 		}
 	    }
 
-
-
 }
