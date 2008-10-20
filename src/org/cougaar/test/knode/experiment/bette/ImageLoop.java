@@ -94,7 +94,13 @@ public class ImageLoop {
      * if no image, returns null
      */
     public Long getFirstTime() {
-        return schedule.firstKey();
+        Long firstTime;
+        try {
+            firstTime = schedule.firstKey();
+        } catch (Exception e) {
+            firstTime = null;
+        }
+        return firstTime;
     }
     
     public ImageHolder getFirstImage() {
@@ -103,7 +109,13 @@ public class ImageLoop {
     }
     
     public Long getLastTime() {
-        return schedule.lastKey();
+        Long lastTime;
+        try {
+            lastTime = schedule.lastKey();
+        } catch (Exception e) {
+          lastTime=null;
+        }
+        return lastTime;
     }
     
     public ImageHolder getLastImage() {

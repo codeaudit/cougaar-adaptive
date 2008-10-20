@@ -74,11 +74,13 @@ public class ClipDisplayPlugin
     public void executeStartClipLooping(ClipHolder clip) {
     	loopingClip=clip;
     	ImageLoop loop = clip.getImageLoop();
-    	long startTime = loop.getFirstTime();
-		Runnable displayNext = new DisplayNextImageRunnable(threadService,clip, frame, startTime);
-		displayNextSchedulable = threadService.getThread(ClipDisplayPlugin.this,displayNext,"DisplayImageFromClip",ThreadService.BEST_EFFORT_LANE);
-		displayNextSchedulable.schedule(startTime);
-    	log.shout("Start Looping");
+    	if (loop.getFirstTime() != null) {
+    	    long startTime = loop.getFirstTime();
+    	    Runnable displayNext = new DisplayNextImageRunnable(threadService,clip, frame, startTime);
+    	    displayNextSchedulable = threadService.getThread(ClipDisplayPlugin.this,displayNext,"DisplayImageFromClip",ThreadService.BEST_EFFORT_LANE);
+    	    displayNextSchedulable.schedule(startTime);
+    	    log.info("Start Looping");
+    	}
     }
     
     @Cougaar.Execute(on = Subscribe.ModType.REMOVE, when = "isMyClip")
@@ -89,7 +91,7 @@ public class ClipDisplayPlugin
     		displayNextSchedulable=null;
     	}
     	frame.clearImage();
-    	log.shout("removed Display Clip");
+    	log.info("removed Display Clip");
     }
 
     private class DisplayNextImageRunnable implements Runnable {
@@ -141,7 +143,7 @@ public class ClipDisplayPlugin
 
     public boolean isMyClipDone(ClipHolder clipHolder) {
         return clipHolder.getClipName().equals(clipName) &&
-        clipHolder.isDone();
+        clipHolder.isDone() && !clipHolder.isSend();
     }
 
     public boolean isMyClip(ClipHolder clipHolder) {

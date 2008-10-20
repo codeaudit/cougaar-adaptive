@@ -48,6 +48,13 @@ public class ClipCreaterPlugin
         threadService = sb.getService(this,ThreadService.class, null );
     }
     
+    //INIT
+    @Cougaar.Execute(on = Subscribe.ModType.ADD, when = "isMyCapture")
+    public void executeInitCapture(ClipCaptureState state) {
+        captureState = state;
+    }
+
+    
     // START
     @Cougaar.Execute(on = Subscribe.ModType.CHANGE, when = "isMyStartCapture")
     public void executeStartCapture(ClipCaptureState state) {
@@ -55,7 +62,6 @@ public class ClipCreaterPlugin
     	deleteClipFromBlackboard(clip);
     	clip=null;
         // Indicate that we have started in capture state
-        captureState = state;
         captureState.setCurrentState(ClipCaptureState.StateKind.Grabbing);
         captureState.setOutstandingCommand(null);
         blackboard.publishChange(captureState);
@@ -213,9 +219,17 @@ public class ClipCreaterPlugin
         return myIncarnation;
     }
 
+    
+    public boolean isMyCapture(ClipCaptureState state) {
+        return state != null && state.getClipName().equals(clipName);
+    }
+    
     public boolean isMyStartCapture(ClipCaptureState state) {
+        if (state != captureState) {
+            return false;
+        }
         CommandKind outstandingCommand = state.getOutstandingCommand();
-        return outstandingCommand !=null && state.getClipName().equals(clipName) && 
+        return outstandingCommand !=null  && 
         outstandingCommand.equals(ClipCaptureState.CommandKind.StartCapture);
     }
     
