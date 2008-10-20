@@ -1,5 +1,7 @@
 package org.cougaar.test.knode.experiment.bette;
 
+import java.io.IOException;
+
 import org.cougaar.core.service.UIDService;
 import org.cougaar.core.util.UniqueObjectBase;
 
@@ -10,25 +12,37 @@ import org.cougaar.core.util.UniqueObjectBase;
 public class ClipHolder
         extends UniqueObjectBase {
 
-    transient private ImageLoop imageLoop = new ImageLoop(0);
     private long startTime;
     private long endTime;
     private String clipName;
     private long clipId;
     private String note;
     private boolean done = false;
-    transient private boolean send = false;
+    transient private boolean send ;
+    transient private ImageLoop imageLoop ;
     // TODO add location
  
     public ClipHolder(UIDService uids,
                        long startTime,
-                       String streamName,
+                       String clipName,
                        long clipId){
         super(uids.nextUID());
         this.startTime = startTime;
         this.clipId = clipId;
-        this.clipName = streamName;
+        this.clipName = clipName;
+        this.imageLoop = new ImageLoop(0);
     }
+    
+    // initialize transients
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        send=false;
+        if (done) {
+        imageLoop = new ImageLoop(endTime - startTime);
+        } else {
+            imageLoop = new ImageLoop(0);
+        }
+   }
 
     public void addImage(long time, ImageHolder image) {
         imageLoop.add(time, image);

@@ -119,6 +119,7 @@
 			</component>
 			<component
 				class="org.cougaar.test.knode.experiment.bette.ClipOnewayClientFacePlugin">
+			    <argument name="clipName" value="Clip"/>
 			</component>
 		</agent>
 	</node>

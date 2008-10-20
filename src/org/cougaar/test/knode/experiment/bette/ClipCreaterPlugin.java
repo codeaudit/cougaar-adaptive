@@ -39,7 +39,6 @@ public class ClipCreaterPlugin
     private ClipCaptureState captureState;
     private ClipHolder clip;
     private Schedulable captureNextSchedulable;
-    private long myIncarnation;
 
     public void start() {
         super.start();
@@ -131,19 +130,7 @@ public class ClipCreaterPlugin
         }
 
         public void run() {
-              //wait for incarnation to be set
-//            if (myIncarnation==0) {
-//                myIncarnation=getMyInarnation();
-//                if (waitForIncarnationNumber && (myIncarnation == 0)) {
-//                    // Agent still not registered in topology service: wait to send
-//                    Runnable sendNext = new captureNextImageRunnable(uids, clip, System.currentTimeMillis(), waitTimeMillis,1);
-//                    captureNextSchedulable = threadService.getThread(this,sendNext,"VideoCapture",ThreadService.WILL_BLOCK_LANE);
-//                    captureNextSchedulable.schedule(waitTimeMillis);
-//                   return;
-//                }
-//            }
-//            // check if capture should stop
-            if (captureState == null || 
+             if (captureState == null || 
                     !captureState.getCurrentState().equals(ClipCaptureState.StateKind.Grabbing)) {
                 clip.setEndTime(expectedCaptureTime);
                 publishChangeLater(clip);
@@ -157,7 +144,7 @@ public class ClipCreaterPlugin
             SchedulableStatus.endBlocking();
             if (image.length > 0) {
                 ImageHolder imageHolder = new ImageHolder(uids, expectedCaptureTime, image, 
-                                                          clipName, count, myIncarnation);
+                                                          clipName, count, clip.getClipId());
                 publishAddLater(imageHolder);
                 clip.addImage(expectedCaptureTime - clip.getStartTime(), imageHolder);
                 publishChangeLater(clip);          
@@ -207,19 +194,7 @@ public class ClipCreaterPlugin
     	}
     }
 
-    // TODO why does it take tens of seconds to get incarnation number
-    @SuppressWarnings("unused")
-	private long getMyInarnation() {
-        ServiceBroker sb = getServiceBroker();
-        IncarnationService incarnationService = sb.getService(this, IncarnationService.class, null);
-        long myIncarnation = incarnationService.getIncarnation(agentId);
-        if (log.isInfoEnabled()) {
-            log.info("Agent "+ agentId + " has incarnation number "+ myIncarnation);
-        }
-        return myIncarnation;
-    }
-
-    
+   
     public boolean isMyCapture(ClipCaptureState state) {
         return state != null && state.getClipName().equals(clipName);
     }

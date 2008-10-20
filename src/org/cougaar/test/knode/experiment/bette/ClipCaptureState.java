@@ -50,7 +50,7 @@ public class ClipCaptureState
     public synchronized void setOutstandingCommand(CommandKind outstandingCommand) {
         this.outstandingCommand = outstandingCommand;
         if (outstandingCommand != null && outstandingCommand.equals(CommandKind.StartCapture)) {
-            this.clipId += 1;
+            this.clipId = System.currentTimeMillis(); // Timestamp more unique than incrementing a counter
         }
         captureTimeStamp();
     }
