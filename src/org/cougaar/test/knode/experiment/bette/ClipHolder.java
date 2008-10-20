@@ -17,6 +17,7 @@ public class ClipHolder
     private long clipId;
     private String note;
     private boolean done = false;
+    transient private boolean send = false;
     // TODO add location
  
     public ClipHolder(UIDService uids,
@@ -79,6 +80,12 @@ public class ClipHolder
         return done;
     }
 
+	public boolean isSend() {
+		return send;
+	}
 
+	public void setSend(boolean send) {
+		this.send = send;
+	}
 }
 

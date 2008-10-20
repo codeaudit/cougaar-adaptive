@@ -37,6 +37,7 @@ public class ClipCreaterPlugin
     private TimedImageService imageService;
     private ThreadService threadService;
     private ClipCaptureState captureState;
+    private ClipHolder clip;
     private Schedulable captureNextSchedulable;
     private long myIncarnation;
 
@@ -46,9 +47,13 @@ public class ClipCreaterPlugin
         imageService = sb.getService(this, TimedImageService.class, null);
         threadService = sb.getService(this,ThreadService.class, null );
     }
-
+    
+    // START
     @Cougaar.Execute(on = Subscribe.ModType.CHANGE, when = "isMyStartCapture")
-    public void executeStartRun(ClipCaptureState state) {
+    public void executeStartCapture(ClipCaptureState state) {
+    	// clear out old clip
+    	deleteClipFromBlackboard(clip);
+    	clip=null;
         // Indicate that we have started in capture state
         captureState = state;
         captureState.setCurrentState(ClipCaptureState.StateKind.Grabbing);
@@ -56,7 +61,7 @@ public class ClipCreaterPlugin
         blackboard.publishChange(captureState);
         // Create Clip blackboard object
         long now = System.currentTimeMillis();
-        ClipHolder clip = new ClipHolder(uids, now, captureState.getClipName(), captureState.getClipId());
+        clip = new ClipHolder(uids, now, captureState.getClipName(), captureState.getClipId());
         blackboard.publishAdd(clip);
         // schedule the first frame
         long waitTime = (int) (1000 / frameRate);
@@ -69,34 +74,40 @@ public class ClipCreaterPlugin
         captureNextSchedulable.schedule(waitTime);
     }
 
+    // STOP
     @Cougaar.Execute(on = Subscribe.ModType.CHANGE, when = "isMyStopCapture")
     public void executeStopRun(ClipCaptureState state) {
+    	// update capture state to Looping
         state.setCurrentState(ClipCaptureState.StateKind.Looping);
         state.setOutstandingCommand(null);
         blackboard.publishChange(state);
-        //TODO Finish up clip Holder
     }
     
+    //SEND
     @Cougaar.Execute(on = Subscribe.ModType.CHANGE, when = "isMySendClip")
     public void executeSendClip(ClipCaptureState state) {
+    	// Update capture state to NoClip
         state.setCurrentState(ClipCaptureState.StateKind.NoClip);
         state.setOutstandingCommand(null);
         blackboard.publishChange(state);
-        //TODO mark clip  Holder as to send
-    }
-
-
-    // TODO why does it take tens of seconds to get incarnation number
-    private long getMyInarnation() {
-        ServiceBroker sb = getServiceBroker();
-        IncarnationService incarnationService = sb.getService(this, IncarnationService.class, null);
-        long myIncarnation = incarnationService.getIncarnation(agentId);
-        if (log.isInfoEnabled()) {
-            log.info("Agent "+ agentId + " has incarnation number "+ myIncarnation);
+        // Mark clip to send
+        if (clip != null) {
+        	clip.setSend(true);
+        	blackboard.publishChange(clip);
         }
-        return myIncarnation;
     }
     
+    //CLEAR
+    @Cougaar.Execute(on = Subscribe.ModType.CHANGE, when = "isMyClearClip")
+    public void executeClearClip(ClipCaptureState state) {
+        state.setCurrentState(ClipCaptureState.StateKind.NoClip);
+        state.setOutstandingCommand(null);
+        blackboard.publishChange(state);
+        deleteClipFromBlackboard(clip);
+        clip = null;
+    }
+    
+    // CAPTURE
     private class captureNextImageRunnable
             implements Runnable {
         private long expectedCaptureTime;
@@ -181,6 +192,27 @@ public class ClipCreaterPlugin
          }
     }
     
+    public void deleteClipFromBlackboard(ClipHolder clip) {
+       	if (clip != null) {
+       		for (ImageHolder image : clip.getImageLoop().images()) {
+       			blackboard.publishRemove(image);
+       		}
+            blackboard.publishRemove(clip);
+    	}
+    }
+
+    // TODO why does it take tens of seconds to get incarnation number
+    @SuppressWarnings("unused")
+	private long getMyInarnation() {
+        ServiceBroker sb = getServiceBroker();
+        IncarnationService incarnationService = sb.getService(this, IncarnationService.class, null);
+        long myIncarnation = incarnationService.getIncarnation(agentId);
+        if (log.isInfoEnabled()) {
+            log.info("Agent "+ agentId + " has incarnation number "+ myIncarnation);
+        }
+        return myIncarnation;
+    }
+
     public boolean isMyStartCapture(ClipCaptureState state) {
         CommandKind outstandingCommand = state.getOutstandingCommand();
         return outstandingCommand !=null && state.getClipName().equals(clipName) && 
@@ -204,5 +236,13 @@ public class ClipCreaterPlugin
         return outstandingCommand !=null && 
         outstandingCommand.equals(ClipCaptureState.CommandKind.Send);
     }
-
+    
+    public boolean isMyClearClip(ClipCaptureState state) {
+        if (state != captureState) {
+            return false;
+        }
+        CommandKind outstandingCommand = state.getOutstandingCommand();
+        return outstandingCommand !=null && 
+        outstandingCommand.equals(ClipCaptureState.CommandKind.Clear);
+    }
 }
