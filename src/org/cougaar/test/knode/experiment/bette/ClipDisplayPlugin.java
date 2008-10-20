@@ -52,6 +52,7 @@ public class ClipDisplayPlugin
         frame.setVisible(true);
     }
     
+    // New Clip
     @Cougaar.Execute(on = Subscribe.ModType.ADD, when = "isMyClip")
     public void executeNewClip(ClipHolder clip) {
     	loopingClip=null;
@@ -63,6 +64,7 @@ public class ClipDisplayPlugin
     	log.shout("added Display Clip");
     }
 
+    // Display While Grabbing
     @Cougaar.Execute(on = Subscribe.ModType.CHANGE, when = "isMyClipNotDone")
     public void executeDisplayImageWhileGrabing(ClipHolder clip) {
         ImageLoop loop = clip.getImageLoop();
@@ -70,6 +72,7 @@ public class ClipDisplayPlugin
         frame.update(lastImage.getImage(), lastImage.getTimeStamp());
     }
     
+    // Start Looping
     @Cougaar.Execute(on = Subscribe.ModType.CHANGE, when = "isMyClipDone")
     public void executeStartClipLooping(ClipHolder clip) {
     	loopingClip=clip;
@@ -83,6 +86,7 @@ public class ClipDisplayPlugin
     	}
     }
     
+    // Stop looping when Clip is removed
     @Cougaar.Execute(on = Subscribe.ModType.REMOVE, when = "isMyClip")
     public void executeStopClipLooping(ClipHolder clip) {
     	loopingClip=null;
