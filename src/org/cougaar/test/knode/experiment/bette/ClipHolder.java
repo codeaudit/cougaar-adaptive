@@ -10,7 +10,7 @@ import org.cougaar.core.util.UniqueObjectBase;
 public class ClipHolder
         extends UniqueObjectBase {
 
-    private ImageLoop imageLoop = new ImageLoop(0);
+    transient private ImageLoop imageLoop = new ImageLoop(0);
     private long startTime;
     private long endTime;
     private String clipName;

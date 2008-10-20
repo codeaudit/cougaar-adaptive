@@ -63,7 +63,17 @@
 			<component
 				class="org.cougaar.test.knode.experiment.bette.ClipDisplayPlugin">
 				<argument name="clipName" value="Clip"/>
+				<argument name="title" value="Server Clip Capture"/>
 			</component>
+			
+			<component
+				class="org.cougaar.test.knode.experiment.bette.ClipOnewaySenderFacePlugin">
+				<argument name="clientName" value="Client"/>
+				<argument name="clipName" value="Clip"/>
+				<argument name="defaultTimeoutMillis" value="30000"/>
+				<argument name="deleteOnSend" value="true"/>
+			</component>
+			
 			
 			<component
 				class="org.cougaar.test.knode.experiment.bette.ImageOnewaySenderFacePlugin">
@@ -95,10 +105,20 @@
 			<component
 				class="org.cougaar.test.knode.experiment.bette.VideoStreamDisplayPlugin">
 				<argument name="displayImages" value="true"/>
-				<argument name="title" value="Oneway Video"/>
+				<argument name="streamName" value="VideoStream"/>
+				<argument name="title" value="Client Video"/>
 			</component>
 			<component
 				class="org.cougaar.test.knode.experiment.bette.ImageOnewayClientFacePlugin">
+			</component>
+			
+			<component
+				class="org.cougaar.test.knode.experiment.bette.ClipDisplayPlugin">
+				<argument name="clipName" value="Clip"/>
+				<argument name="title" value="Client Clip"/>
+			</component>
+			<component
+				class="org.cougaar.test.knode.experiment.bette.ClipOnewayClientFacePlugin">
 			</component>
 		</agent>
 	</node>
