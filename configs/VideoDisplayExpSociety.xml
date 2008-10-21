@@ -44,7 +44,6 @@
 		</agent>
 		
 		<agent name="Server">
-		<!-- 
 			<component
 				class="org.cougaar.test.knode.experiment.bette.VideoStreamCreaterPlugin">
 				<argument name="streamName" value="VideoStream"/>
@@ -57,7 +56,7 @@
 				<argument name="defaultTimeoutMillis" value="1000"/>
 				<argument name="deleteOnSend" value="true"/>
 			</component>
-			 -->		
+			 		
 			<component
 				class="org.cougaar.test.knode.experiment.bette.ClipControlPlugin">
 				<argument name="clipName" value="Clip"/>

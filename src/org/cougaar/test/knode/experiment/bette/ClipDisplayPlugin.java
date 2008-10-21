@@ -17,7 +17,7 @@ public class ClipDisplayPlugin
         implements Quitable {
     private ImageFrame frame;
 	private Schedulable displayNextSchedulable;
-	private ClipHolder loopingClip = null;
+	private ClipHolder displayingClip = null;
 	private ThreadService threadService;
 	
     
@@ -54,12 +54,16 @@ public class ClipDisplayPlugin
     // New Clip
     @Cougaar.Execute(on = Subscribe.ModType.ADD, when = "isMyClip")
     public void executeNewClip(ClipHolder clip) {
-    	loopingClip=null;
+    	displayingClip=null;
     	if (displayNextSchedulable != null) {
     		displayNextSchedulable.cancel();
     		displayNextSchedulable=null;
     	}
-        loopingClip=clip;
+        displayingClip=clip;
+        if(clip.isDone()) {
+            //Clip is done and may have a subset of images loaded
+            startLoopingDisplay(clip);
+        }
     	log.shout("added Display Clip");
     }
 
@@ -71,24 +75,31 @@ public class ClipDisplayPlugin
         frame.update(lastImage.getImage(), lastImage.getTimeStamp());
     }
     
-    // Start Looping
+    // Start Looping, if not already started
     @Cougaar.Execute(on = Subscribe.ModType.CHANGE, when = "isMyClipDone")
     public void executeStartClipLooping(ClipHolder clip) {
-    	loopingClip=clip;
-    	ImageLoop loop = clip.getImageLoop();
-    	if (loop.getFirstTime() != null) {
-    	    long startTime = loop.getFirstTime();
-    	    Runnable displayNext = new DisplayNextImageRunnable(threadService,clip, frame, startTime);
-    	    displayNextSchedulable = threadService.getThread(ClipDisplayPlugin.this,displayNext,"DisplayImageFromClip",ThreadService.BEST_EFFORT_LANE);
-    	    displayNextSchedulable.schedule(startTime);
-    	    log.info("Start Looping");
-    	}
+        if (clip.equals(displayingClip)) {
+            startLoopingDisplay(clip);
+        }
+    }
+
+    private void startLoopingDisplay(ClipHolder clip) {
+        if (displayNextSchedulable == null) {
+            ImageLoop loop = clip.getImageLoop();
+            if (loop.getFirstTime() != null) {
+                long startTime = loop.getFirstTime();
+                Runnable displayNext = new DisplayNextImageRunnable(threadService,clip, frame, startTime);
+                displayNextSchedulable = threadService.getThread(ClipDisplayPlugin.this,displayNext,"DisplayImageFromClip",ThreadService.BEST_EFFORT_LANE);
+                displayNextSchedulable.schedule(startTime);
+                log.info("Start Looping");
+            }
+        }
     }
     
     // Stop looping when Clip is removed
     @Cougaar.Execute(on = Subscribe.ModType.REMOVE, when = "isMyClip")
     public void executeStopClipLooping(ClipHolder clip) {
-    	loopingClip=null;
+    	displayingClip=null;
     	if (displayNextSchedulable != null) {
     		displayNextSchedulable.cancel();
     		displayNextSchedulable=null;
@@ -117,10 +128,10 @@ public class ClipDisplayPlugin
 
 		public void run() {
 			//Check if time to stop
-			if (displayNextSchedulable != this) {
+			if (displayNextSchedulable.equals(this)) {
 				return;
 			}
-			if (loopingClip == null) {
+			if (displayingClip == null) {
 				displayNextSchedulable = null;
 				return;
 			}

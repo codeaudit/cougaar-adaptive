@@ -47,6 +47,11 @@ public class ClipHolder
     public void addImage(long time, ImageHolder image) {
         imageLoop.add(time, image);
     }
+    
+    public void addImage(ImageHolder image) {
+        imageLoop.add(image.getTimeStamp() - startTime, image);
+    }
+
 
     public int getImageCount() {
         return imageLoop.getImageCount();
