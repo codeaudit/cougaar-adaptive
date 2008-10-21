@@ -110,6 +110,10 @@ public class ClipCreaterPlugin
         blackboard.publishChange(state);
         deleteClipFromBlackboard(clip);
         clip = null;
+        if (captureNextSchedulable != null) {
+        	captureNextSchedulable.cancel();
+        	captureNextSchedulable = null;
+        }
     }
     
     // CAPTURE
@@ -135,6 +139,7 @@ public class ClipCreaterPlugin
                 clip.setEndTime(expectedCaptureTime);
                 publishChangeLater(clip);
                 captureNextSchedulable.cancel();
+                captureNextSchedulable=null;
                 return;
             }
             // Publish frame for capture time

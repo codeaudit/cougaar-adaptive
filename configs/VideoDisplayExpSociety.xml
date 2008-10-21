@@ -44,17 +44,25 @@
 		</agent>
 		
 		<agent name="Server">
+		<!-- 
 			<component
 				class="org.cougaar.test.knode.experiment.bette.VideoStreamCreaterPlugin">
 				<argument name="streamName" value="VideoStream"/>
 				<argument name="frameRate" value="1"/>
 			</component>
-			
+			<component
+				class="org.cougaar.test.knode.experiment.bette.ImageOnewaySenderFacePlugin">
+				<argument name="clientName" value="Client"/>
+				<argument name="streamName" value="VideoStream"/>
+				<argument name="defaultTimeoutMillis" value="1000"/>
+				<argument name="deleteOnSend" value="true"/>
+			</component>
+			 -->		
 			<component
 				class="org.cougaar.test.knode.experiment.bette.ClipControlPlugin">
 				<argument name="clipName" value="Clip"/>
 			</component>
-			
+	
 			<component
 				class="org.cougaar.test.knode.experiment.bette.ClipCreaterPlugin">
 				<argument name="clipName" value="Clip"/>
@@ -75,15 +83,7 @@
 			</component>
 			
 			
-			<component
-				class="org.cougaar.test.knode.experiment.bette.ImageOnewaySenderFacePlugin">
-				<argument name="clientName" value="Client"/>
-				<argument name="streamName" value="VideoStream"/>
-				<argument name="defaultTimeoutMillis" value="1000"/>
-				<argument name="deleteOnSend" value="true"/>
-			</component>
-			
-            <component
+         <component
                 class="org.cougaar.test.knode.experiment.bette.TimedImageFromFilePlugin">
                 <argument name="cacheImages" value="false" />
                 <argument name="imageDirectory" value="/Volumes/Scratch/PCES/EDSplane" />
@@ -102,14 +102,17 @@
 
 	<node name="Node2">
 			<agent name="Client">
+			
 			<component
 				class="org.cougaar.test.knode.experiment.bette.VideoStreamDisplayPlugin">
 				<argument name="displayImages" value="true"/>
 				<argument name="streamName" value="VideoStream"/>
 				<argument name="title" value="Client Video"/>
 			</component>
+		
 			<component
 				class="org.cougaar.test.knode.experiment.bette.ImageOnewayClientFacePlugin">
+				<argument name="streamName" value="VideoStream"/>
 			</component>
 			
 			<component
@@ -117,10 +120,12 @@
 				<argument name="clipName" value="Clip"/>
 				<argument name="title" value="Client Clip"/>
 			</component>
+			
 			<component
 				class="org.cougaar.test.knode.experiment.bette.ClipOnewayClientFacePlugin">
 			    <argument name="clipName" value="Clip"/>
 			</component>
+	
 		</agent>
 	</node>
 </society>

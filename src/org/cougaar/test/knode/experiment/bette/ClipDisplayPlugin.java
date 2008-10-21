@@ -17,6 +17,9 @@ public class ClipDisplayPlugin
         implements Quitable {
     private ImageFrame frame;
 	private Schedulable displayNextSchedulable;
+	private ClipHolder loopingClip = null;
+	private ThreadService threadService;
+	
     
     @Cougaar.Arg(name = "clipName", defaultValue = "DefaultClip", 
                  description = "Name of the clip")
@@ -30,10 +33,6 @@ public class ClipDisplayPlugin
 
     @Cougaar.Arg(name = "yPosition", defaultValue = "20", description = "y Position for Display window")
     public int yPos;
-
-    ClipHolder loopingClip = null;
-	private ThreadService threadService;
-    
     public void start() {
         super.start();
         ServiceBroker sb = getServiceBroker();
@@ -117,8 +116,12 @@ public class ClipDisplayPlugin
 		}
 
 		public void run() {
-			//Check if time stop
-			if (displayNextSchedulable== null) {
+			//Check if time to stop
+			if (displayNextSchedulable != this) {
+				return;
+			}
+			if (loopingClip == null) {
+				displayNextSchedulable = null;
 				return;
 			}
 			// Find image for current time
