@@ -60,11 +60,13 @@
 			<component
 				class="org.cougaar.test.knode.experiment.bette.ClipControlPlugin">
 				<argument name="clipName" value="Clip"/>
+				<argument name="title" value="Clip Control"/>
 			</component>
 	
 			<component
 				class="org.cougaar.test.knode.experiment.bette.ClipCreaterPlugin">
 				<argument name="clipName" value="Clip"/>
+				<argument name="frameRate" value="10"/>
 			</component>
 			
 			<component
