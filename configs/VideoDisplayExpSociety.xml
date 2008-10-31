@@ -83,7 +83,7 @@
 				<argument name="deleteOnSend" value="true"/>
 			</component>
 			
-			
+		 <!-- 	
          <component
                 class="org.cougaar.test.knode.experiment.bette.TimedImageFromFilePlugin">
                 <argument name="cacheImages" value="false" />
@@ -92,7 +92,11 @@
                 <argument name="imageFrameRate" value="24" />
                 <argument name="loopBackwards" value="false" />
             </component>
-            
+           -->  
+            <component
+                class="org.cougaar.test.knode.experiment.bette.TimedImageFromQuicktimePlugin">
+            </component>
+           
 			<component
 				class="org.cougaar.test.ping.experiment.PingBBWorkerPlugin">
 				<argument name="workerId" value="source1" />
