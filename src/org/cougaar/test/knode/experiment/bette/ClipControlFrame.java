@@ -12,46 +12,32 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class ClipControlFrame extends JFrame {
-	private static final DecimalFormat f2_1 = new DecimalFormat("0.0");
-	private static final DecimalFormat f3_0 = new DecimalFormat("000");
-	private static final DateFormat dateFormatter = DateFormat
-			.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
 	private int frameWidth;
 	private int frameHeight;
-	private int imageWidth;
-	private int imageHeight;
 	private int xPos, yPos;
-	private JLabel imgLabel;
-	private JLabel timeLabel;
+	private ImagePanel imagePanel;
 	private JButton captureButton;
 	private JButton sendButton;
 	private JButton clearButton;
-	private boolean showSlides = true;
 	private ClipControlInterface client;
 
 	ClipControlFrame(String title, String[] args, ClipControlInterface client) {
 		super(title);
 
 		this.client = client;
+		this.imagePanel = new ImagePanel();
 
 		// Defaults
 		frameWidth = 250;
 		frameHeight = 250;
-		imageWidth = 200;
-		imageHeight = 200;
 		xPos = 20;
 		yPos = 20;
-		showSlides = true;
 
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
@@ -60,15 +46,15 @@ public class ClipControlFrame extends JFrame {
 			} else if (arg.equals("-frame-height")) {
 				frameHeight = Integer.parseInt(args[++i]);
 			} else if (arg.equals("-image-width")) {
-				imageWidth = Integer.parseInt(args[++i]);
+				imagePanel.setImageWidth(Integer.parseInt(args[++i]));
 			} else if (arg.equals("-image-height")) {
-				imageHeight = Integer.parseInt(args[++i]);
+				imagePanel.setImageHeight(Integer.parseInt(args[++i]));
 			} else if (arg.equals("-x-position")) {
 				xPos = Integer.parseInt(args[++i]);
 			} else if (arg.equals("-y-position")) {
 				yPos = Integer.parseInt(args[++i]);
 			} else if (arg.equals("-show-slides")) {
-				showSlides = (args[++i].equalsIgnoreCase("true"));
+				imagePanel.setShowSlides((args[++i].equalsIgnoreCase("true")));
 			}
 		}
 
@@ -78,33 +64,40 @@ public class ClipControlFrame extends JFrame {
 				ClipControlFrame.this.client.quit();
 			}
 		});
-
+		JPanel imgPanel=imagePanel.createImagePanel();
+		JPanel ctrPanel=createControlPanel();
+        JPanel outside = new JPanel();
+        outside.add(ctrPanel);
+        outside.add(imgPanel); 
+        
 		getContentPane().setLayout(new BorderLayout());
-		addPictureArea();
+		getContentPane().add(outside,"Center");
 		pack();
 
 		setSize(frameWidth, frameHeight);
 		setLocation(xPos, yPos);
 	}
 
-	void quit() {
-		dispose();
+	public void update(byte[] image, long timeStamp) {
+		imagePanel.update(image, timeStamp);
+		resize();
 	}
 
-	private void addPictureArea() {
+	public void clearImage() {
+		imagePanel.clearImage();		
+	}
+
+
+
+	private JPanel createControlPanel() {
 		GridBagLayout bag = new GridBagLayout();
-		JPanel imgPanel = new JPanel();
-		imgPanel.setLayout(bag);
+		JPanel ctrPanel = new JPanel();
+		ctrPanel.setLayout(bag);
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets = new Insets(5, 5, 5, 5);
 		c.fill = GridBagConstraints.BOTH;
 
-		//Image Label
-		imgLabel = new JLabel();
-		imgLabel.setSize(new Dimension(imageWidth, imageHeight));
-		bag.setConstraints(imgLabel, c);
-		imgPanel.add(imgLabel);
-		
+	
 		//Capture Button
 		c.gridwidth = GridBagConstraints.REMAINDER; // Make new row after this cell
 		captureButton = new JButton("Capture");
@@ -120,16 +113,9 @@ public class ClipControlFrame extends JFrame {
 		};
 		captureButton.addMouseListener(captureListener);
 		bag.setConstraints(captureButton, c);
-		imgPanel.add(captureButton);
+		ctrPanel.add(captureButton);
 		
-		// Time Label
-		timeLabel = new JLabel();
-		timeLabel.setSize(new Dimension(50, 20));
-		timeLabel.setText("Waiting for Image");
-		bag.setConstraints(timeLabel, c);
-		imgPanel.add(timeLabel);
-		
-		//Send Label
+		//Send Button
 		c.gridwidth = GridBagConstraints.REMAINDER; // Make new row after this cell
 		sendButton = new JButton("Send");
 		sendButton.setToolTipText("Send clip to remote viewer");
@@ -140,7 +126,7 @@ public class ClipControlFrame extends JFrame {
 		};
 		sendButton.addActionListener(sendListener);
 		bag.setConstraints(sendButton, c);
-		imgPanel.add(sendButton);
+		ctrPanel.add(sendButton);
 
 		//Clear button
 		c.gridwidth = GridBagConstraints.REMAINDER; // Make new row after this cell
@@ -153,28 +139,15 @@ public class ClipControlFrame extends JFrame {
 			}
 		};
 		clearButton.addActionListener(clearListener);
-		imgPanel.add(clearButton);
+		ctrPanel.add(clearButton);
 
-		getContentPane().add(imgPanel, "Center");
-
+		return ctrPanel;
+	}
+	
+	void quit() {
+		dispose();
 	}
 
-
-	void update(byte[] pixels, long count) {
-		if (pixels == null) {
-			return;
-		} else if (showSlides) {
-			imgLabel.setIcon(new ImageIcon(pixels));
-			timeLabel.setText(dateFormatter.format(count) + " "
-					+ f3_0.format(count % 1000) + "ms");
-		} else {
-			imgLabel.setText(Long.toString(count));
-			timeLabel.setText(f2_1.format((count % 100000) / 1000.0));
-		}
-		resize();
-	}
-
-	// We're not using this at the moment
 	private void resize() {
 		Dimension now = getSize();
 		Dimension pref = getPreferredSize();
@@ -194,5 +167,4 @@ public class ClipControlFrame extends JFrame {
 			setLocation(xPos, yPos);
 		}
 	}
-
 }

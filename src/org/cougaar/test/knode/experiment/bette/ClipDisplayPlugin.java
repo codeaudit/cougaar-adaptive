@@ -73,13 +73,13 @@ public class ClipDisplayPlugin
 		}
 	}
 
-    // Display While Grabbing
-    @Cougaar.Execute(on = Subscribe.ModType.CHANGE, when = "isMyClipNotDone")
-    public void executeDisplayImageWhileGrabing(ClipHolder clip) {
-        ImageLoop loop = clip.getImageLoop();
-        ImageHolder  lastImage = loop.getLastImage();
-        frame.update(lastImage.getImage(), lastImage.getTimeStamp());
-    }
+//    // Display While Grabbing
+//    @Cougaar.Execute(on = Subscribe.ModType.CHANGE, when = "isMyClipNotDone")
+//    public void executeDisplayImageWhileGrabing(ClipHolder clip) {
+//        ImageLoop loop = clip.getImageLoop();
+//        ImageHolder  lastImage = loop.getLastImage();
+//        frame.update(lastImage.getImage(), lastImage.getTimeStamp());
+//    }
     
     // Start Looping, if not already started
     @Cougaar.Execute(on = Subscribe.ModType.CHANGE, when = "isMyClipDone")

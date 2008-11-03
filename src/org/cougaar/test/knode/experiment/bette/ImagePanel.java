@@ -18,16 +18,15 @@ public class ImagePanel {
 			.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
 
 	private JPanel imagePanel;
-	private int imageWidth;
-	private int imageHeight;
-	private javax.swing.JLabel imgLabel;
-	private javax.swing.JLabel timeLabel;
+	private Dimension imageSize;
+	private JPanel imgBoarder;
+	private JLabel imgLabel;
+	private JLabel timeLabel;
 	private boolean showSlides = true;
 	
 	public ImagePanel() {
 		super();
-		imageWidth = 650;
-		imageHeight = 650;
+		imageSize = new Dimension(640,480);
 	}
 
 	
@@ -41,10 +40,12 @@ public class ImagePanel {
 		c.fill = GridBagConstraints.BOTH;
 
 		c.gridwidth = GridBagConstraints.REMAINDER; // Make new row after this cell
+		imgBoarder = new JPanel();
 		imgLabel = new JLabel();
-		imgLabel.setSize(new Dimension(imageWidth, imageHeight));
-		bag.setConstraints(imgLabel, c);
-		imagePanel.add(imgLabel);
+		imgBoarder.add(imgLabel);
+		imgBoarder.setSize(imageSize);
+		bag.setConstraints(imgBoarder, c);
+		imagePanel.add(imgBoarder);
 
 		timeLabel = new JLabel();
 		timeLabel.setSize(new Dimension(50, 20));
@@ -64,17 +65,18 @@ public class ImagePanel {
 			imgLabel.setText(null);
 			timeLabel.setText(dateFormatter.format(count) + " "
 					+ f3_0.format(count % 1000) + "ms");
+			this.imageSize = imgLabel.getSize();
 		} else {
 			imgLabel.setText(Long.toString(count));
 			timeLabel.setText(f2_1.format((count % 100000) / 1000.0));
 		}
-		// resize();
 	}
 	
 	public void clearImage() {
-	   imgLabel.setText("Waiting For Image");
+	   Dimension oldSize = imgBoarder.getSize();
 	   imgLabel.setIcon(null);
-	   timeLabel.setText("");
+	   imgBoarder.setSize(oldSize);
+	   timeLabel.setText("Waiting For Image");
 	}
 
 	public boolean isShowSlides() {
@@ -89,29 +91,22 @@ public class ImagePanel {
 		return imagePanel;
 	}
 
-
-
 	public int getImageWidth() {
-		return imageWidth;
+		return (int) imageSize.getWidth();
 	}
 
-
-
-	public void setImageWidth(int imageWidth) {
-		this.imageWidth = imageWidth;
+	public void setImageWidth(int width) {
+		int height = (int) imageSize.getHeight();
+		this.imageSize = new Dimension(width, height);
 	}
-
-
 
 	public int getImageHeight() {
-		return imageHeight;
+		return (int) imageSize.getHeight();
 	}
 
-
-
-	public void setImageHeight(int imageHeight) {
-		this.imageHeight = imageHeight;
+	public void setImageHeight(int height) {
+		int width = (int) imageSize.getWidth();
+		this.imageSize = new Dimension(width, height);
 	}
-
 
 }

@@ -19,12 +19,12 @@ public class ImageFrame extends JFrame {
 		super(title);
 
 		this.client = client;
+		this.imagePanel = new ImagePanel();
 		// Defaults
 		frameWidth = 840;
 		frameHeight = 720;
 		xPos = 20;
 		yPos = 20;
-		this.imagePanel = new ImagePanel();
 
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
