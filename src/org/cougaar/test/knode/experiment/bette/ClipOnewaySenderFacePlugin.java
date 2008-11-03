@@ -28,7 +28,7 @@ public class ClipOnewaySenderFacePlugin
     @Cougaar.Arg(name = "clientName", required = true)
     public MessageAddress clientAddress;
 
-    @Cougaar.Arg(name = "defaultTimeoutMillis", defaultValue = "1000")
+    @Cougaar.Arg(name = "defaultTimeoutMillis", defaultValue = "30000")
     public int defaultTimeoutMillis;
 
     @Cougaar.Arg(name = "deleteOnSend", defaultValue = "true")
