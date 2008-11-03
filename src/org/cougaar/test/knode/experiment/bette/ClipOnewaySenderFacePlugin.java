@@ -16,7 +16,6 @@ import org.cougaar.core.qos.coordinations.oneway.OneWay;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.relay.SimpleRelaySource;
 import org.cougaar.core.util.UID;
-import org.cougaar.core.util.UniqueObject;
 import org.cougaar.util.annotations.Cougaar;
 import org.cougaar.util.annotations.Subscribe;
 
