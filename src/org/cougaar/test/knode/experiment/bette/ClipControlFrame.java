@@ -73,8 +73,8 @@ public class ClipControlFrame extends JFrame {
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(outside,"Center");
 		pack();
-
-		setSize(frameWidth, frameHeight);
+		// TODO Too complicated to figure out size, for now let it be calculated automatically
+		//setSize(frameWidth, frameHeight);
 		setLocation(xPos, yPos);
 	}
 

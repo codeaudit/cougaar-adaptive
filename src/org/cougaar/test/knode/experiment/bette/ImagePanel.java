@@ -1,5 +1,6 @@
 package org.cougaar.test.knode.experiment.bette;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -7,9 +8,11 @@ import java.awt.Insets;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
 
 public class ImagePanel {
 	private static final DecimalFormat f2_1 = new DecimalFormat("0.0");
@@ -19,7 +22,7 @@ public class ImagePanel {
 
 	private JPanel imagePanel;
 	private Dimension imageSize;
-	private JPanel imgBoarder;
+	private JPanel imgBorder;
 	private JLabel imgLabel;
 	private JLabel timeLabel;
 	private boolean showSlides = true;
@@ -40,15 +43,16 @@ public class ImagePanel {
 		c.fill = GridBagConstraints.BOTH;
 
 		c.gridwidth = GridBagConstraints.REMAINDER; // Make new row after this cell
-		imgBoarder = new JPanel();
+		imgBorder = new JPanel();
+		//Border blackline = BorderFactory.createLoweredBevelBorder();
+		//imgBorder.setBorder(blackline);
+		imgBorder.setPreferredSize(imageSize);
 		imgLabel = new JLabel();
-		imgBoarder.add(imgLabel);
-		imgBoarder.setSize(imageSize);
-		bag.setConstraints(imgBoarder, c);
-		imagePanel.add(imgBoarder);
+		imgBorder.add(imgLabel);
+		bag.setConstraints(imgBorder, c);
+		imagePanel.add(imgBorder);
 
 		timeLabel = new JLabel();
-		timeLabel.setSize(new Dimension(50, 20));
 		timeLabel.setText("Waiting for Image");
 		bag.setConstraints(timeLabel, c);
 		imagePanel.add(timeLabel);
@@ -73,9 +77,9 @@ public class ImagePanel {
 	}
 	
 	public void clearImage() {
-	   Dimension oldSize = imgBoarder.getSize();
+	   Dimension oldSize = imgBorder.getSize();
 	   imgLabel.setIcon(null);
-	   imgBoarder.setSize(oldSize);
+	   imgBorder.setPreferredSize(oldSize);
 	   timeLabel.setText("Waiting For Image");
 	}
 
