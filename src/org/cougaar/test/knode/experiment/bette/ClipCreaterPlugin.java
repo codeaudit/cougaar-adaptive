@@ -67,6 +67,7 @@ public class ClipCreaterPlugin
         // Create Clip blackboard object
         long now = System.currentTimeMillis();
         clip = new ClipHolder(uids, now, captureState.getClipName(), captureState.getClipId());
+        // TODO add latitude and longitude from metric service (Node Position)
         blackboard.publishAdd(clip);
         // schedule the first frame
         long waitTime = (int) (1000 / frameRate);

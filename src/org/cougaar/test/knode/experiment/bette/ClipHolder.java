@@ -17,10 +17,12 @@ public class ClipHolder
     private String clipName;
     private long clipId;
     private String note;
+    private double latitude = 42.365192;   // Default to Center of Universe
+    private double longitude = -71.103388;
+    private int totalImages = 0;
     private boolean done = false;
     transient private boolean send ;
     transient private ImageLoop imageLoop ;
-    // TODO add location
  
     public ClipHolder(UIDService uids,
                        long startTime,
@@ -46,10 +48,11 @@ public class ClipHolder
 
     public void addImage(long time, ImageHolder image) {
         imageLoop.add(time, image);
+        totalImages += 1;
     }
     
     public void addImage(ImageHolder image) {
-        imageLoop.add(image.getTimeStamp() - startTime, image);
+        addImage(image.getTimeStamp() - startTime, image);
     }
 
 
@@ -105,6 +108,26 @@ public class ClipHolder
 
 	public void setSend(boolean send) {
 		this.send = send;
+	}
+
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+
+	public double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
+	}
+
+	public int getTotalImages() {
+		return totalImages;
 	}
 }
 

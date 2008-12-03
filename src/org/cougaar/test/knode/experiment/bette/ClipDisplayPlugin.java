@@ -15,7 +15,7 @@ import org.cougaar.util.annotations.Subscribe;
 public class ClipDisplayPlugin
         extends TodoPlugin
         implements Quitable {
-    private ImageFrame frame;
+    private ClipFrame frame;
 	private Schedulable displayNextSchedulable;
 	private ClipHolder displayingClip = null;
 	private ThreadService threadService;
@@ -47,7 +47,7 @@ public class ClipDisplayPlugin
         args[1] = Integer.toString(xPos);
         args[2] = "-y-position";
         args[3] = Integer.toString(yPos);
-        frame = new ImageFrame(title, args, this);
+        frame = new ClipFrame(title, args, this);
         frame.setVisible(true);
     }
     
