@@ -72,7 +72,7 @@ public class ClipOnewayClientFacePlugin
                 imageList.add(image);
                 return null;
             } else {
-                clip.addImage(image);
+                clip.addImageOnlyToLoop(image);
                 return clip;
             }
         }
@@ -83,7 +83,7 @@ public class ClipOnewayClientFacePlugin
         Set<ImageHolder> imagesToAdd = unclaimedImages.get(clipId);
         if (imagesToAdd != null) {
             for ( ImageHolder image : imagesToAdd) {
-                clip.addImage(image);
+                clip.addImageOnlyToLoop(image);
             }
             return true;
         } else {
