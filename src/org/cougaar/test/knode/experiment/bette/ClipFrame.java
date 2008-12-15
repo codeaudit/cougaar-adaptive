@@ -96,4 +96,8 @@ public class ClipFrame extends JFrame {
 		resize();
 	}
 
+	public void updateWithClip(ClipHolder clip) {
+		clipPanel.updateWithClip(clip);
+	}
+
 }

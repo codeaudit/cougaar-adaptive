@@ -140,6 +140,7 @@ public class ClipDisplayPlugin
 			// Display image
 			if (image!=null) {
 				frame.update(image.getImage(), image.getTimeStamp());
+				frame.updateWithClip(clip);
 			}
 			// find next frame time
 			long waitTime = loop.getNextWallclockTimeWithWrap(loopCurrentTime);

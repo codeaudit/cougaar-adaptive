@@ -16,19 +16,12 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 
 public class ClipPanel {
-	private static final DecimalFormat f2_1 = new DecimalFormat("0.0");
-	private static final DecimalFormat f3_0 = new DecimalFormat("000");
-	private static final DateFormat dateFormatter = DateFormat
-			.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
 
 	private ImagePanel imagePanel;
 	private JPanel clipPanel;
 	private JPanel imgPanel;
-	private JLabel latitudeLabel;
-	private JLabel longitudeLabel;
-	private JTextField noteLabel;
-	private JLabel imageCountLabel;
-	private JLabel nameLabel;
+	private ClipMetaDataPanel clipMetaDataPanel;
+	private JPanel metaPanel;
 	
 	private Dimension clipSize;
 	
@@ -56,10 +49,10 @@ public class ClipPanel {
 		
 		//
 		c.gridwidth = GridBagConstraints.REMAINDER; // Make new row after this cell
-		noteLabel= new JTextField(20);
-		noteLabel.setName("NOTE");
-		bag.setConstraints(noteLabel, c);
-		clipPanel.add(noteLabel);
+		clipMetaDataPanel = new ClipMetaDataPanel();
+		metaPanel=clipMetaDataPanel.createClipMetaDataPanel();
+		bag.setConstraints(metaPanel, c);
+		clipPanel.add(metaPanel);
 		return clipPanel;
 
 	}
@@ -68,8 +61,13 @@ public class ClipPanel {
 		imagePanel.update(pixels, count);
 	}
 	
+	public void updateWithClip(ClipHolder clip) {
+		clipMetaDataPanel.updateWithClip(clip);
+	}
+	
 	public void clearImage() {
 	   imagePanel.clearImage();
+	   clipMetaDataPanel.clear();
 	}
 
 	public boolean isShowSlides() {
