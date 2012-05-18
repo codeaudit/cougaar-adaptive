@@ -33,7 +33,8 @@ import org.cougaar.core.plugin.ParameterizedPlugin;
  */
 public class BeanShellPlugin extends ParameterizedPlugin {
 
-    public void load() {
+    @Override
+   public void load() {
 	super.load();
 	BeanShellFrame bshFrame = new BeanShellFrame();
 	bshFrame.set("sb", getServiceBroker());
@@ -44,9 +45,11 @@ public class BeanShellPlugin extends ParameterizedPlugin {
 	bshFrame.setVisible(true);
     }
 
-    protected void execute() {
+    @Override
+   protected void execute() {
     }
 
-    protected void setupSubscriptions() {
+    @Override
+   protected void setupSubscriptions() {
     }
 }

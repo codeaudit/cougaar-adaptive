@@ -25,8 +25,8 @@
 
 package org.cougaar.test.sequencer;
 
-import org.cougaar.core.qos.coordinations.multicast.rir.RIRMulticastResponseFacePlugin;
 import org.cougaar.core.qos.coordinations.multicast.rir.RIRMulticast.EventType;
+import org.cougaar.core.qos.coordinations.multicast.rir.RIRMulticastResponseFacePlugin;
 import org.cougaar.core.util.UniqueObject;
 
 /*

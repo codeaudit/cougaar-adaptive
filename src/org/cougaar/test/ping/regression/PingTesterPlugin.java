@@ -67,18 +67,21 @@ public class PingTesterPlugin extends AbstractRegressionTesterPlugin<Report> {
     		description="Kind of statistics to collect (ANOVA, TRACE, or BOTH)")
     public StatisticKind statisticsKind; 
  
-    protected void doStartTest(Context context) {
+    @Override
+   protected void doStartTest(Context context) {
         startRequest = new StartRequest(uids.nextUID(), interPingDelay, payloadSize, statisticsKind.name());
         blackboard.publishAdd(startRequest);
         //defer until all Start requests have returned
     }
 
-    public void doneStartTest(Report report) {
+    @Override
+   public void doneStartTest(Report report) {
          failed = startRequest.isFailed();
          super.doneStartTest(report);
      }
 
-    protected void doStartSteadyStateCollection(Context context) {
+    @Override
+   protected void doStartSteadyStateCollection(Context context) {
         // query blackboard for all ping queries
         // snapshot the statistics
         // store the statistics for later processing
@@ -86,24 +89,28 @@ public class PingTesterPlugin extends AbstractRegressionTesterPlugin<Report> {
         super.doStartSteadyStateCollection(context);
     }
 
-    protected void doEndSteadyStateCollection(Context context) {
+    @Override
+   protected void doEndSteadyStateCollection(Context context) {
         finalStatistics = gatherStatistics();
         super.doEndSteadyStateCollection(context);
     }
 
-    protected void doEndTest(Context context) {
+    @Override
+   protected void doEndTest(Context context) {
         blackboard.publishRemove(startRequest);
         stopRequest = new StopRequest(uids.nextUID());
         blackboard.publishAdd(stopRequest);
         //defer until all Stop requests have returned
     }
     
-    public void doneEndTest(Report report) {
+    @Override
+   public void doneEndTest(Report report) {
         failed = stopRequest.isFailed();
         super.doneEndTest(report);
     }
 
-    protected void doSummary(Context context) {
+    @Override
+   protected void doSummary(Context context) {
         if (log.isInfoEnabled()) {
             log.info("Do Summary context="+context);
         }
@@ -111,7 +118,8 @@ public class PingTesterPlugin extends AbstractRegressionTesterPlugin<Report> {
         doneSummary(report);
     }
 
-    protected void doShutdown(Context context) {
+    @Override
+   protected void doShutdown(Context context) {
         super.doShutdown(context);
     }
     
@@ -128,7 +136,8 @@ public class PingTesterPlugin extends AbstractRegressionTesterPlugin<Report> {
 		return statistics;
 	}
     
-    protected Report makeReport(RegressionStep step) {
+    @Override
+   protected Report makeReport(RegressionStep step) {
         return new ReportBase(workerId,!failed,reason);
     }
     
@@ -150,7 +159,12 @@ public class PingTesterPlugin extends AbstractRegressionTesterPlugin<Report> {
      * holding PingQuery objects.
      */
     private class IsQueryRelay implements UnaryPredicate {
-        public boolean execute(Object arg) {
+        /**
+       * 
+       */
+      private static final long serialVersionUID = 1L;
+
+      public boolean execute(Object arg) {
             if (arg instanceof SimpleRelay) {
                 SimpleRelay relay = (SimpleRelay) arg;
                 return relay.getQuery() instanceof PingQuery;

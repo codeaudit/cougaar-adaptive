@@ -43,7 +43,8 @@ public class VideoStreamCreaterPlugin
     private Schedulable sendNextSchedulable;
     private long myIncarnation;
 
-    public void start() {
+    @Override
+   public void start() {
         super.start();
         ServiceBroker sb = getServiceBroker();
         imageService = sb.getService(this, TimedImageService.class, null);

@@ -86,7 +86,8 @@ public class PingRunSummaryBean {
 		return pingSize;
 	}
 		
-	public String toString() {
+	@Override
+   public String toString() {
 		DecimalFormat fmt = new DecimalFormat("#0.00");
 		StringWriter writer = new StringWriter();
 		writer.append("Pingers=").append(fmt.format(getPingers()));

@@ -56,7 +56,8 @@ public class KnodeWorkerPlugin extends ExperimentWorkerPlugin implements KnodeSt
     
 	private Callback validityCallback;
     
-    protected void doStep(ExperimentStep step, Context context) {
+    @Override
+   protected void doStep(ExperimentStep step, Context context) {
         if (KNODE_ADD_LINK.equals(step)) { 
             // send KNODE message to socket, 
             String link = context.getParameter(LINK_PROPERTY);

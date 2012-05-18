@@ -30,7 +30,11 @@ import org.cougaar.core.util.UniqueObjectBase;
 
 public class WorkerRegistrationEvent<S extends Step, C extends Context>
         extends UniqueObjectBase {
-    private final String workerId;
+    /**
+    * 
+    */
+   private static final long serialVersionUID = 1L;
+   private final String workerId;
     private final Worker<S,C> worker;
    
     

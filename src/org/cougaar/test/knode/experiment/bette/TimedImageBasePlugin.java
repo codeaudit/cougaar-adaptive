@@ -36,7 +36,8 @@ public class TimedImageBasePlugin extends AnnotatedSubscriptionsPlugin implement
 	private byte[][] imageCache;
     private ServiceProvider provider;
 
-    public void load() {
+    @Override
+   public void load() {
         super.load();
         // Find the Image Files
         imageNames=listImages(imageDirectory);
@@ -48,7 +49,8 @@ public class TimedImageBasePlugin extends AnnotatedSubscriptionsPlugin implement
         getServiceBroker().addService(TimedImageService.class, provider);
     }
     
-    public void start() {
+    @Override
+   public void start() {
     	super.start();
     	if (imageNames == null || imageNames.length == 0) {
     		log.warn("No images found in " + imageDirectory+ " extension " + imageFileExtension);
@@ -59,7 +61,8 @@ public class TimedImageBasePlugin extends AnnotatedSubscriptionsPlugin implement
     	}
     }
 
-    public void unload() {
+    @Override
+   public void unload() {
         if (provider != null) {
         	getServiceBroker().revokeService(TimedImageService.class, provider);
         }

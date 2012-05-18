@@ -64,7 +64,8 @@ public class PingSequencerPlugin
 
 
     // Override to defer some steps
-    @Cougaar.Execute(on=Subscribe.ModType.ADD)
+    @Override
+   @Cougaar.Execute(on=Subscribe.ModType.ADD)
     public void executeSocietyCompletion(SocietyCompletionEvent<RegressionStep, Report> event) {
         if (!event.isSuccessful()) {
             sequenceFailed(event);
@@ -95,6 +96,7 @@ public class PingSequencerPlugin
     private void processStats(Collection<Set<Report>> reportsCollection) {
         final Anova summary = (Anova) StatisticKind.ANOVA.makeStatistic("Throughput");
         StatisticsAccumulator acc = new StatisticsAccumulator(log) {
+            @Override
             protected void accumulate(Statistic statistic) {
                 Anova anova = (Anova) statistic;
                 summary.newValue(anova.itemPerSec());
@@ -108,7 +110,8 @@ public class PingSequencerPlugin
         
     }
     
-    protected Set<Report> makeNodeTimoutFailureReport(RegressionStep step, String reason) {
+    @Override
+   protected Set<Report> makeNodeTimoutFailureReport(RegressionStep step, String reason) {
         Report report = new StatisticsReport(agentId.getAddress(), reason);
         return Collections.singleton(report);
     }

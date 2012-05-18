@@ -56,7 +56,8 @@ public class PingBBSenderPlugin extends TodoPlugin {
     private long waitTime;
     private int payloadBytes;
     
-    public void load() {
+    @Override
+   public void load() {
         super.load();
         sessionName =
                 "[" + agentId + ":" + pluginId + "]->[" + targetAgentId + ":" + targetPluginId

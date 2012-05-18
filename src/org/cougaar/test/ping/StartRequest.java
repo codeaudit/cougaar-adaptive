@@ -31,7 +31,11 @@ import org.cougaar.core.util.UID;
 
 
 public class StartRequest extends RunRequest {
-	private final long waitTimeMillis;
+	/**
+    * 
+    */
+   private static final long serialVersionUID = 1L;
+   private final long waitTimeMillis;
 	private final int payloadBytes;
 	private final StatisticKind statisticKind;
 

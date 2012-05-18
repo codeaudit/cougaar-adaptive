@@ -8,7 +8,6 @@ package org.cougaar.test.knode.experiment.bette;
 
 import org.cougaar.core.component.ServiceBroker;
 import org.cougaar.core.plugin.TodoPlugin;
-import org.cougaar.core.service.IncarnationService;
 import org.cougaar.core.service.ThreadService;
 import org.cougaar.core.service.UIDService;
 import org.cougaar.core.thread.Schedulable;
@@ -40,7 +39,8 @@ public class ClipCreaterPlugin
     private ClipHolder clip;
     private Schedulable captureNextSchedulable;
 
-    public void start() {
+    @Override
+   public void start() {
         super.start();
         ServiceBroker sb = getServiceBroker();
         imageService = sb.getService(this, TimedImageService.class, null);

@@ -32,7 +32,11 @@ import java.util.Map;
 import org.cougaar.core.qos.stats.Statistic;
 
 public class StatisticsReport extends ReportBase {
-    private List<Statistic> rawStats;
+    /**
+    * 
+    */
+   private static final long serialVersionUID = 1L;
+   private List<Statistic> rawStats;
     
     /**
      * Use this constructor if there was a failure (no stats)
@@ -64,7 +68,8 @@ public class StatisticsReport extends ReportBase {
         setSuccessful(true);
     }
     
-    public String toString() {
+    @Override
+   public String toString() {
         if (!isSuccessful()) {
             return "Failed Test";
         }

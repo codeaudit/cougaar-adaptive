@@ -6,7 +6,8 @@ import java.util.Arrays;
 
 public class TimedImageFromFilePlugin extends TimedImageBasePlugin{
 	
-	protected String[] listImages(String dirName) {
+	@Override
+   protected String[] listImages(String dirName) {
 		File dir = new File(dirName);   
         String[] fileList = dir.list(new ImageFilter());
         if (fileList != null) {
@@ -15,7 +16,8 @@ public class TimedImageFromFilePlugin extends TimedImageBasePlugin{
 		return fileList;
 	}
 
-	protected byte[] readImage(int imageNumber) throws Exception {
+	@Override
+   protected byte[] readImage(int imageNumber) throws Exception {
 		long imageLength = 0;
 		byte[] pixels = null;
 		String[] imageNames=getImageNames();

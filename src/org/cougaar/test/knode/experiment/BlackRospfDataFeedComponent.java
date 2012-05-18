@@ -17,7 +17,8 @@ public class BlackRospfDataFeedComponent extends RospfDataFeedComponent {
     @Arg(name="black.router.address")
     public InetAddress blackRouter;
 
-    protected RospfDataFeed makeDataFeed() {
+    @Override
+   protected RospfDataFeed makeDataFeed() {
     	// TODO: Make a new kind of feed that takes two sets of snmp args
 		return new BlackRospfDataFeed(transformClassName, pollPeriod,
 				community, version, router,

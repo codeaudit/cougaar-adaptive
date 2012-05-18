@@ -14,11 +14,13 @@ public class TimedImageFromResourcePlugin extends TimedImageBasePlugin {
 
     
     // TODO Stuck with explicit list for now
-    protected String[] listImages(String dir) {
+    @Override
+   protected String[] listImages(String dir) {
     	return betteImageNames;
     }
 	
-	protected byte[] readImage(int imageNumber)  {
+	@Override
+   protected byte[] readImage(int imageNumber)  {
 		byte[] pixels = null;
 		String[] imageNames=getImageNames();
 		String imageName=imageNames[imageNumber];

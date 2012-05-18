@@ -88,7 +88,8 @@ public class PingSequencerPlugin
         }
     }; 
 
-    public void load() {
+    @Override
+   public void load() {
         super.load();
         addStep(SOCIETY_READY, 0, null);
         addStep(START_TEST, steadyStateWaitMillis, null,
@@ -109,6 +110,7 @@ public class PingSequencerPlugin
     private void processStats(Collection<Set<Report>> reportsCollection,Properties props) {
         final Anova summary = (Anova) StatisticKind.ANOVA.makeStatistic("Throughput");
         StatisticsAccumulator acc = new StatisticsAccumulator(log) {
+            @Override
             protected void accumulate(Statistic statistic) {
                 Anova anova = (Anova) statistic;
                 summary.newValue(anova.itemPerSec());
@@ -122,7 +124,8 @@ public class PingSequencerPlugin
         
     }
     
-    protected Set<Report> makeNodeTimoutFailureReport(ExperimentStep step, String reason) {
+    @Override
+   protected Set<Report> makeNodeTimoutFailureReport(ExperimentStep step, String reason) {
         Report report = new StatisticsReport(agentId.getAddress(), reason);
         return Collections.singleton(report);
     }

@@ -30,7 +30,12 @@ import org.cougaar.core.util.UniqueObjectBase;
 
 abstract public class RunRequest extends UniqueObjectBase
    {
-    public RunRequest(UID uid) {
+    /**
+    * 
+    */
+   private static final long serialVersionUID = 1L;
+
+   public RunRequest(UID uid) {
         super(uid);
     }
 

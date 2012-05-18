@@ -35,7 +35,8 @@ import org.cougaar.util.UnaryPredicate;
 
 public class PingBBWorkerPlugin extends PingWorkerPlugin {
     
-    protected Map<String, Statistic> gatherStatistics() {
+    @Override
+   protected Map<String, Statistic> gatherStatistics() {
 		Map<String, Statistic> statistics = new HashMap<String, Statistic>();
 		@SuppressWarnings("unchecked")
 		Collection<PingQuery> querys = blackboard.query(new IsPingQuery());
@@ -53,7 +54,12 @@ public class PingBBWorkerPlugin extends PingWorkerPlugin {
 	 * objects.
 	 */
     private class IsPingQuery implements UnaryPredicate {
-        public boolean execute(Object arg) {
+        /**
+       * 
+       */
+      private static final long serialVersionUID = 1L;
+
+      public boolean execute(Object arg) {
             return arg instanceof PingQuery ;
         }
     }

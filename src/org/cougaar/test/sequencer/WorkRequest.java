@@ -29,7 +29,11 @@ import org.cougaar.core.service.UIDService;
 import org.cougaar.core.util.UniqueObjectBase;
 
 public class WorkRequest<S extends Step, C extends Context> extends UniqueObjectBase {
-    private final S step;
+    /**
+    * 
+    */
+   private static final long serialVersionUID = 1L;
+   private final S step;
     private final C context;
 
     public WorkRequest(UIDService uids, S step, C context) {

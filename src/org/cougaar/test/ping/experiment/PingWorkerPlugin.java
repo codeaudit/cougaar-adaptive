@@ -55,7 +55,8 @@ public class PingWorkerPlugin extends ExperimentWorkerPlugin implements PingStep
     @Cougaar.Arg(name="pingerCount", required=true)
     public int pingerCount;
     
-    protected void doStep(ExperimentStep step, Context context) {
+    @Override
+   protected void doStep(ExperimentStep step, Context context) {
     	TypedProperties tprops = new TypedProperties(context.getProperties());
         if (START_TEST.equals(step)) { 
         	long wait = tprops.getLong(PING_DELAY_PROPERTY, 0);
@@ -128,7 +129,12 @@ public class PingWorkerPlugin extends ExperimentWorkerPlugin implements PingStep
      * holding PingQuery objects.
      */
     private class IsQueryRelay implements UnaryPredicate {
-        public boolean execute(Object arg) {
+        /**
+       * 
+       */
+      private static final long serialVersionUID = 1L;
+
+      public boolean execute(Object arg) {
             if (arg instanceof SimpleRelay) {
                 SimpleRelay relay = (SimpleRelay) arg;
                 return relay.getQuery() instanceof PingQuery;

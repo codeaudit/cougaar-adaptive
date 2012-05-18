@@ -25,7 +25,8 @@ public class ImageDisplaySenderPlugin extends PingBBSenderPlugin  implements Qui
 	private long sentTime;
 	
 
-	protected byte[] initialPayload() {
+	@Override
+   protected byte[] initialPayload() {
 		// Setup Swing frame
 		String[] args = new String[2];
 		args[0] = "-show-slides";
@@ -39,7 +40,8 @@ public class ImageDisplaySenderPlugin extends PingBBSenderPlugin  implements Qui
 		return queryPayload;
 	}
 
-	protected byte[] nextPayload(byte[] replyPayload) {
+	@Override
+   protected byte[] nextPayload(byte[] replyPayload) {
 		// Display an image
 		frame.update(replyPayload, sentTime);
 		sentTime= System.currentTimeMillis()- startTime;

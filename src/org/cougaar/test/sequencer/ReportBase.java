@@ -28,7 +28,11 @@ package org.cougaar.test.sequencer;
 
 
 public class ReportBase implements Report {
-    private boolean successful;
+    /**
+    * 
+    */
+   private static final long serialVersionUID = 1L;
+   private boolean successful;
     private String reason;
     private final String worker;
     

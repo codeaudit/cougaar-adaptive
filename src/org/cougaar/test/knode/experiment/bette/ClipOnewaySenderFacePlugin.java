@@ -88,7 +88,7 @@ public class ClipOnewaySenderFacePlugin
 
  
     public boolean isSendableClip(ClipHolder object) {
-            ClipHolder clip = (ClipHolder) object;
+            ClipHolder clip = object;
             String name = clip.getClipName();
             int length = clip.getImageCount();
             boolean isSend = clip.isSend();

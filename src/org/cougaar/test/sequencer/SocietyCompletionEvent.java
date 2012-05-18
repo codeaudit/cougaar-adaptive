@@ -33,7 +33,11 @@ import org.cougaar.core.util.UniqueObjectBase;
 
 public class SocietyCompletionEvent<S extends Step, R extends Report>
         extends UniqueObjectBase {
-    private final S step;
+    /**
+    * 
+    */
+   private static final long serialVersionUID = 1L;
+   private final S step;
     private final Map<String, Set<R>> reports;
     private final boolean successful;
     

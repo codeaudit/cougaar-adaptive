@@ -82,7 +82,8 @@ public class MulticastPingSenderPlugin
     private MessageAddress targetMulticastGroup;
 
 
-    public void start() {
+    @Override
+   public void start() {
         super.start();
         targetMulticastGroup = new InetMulticastMessageAddress(multicastAddress, multicastPort);
     }

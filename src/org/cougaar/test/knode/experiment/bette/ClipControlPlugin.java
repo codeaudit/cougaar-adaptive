@@ -38,13 +38,15 @@ public class ClipControlPlugin
     @Cougaar.Arg(name = "yPosition", defaultValue = "20", description = "y Position for Display window")
     public int yPos;
 
-    public void start() {
+    @Override
+   public void start() {
         super.start();
         ServiceBroker sb = getServiceBroker();
         threadService = sb.getService(this,ThreadService.class, null );
     }
 
-    protected void setupSubscriptions() {
+    @Override
+   protected void setupSubscriptions() {
         super.setupSubscriptions();
         // Setup Swing frame
         clipCaptureState = new ClipCaptureState(uids, clipName);

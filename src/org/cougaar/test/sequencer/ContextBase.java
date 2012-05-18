@@ -29,7 +29,11 @@ import java.util.Properties;
 
 
 public class ContextBase implements Context {
-    private final int workerTimout;
+    /**
+    * 
+    */
+   private static final long serialVersionUID = 1L;
+   private final int workerTimout;
     private final boolean failed;
     private final Properties properties;
 
@@ -59,7 +63,8 @@ public class ContextBase implements Context {
 		return properties;
 	}
 
-	public String toString() {
+	@Override
+   public String toString() {
         return "Context: hasFailed="+failed+" workerTimeout="+workerTimout;
     }
 

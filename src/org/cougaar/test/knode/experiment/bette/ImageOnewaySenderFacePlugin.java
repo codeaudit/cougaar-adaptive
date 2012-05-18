@@ -7,8 +7,8 @@
 package org.cougaar.test.knode.experiment.bette;
 
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.qos.coordinations.oneway.OnewayServerFacePlugin;
 import org.cougaar.core.qos.coordinations.oneway.OneWay.EventType;
+import org.cougaar.core.qos.coordinations.oneway.OnewayServerFacePlugin;
 import org.cougaar.core.util.UID;
 import org.cougaar.core.util.UniqueObject;
 import org.cougaar.util.annotations.Cougaar;
@@ -34,6 +34,7 @@ public class ImageOnewaySenderFacePlugin extends OnewayServerFacePlugin {
         return false;
     }
    
+   @Override
    protected MessageAddress makeMessageAddress( Object objectToSend, MessageAddress clientAddress, 
    		int defaultTimeoutMillis, UID uid) { 
 	   MessageAddress addr = super.makeMessageAddress(objectToSend, clientAddress, defaultTimeoutMillis, uid);

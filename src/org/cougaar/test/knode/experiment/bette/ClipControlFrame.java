@@ -18,7 +18,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class ClipControlFrame extends JFrame {
-	private int frameWidth;
+	/**
+    * 
+    */
+   private static final long serialVersionUID = 1L;
+   private int frameWidth;
 	private int frameHeight;
 	private int xPos, yPos;
 	private ImagePanel imagePanel;
@@ -60,7 +64,8 @@ public class ClipControlFrame extends JFrame {
 
 		// Make nice quit
 		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
+			@Override
+         public void windowClosing(WindowEvent e) {
 				ClipControlFrame.this.client.quit();
 			}
 		});
@@ -103,11 +108,13 @@ public class ClipControlFrame extends JFrame {
 		captureButton = new JButton("Capture");
 		captureButton.setToolTipText("Press and Hold to caputure Clip");
 		MouseListener captureListener = new MouseAdapter() {
-			public void mousePressed(MouseEvent mouseEvent) {
+			@Override
+         public void mousePressed(MouseEvent mouseEvent) {
 				client.startCapture();
 			}
 
-			public void mouseReleased(MouseEvent mouseEvent) {
+			@Override
+         public void mouseReleased(MouseEvent mouseEvent) {
 				client.stopCapture();
 			}
 		};

@@ -1,7 +1,7 @@
 package org.cougaar.test.ping;
 
-import org.cougaar.core.qos.coordinations.selectserver.ServerSelectionClientFacePlugin;
 import org.cougaar.core.qos.coordinations.selectserver.ServerSelection.EventType;
+import org.cougaar.core.qos.coordinations.selectserver.ServerSelectionClientFacePlugin;
 import org.cougaar.core.util.UniqueObject;
 
 public class PingSSClientFacePlugin extends ServerSelectionClientFacePlugin {
@@ -14,7 +14,8 @@ public class PingSSClientFacePlugin extends ServerSelectionClientFacePlugin {
         return false;
     }
     
-    public void remapResponse(UniqueObject object) {
+    @Override
+   public void remapResponse(UniqueObject object) {
         PingReply reply = (PingReply) object;
         reply.setReceiverAgent(logicalServerAddress);
     }

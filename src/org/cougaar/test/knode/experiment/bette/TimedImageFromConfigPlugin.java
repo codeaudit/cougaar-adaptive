@@ -3,12 +3,14 @@ package org.cougaar.test.knode.experiment.bette;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Arrays;
+
 import org.cougaar.util.ConfigFinder;
 
 public class TimedImageFromConfigPlugin extends TimedImageBasePlugin {
 	
 	
-	protected String[] listImages(String dirName) {
+	@Override
+   protected String[] listImages(String dirName) {
 		ConfigFinder finder = ConfigFinder.getInstance();
 		File dir = finder.locateFile(dirName);
 		String[] fileList = dir.list(new ImageFilter());
@@ -16,7 +18,8 @@ public class TimedImageFromConfigPlugin extends TimedImageBasePlugin {
 		return fileList;
 	}
 	
-	protected byte[] readImage(int imageNumber) throws Exception {
+	@Override
+   protected byte[] readImage(int imageNumber) throws Exception {
 		byte[] pixels = null;
 		String[] imageNames=getImageNames();
 		String imageName=imageNames[imageNumber];

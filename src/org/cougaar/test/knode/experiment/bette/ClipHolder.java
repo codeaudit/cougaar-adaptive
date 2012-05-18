@@ -12,7 +12,11 @@ import org.cougaar.core.util.UniqueObjectBase;
 public class ClipHolder
         extends UniqueObjectBase {
 
-    private long startTime;
+    /**
+    * 
+    */
+   private static final long serialVersionUID = 1L;
+   private long startTime;
     private long endTime;
     private String clipName;
     private long clipId;

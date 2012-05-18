@@ -33,7 +33,8 @@ public class VideoStreamDisplayPlugin
     public int yPos;
 
 
-    protected void setupSubscriptions() {
+    @Override
+   protected void setupSubscriptions() {
         super.setupSubscriptions();
         // Setup Swing frame
         String[] args = new String[6];

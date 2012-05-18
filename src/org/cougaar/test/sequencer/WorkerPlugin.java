@@ -42,7 +42,8 @@ abstract public class WorkerPlugin<S extends Step, R extends Report, C extends C
         sequencerService.done(workerId, step, report);
     }
     
-    protected void setupSubscriptions() {
+    @Override
+   protected void setupSubscriptions() {
         super.setupSubscriptions();
         
         // FIXME: Component infrastructure should support reflective service discovery of root services.

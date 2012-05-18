@@ -9,7 +9,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class ImageFrame extends JFrame {
-	private int frameWidth;
+	/**
+    * 
+    */
+   private static final long serialVersionUID = 1L;
+   private int frameWidth;
 	private int frameHeight;
 	private int xPos, yPos;
 	private Quitable client;
@@ -47,7 +51,8 @@ public class ImageFrame extends JFrame {
 
 		// Make nice quit
 		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
+			@Override
+         public void windowClosing(WindowEvent e) {
 				ImageFrame.this.client.quit();
 			}
 		});

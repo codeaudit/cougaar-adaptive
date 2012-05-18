@@ -40,7 +40,8 @@ public class KnodeSequencerPlugin
     implements KnodeSteps {
 
 
-    public void load() {
+    @Override
+   public void load() {
         super.load();
         addRestartKnodeSteps();
         addMoveLinkSteps("163","164","40.0");
@@ -51,7 +52,8 @@ public class KnodeSequencerPlugin
         logExperimentDescription();
     }
 
-    protected Set<Report> makeNodeTimoutFailureReport(ExperimentStep step, String reason) {
+    @Override
+   protected Set<Report> makeNodeTimoutFailureReport(ExperimentStep step, String reason) {
         Report report = new StatisticsReport(agentId.getAddress(), reason);
         return Collections.singleton(report);
     }

@@ -6,8 +6,8 @@
 
 package org.cougaar.test.knode.experiment.bette;
 
-import org.cougaar.core.qos.coordinations.oneway.OnewayClientFacePlugin;
 import org.cougaar.core.qos.coordinations.oneway.OneWay.EventType;
+import org.cougaar.core.qos.coordinations.oneway.OnewayClientFacePlugin;
 import org.cougaar.core.util.UniqueObject;
 import org.cougaar.util.annotations.Cougaar;
 

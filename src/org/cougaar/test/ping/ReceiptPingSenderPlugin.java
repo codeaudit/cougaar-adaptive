@@ -75,7 +75,8 @@ public class ReceiptPingSenderPlugin
     private int payloadBytes;
     private long waitTime;
 
-    public void load() {
+    @Override
+   public void load() {
         super.load();
         if (targetAgent.equals(agentId)) {
             throw new IllegalArgumentException("Target matches self: " + targetAgent);

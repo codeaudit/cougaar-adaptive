@@ -25,7 +25,6 @@
 
 package org.cougaar.test.sequencer;
 
-import org.cougaar.core.component.ServiceBroker;
 
 /**
  * A generic service that walks through a sequence of steps

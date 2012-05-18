@@ -53,7 +53,8 @@ public class ScaleFramesetTestPlugin extends TodoPlugin implements
 	private static final DecimalFormat f2_1 = new DecimalFormat("0.0");
 	private static final DecimalFormat f2_3 = new DecimalFormat("0.000");
 
-	public void start() {
+	@Override
+   public void start() {
 		super.start();
 		//TODO use Annotated Service lookup
 		ServiceBroker sb = getServiceBroker();

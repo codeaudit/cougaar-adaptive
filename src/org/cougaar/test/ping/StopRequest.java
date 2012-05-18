@@ -30,7 +30,12 @@ import org.cougaar.core.util.UID;
 
 public class StopRequest extends RunRequest {
 
-    public StopRequest(UID uid) {
+    /**
+    * 
+    */
+   private static final long serialVersionUID = 1L;
+
+   public StopRequest(UID uid) {
         super(uid);
         // TODO Auto-generated constructor stub
     }

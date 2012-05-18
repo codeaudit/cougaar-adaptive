@@ -32,7 +32,11 @@ import org.cougaar.core.util.UniqueObjectBase;
 
 public class NodeCompletionEvent<S extends Step, R extends Report>
         extends UniqueObjectBase {
-    private final S step;
+    /**
+    * 
+    */
+   private static final long serialVersionUID = 1L;
+   private final S step;
     private final Set<R> reports;
     private final boolean successful;
     private final String nodeId;

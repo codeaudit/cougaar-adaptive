@@ -44,15 +44,18 @@ abstract public class AbstractRegressionSequencerPlugin<R extends Report>
     
     boolean hasAttemptedToShutdown = false;
 
-    protected Context makeContext(RegressionStep step, boolean hasFailed, int workerTimeout) {
+    @Override
+   protected Context makeContext(RegressionStep step, boolean hasFailed, int workerTimeout) {
         return new ContextBase(workerTimeout, hasFailed);
     }
 
-    protected RegressionStep getFirstStep() {
+    @Override
+   protected RegressionStep getFirstStep() {
         return RegressionStep.values()[0];
     }
 
-    protected RegressionStep getNextStep(RegressionStep step) {
+    @Override
+   protected RegressionStep getNextStep(RegressionStep step) {
         RegressionStep nextStep = getNextEnumConstant(step, RegressionStep.class);
         if (log.isInfoEnabled()) {
             log.info("Finished Step=" + step + " Next step=" + nextStep);
@@ -64,14 +67,16 @@ abstract public class AbstractRegressionSequencerPlugin<R extends Report>
     // Since the Sequencer can run in an agent, it does not have permission to run ncs.shutdown();
     // Log just an informative message, and expect that the Local node aggregator will kill the
     // Node as instructed during the Shutdown Step
-    protected void sequenceCompleted() {
+    @Override
+   protected void sequenceCompleted() {
         // Ran through all steps successfully, shutdown cleanly
         String status = failedDuringSequence ? "Failed" : "Successful";
         log.shout("Regression suite " + suiteName + " " + status);
      }
 
     // This can be called after any step
-    protected void sequenceFailed(SocietyCompletionEvent<RegressionStep, R> evt) {
+    @Override
+   protected void sequenceFailed(SocietyCompletionEvent<RegressionStep, R> evt) {
         StringBuffer msg = new StringBuffer();
         msg.append("Regression suite ").append(suiteName).append(" FAILED at step ").append(evt.getStep());
         Map<String, Set<R>> reportsMap = evt.getReports();

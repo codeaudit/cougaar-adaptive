@@ -31,7 +31,11 @@ import org.cougaar.core.service.UIDService;
 import org.cougaar.core.util.UniqueObjectBase;
 
 public class PingQuery  extends UniqueObjectBase {
-    private int count;
+    /**
+    * 
+    */
+   private static final long serialVersionUID = 1L;
+   private int count;
     private transient Statistic statistic;
     private MessageAddress senderAgent;
     private String senderPlugin;

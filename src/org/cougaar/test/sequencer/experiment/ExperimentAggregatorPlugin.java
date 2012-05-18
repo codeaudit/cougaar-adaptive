@@ -49,11 +49,13 @@ public class ExperimentAggregatorPlugin
     private Context shutdownContext;
     private Alarm deadManAlarm;
     
-    protected Report makeWorkerTimoutFailureReport(ExperimentStep step, String reason) {
+    @Override
+   protected Report makeWorkerTimoutFailureReport(ExperimentStep step, String reason) {
         return new ReportBase(nodeId,false,reason);
     }
     
-    protected void setupSubscriptions() {
+    @Override
+   protected void setupSubscriptions() {
         super.setupSubscriptions();
         deadManAlarm=executeLater(maxIdleTime, new DeadManTimer());
     }

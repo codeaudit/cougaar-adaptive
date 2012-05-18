@@ -59,7 +59,8 @@ public class MulticastPingReceiverPlugin extends AnnotatedSubscriptionsPlugin {
     private InetMulticastMessageAddress targetMulticastGroup;
 
 
-    public void setupSubscriptions() {
+    @Override
+   public void setupSubscriptions() {
         super.setupSubscriptions();
         targetMulticastGroup = new InetMulticastMessageAddress(multicastAddress, multicastPort);
         ServiceBroker sb = getServiceBroker();

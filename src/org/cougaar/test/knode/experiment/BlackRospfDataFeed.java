@@ -39,7 +39,8 @@ public class BlackRospfDataFeed extends RospfDataFeed {
 		blackSnmpArgs = makeSnmpArgs(blackCommunity, blackVersion, blackRouter);
 	}
 	
-	protected SiteToNeighborFinder makeSiteToNeighborFinder() {
+	@Override
+   protected SiteToNeighborFinder makeSiteToNeighborFinder() {
 		// Use the Black-side router's ROSPF MIB
 		blackSiteToNeighborFinder = new SiteToNeighborFinder(blackSnmpArgs);
 		redSiteToNeighborFinder = super.makeSiteToNeighborFinder(); // makes red finder
@@ -48,12 +49,14 @@ public class BlackRospfDataFeed extends RospfDataFeed {
 
 	// Create mapping from Black Neighbor to its link metric in the WNW.
 	// This uses the Black-side router's OSPF-MIB
-	protected NeighborMetricFinder makeNeighborMetricFinder() {
+	@Override
+   protected NeighborMetricFinder makeNeighborMetricFinder() {
 		return new NeighborMetricFinder(blackSnmpArgs);
 	}
 	
 	// Create two mappings: from Red Site to Red Neighbor; and from BlackSite to Black WNW Neighbor
-	protected boolean findMyNeighbors() {
+	@Override
+   protected boolean findMyNeighbors() {
 		boolean haveRed = super.findMyNeighbors();
 		if (!haveRed) {
 			return false;
@@ -84,7 +87,8 @@ public class BlackRospfDataFeed extends RospfDataFeed {
 	
 	// Three step mapping:
 	// Red Neighbor -> HAIPE Black-side Neighbor -> Black Site -> Black WNW Neighbor
-	protected InetAddress findMeasuredNeighbor(InetAddress redNeighbor) {
+	@Override
+   protected InetAddress findMeasuredNeighbor(InetAddress redNeighbor) {
 		InetAddress haipeBlackSideNeighbor = HaipeRedToBlackAddressTranslator.get(redNeighbor);
         if (haipeBlackSideNeighbor  != null) {
 			SiteAddress blackSite = HaipeBlackSideNeighborToBlackSite(haipeBlackSideNeighbor);

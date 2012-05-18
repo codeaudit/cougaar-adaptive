@@ -13,7 +13,11 @@ import org.cougaar.test.sequencer.Step;
  * A named step in an experiment.
  */
 public class ExperimentStep implements Step {
-    private final String name;
+    /**
+    * 
+    */
+   private static final long serialVersionUID = 1L;
+   private final String name;
     
     public ExperimentStep(String name) {
         this.name = name;
@@ -23,15 +27,18 @@ public class ExperimentStep implements Step {
         return name;
     }
     
-    public String toString() {
+    @Override
+   public String toString() {
         return name;
     }
     
-    public boolean equals(Object x) {
+    @Override
+   public boolean equals(Object x) {
         return x instanceof ExperimentStep && ((ExperimentStep) x).name.equals(name);
     }
     
-    public int hashCode() {
+    @Override
+   public int hashCode() {
         return name.hashCode();
     }
 }

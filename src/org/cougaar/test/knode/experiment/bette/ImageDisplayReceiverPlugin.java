@@ -7,14 +7,16 @@ public class ImageDisplayReceiverPlugin extends PingBBReceiverPlugin {
 	//TODO use Annotated Service lookup
 	TimedImageService imageService;
 	
-	public void start() {
+	@Override
+   public void start() {
 		super.start();
 		imageService = 	getServiceBroker().getService(this, TimedImageService.class, null);
 	}
 	
 	// Return image as payload.
 	// use query payload as time 	
-	protected byte[] nextPayload(byte[] queryPayload) {
+	@Override
+   protected byte[] nextPayload(byte[] queryPayload) {
 		long time = 0;
 		if (queryPayload != null && queryPayload.length >= 1) {
 			time=TimeBytesConverter.bytesToTime(queryPayload);

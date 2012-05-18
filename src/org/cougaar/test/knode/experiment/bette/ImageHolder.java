@@ -9,7 +9,11 @@ import org.cougaar.core.util.UniqueObjectBase;
 public class ImageHolder
         extends UniqueObjectBase {
 
-    private byte[] image;
+    /**
+    * 
+    */
+   private static final long serialVersionUID = 1L;
+   private byte[] image;
     private long timeStamp;
     private String streamName;
     private long count;

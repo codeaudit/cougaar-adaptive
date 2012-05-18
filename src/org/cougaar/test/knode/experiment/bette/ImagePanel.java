@@ -1,6 +1,5 @@
 package org.cougaar.test.knode.experiment.bette;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -8,11 +7,9 @@ import java.awt.Insets;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
 
 public class ImagePanel {
 	private static final DecimalFormat f2_1 = new DecimalFormat("0.0");

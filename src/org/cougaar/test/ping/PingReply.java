@@ -30,7 +30,11 @@ import org.cougaar.core.service.UIDService;
 import org.cougaar.core.util.UniqueObjectBase;
 
 public class PingReply extends UniqueObjectBase {
-    private int count;
+    /**
+    * 
+    */
+   private static final long serialVersionUID = 1L;
+   private int count;
     private MessageAddress senderAgent;
     private String senderPlugin;
     private MessageAddress receiverAgent;

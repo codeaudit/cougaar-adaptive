@@ -9,7 +9,12 @@ import org.cougaar.core.util.UniqueObjectBase;
 public class ClipCaptureState
         extends UniqueObjectBase {
     
-    public enum StateKind { Grabbing, Storing, Looping, Sending, NoClip   };
+    /**
+    * 
+    */
+   private static final long serialVersionUID = 1L;
+
+   public enum StateKind { Grabbing, Storing, Looping, Sending, NoClip   };
     public enum CommandKind { StartCapture, StopCapture, Send, Clear  };    
 
     private long timeStamp;

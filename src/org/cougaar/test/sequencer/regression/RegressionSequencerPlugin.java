@@ -33,7 +33,8 @@ import org.cougaar.test.sequencer.ReportBase;
 
 public class RegressionSequencerPlugin extends AbstractRegressionSequencerPlugin<Report> {
     
-    protected Set<Report> makeNodeTimoutFailureReport(RegressionStep step, String reason) {
+    @Override
+   protected Set<Report> makeNodeTimoutFailureReport(RegressionStep step, String reason) {
         Report report = new ReportBase(agentId.getAddress(), false, reason);
         return Collections.singleton(report);
     }

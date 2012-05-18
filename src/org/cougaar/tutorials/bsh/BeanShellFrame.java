@@ -46,7 +46,12 @@ import bsh.util.JConsole;
  */
 public class BeanShellFrame extends JFrame {
 
-    /** The Bean Shell console window. */
+    /**
+    * 
+    */
+   private static final long serialVersionUID = 1L;
+
+   /** The Bean Shell console window. */
     private JConsole console;
 
     /** The Bean Shell interpreter. */

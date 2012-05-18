@@ -29,7 +29,11 @@ import org.cougaar.core.service.UIDService;
 import org.cougaar.core.util.UniqueObjectBase;
 
 public class SocietyRegistrationEvent extends UniqueObjectBase {
-    private final boolean successful;
+    /**
+    * 
+    */
+   private static final long serialVersionUID = 1L;
+   private final boolean successful;
     private final int numberWorkers;
     private final int numberNodes;
     

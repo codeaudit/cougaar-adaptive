@@ -72,7 +72,8 @@ abstract public class NodeAggregatorPlugin<S extends Step, R extends Report, C e
         return ncs;
     }
 
-    public void load() {
+    @Override
+   public void load() {
         super.load();
         provider = new MyServiceProvider();
         ServiceBroker rootsb = ncs.getRootServiceBroker();
@@ -83,7 +84,8 @@ abstract public class NodeAggregatorPlugin<S extends Step, R extends Report, C e
         nodeId = nis.getMessageAddress().getAddress();
     }
 
-    public void unload() {
+    @Override
+   public void unload() {
         if (provider != null) {
             ServiceBroker rootsb = ncs.getRootServiceBroker();
             rootsb.revokeService(SequencerService.class, provider);

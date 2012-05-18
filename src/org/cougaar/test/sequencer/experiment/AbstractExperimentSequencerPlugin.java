@@ -66,7 +66,8 @@ abstract public class AbstractExperimentSequencerPlugin<R extends Report>
         experimentDescriptor.logDescription(log);
     }
     
-    protected Context makeContext(ExperimentStep step, boolean hasFailed, int workerTimeout) {
+    @Override
+   protected Context makeContext(ExperimentStep step, boolean hasFailed, int workerTimeout) {
         ExperimentStep descriptorStep = experimentDescriptor.getStep();
         if (!step.equals(descriptorStep)) {
             log.shout("Event has step " +step+ " but descriptor has step " +descriptorStep);
@@ -76,17 +77,20 @@ abstract public class AbstractExperimentSequencerPlugin<R extends Report>
         return new ContextBase(workerTimeout, hasFailed, props);
     }
 
-    protected ExperimentStep getFirstStep() {
+    @Override
+   protected ExperimentStep getFirstStep() {
         return experimentDescriptor.initializeExperiment();
     }
     
-    protected ExperimentStep getNextStep(ExperimentStep step) {
+    @Override
+   protected ExperimentStep getNextStep(ExperimentStep step) {
         ExperimentStep nextStep = experimentDescriptor.getNextStep();
         log.info("Done step " +step+ " Next step is " + nextStep);
         return nextStep;
     }
     
-    @Cougaar.Execute(on = Subscribe.ModType.ADD)
+    @Override
+   @Cougaar.Execute(on = Subscribe.ModType.ADD)
     public void executeSocietyCompletion(SocietyCompletionEvent<ExperimentStep, R> event) {
         // Sanity check
         ExperimentStep eventStep = event.getStep();
@@ -113,14 +117,16 @@ abstract public class AbstractExperimentSequencerPlugin<R extends Report>
     // Since the Sequencer can run in an agent, it does not have permission to run ncs.shutdown();
     // Log just an informative message, and expect that the Local node aggregator will kill the
     // Node as instructed during the Shutdown Step
-    protected void sequenceCompleted() {
+    @Override
+   protected void sequenceCompleted() {
         // Ran through all steps successfully, shutdown cleanly
         String status = failedDuringSequence ? "Failed" : "Successful";
         log.shout("Experiment " + suiteName + " " + status);
      }
 
     // This can be called after any step
-    protected void sequenceFailed(SocietyCompletionEvent<ExperimentStep, R> evt) {
+    @Override
+   protected void sequenceFailed(SocietyCompletionEvent<ExperimentStep, R> evt) {
         StringBuffer msg = new StringBuffer();
         msg.append("Experiment ").append(suiteName).append(" FAILED at step ").append(evt.getStep());
         Map<String, Set<R>> reportsMap = evt.getReports();

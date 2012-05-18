@@ -46,7 +46,8 @@ public class RegressionTesterPlugin extends AbstractRegressionTesterPlugin<Repor
     public String reason;
   
    
-    protected Report makeReport(RegressionStep step) {
+    @Override
+   protected Report makeReport(RegressionStep step) {
         if (delayStep == step) {
             // nasty delay holding thread
             try {

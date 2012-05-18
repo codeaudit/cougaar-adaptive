@@ -6,8 +6,8 @@
 
 package org.cougaar.test.ping;
 
-import org.cougaar.core.qos.coordinations.sweep.bundled.BundledSweepLeaderFacePlugin;
 import org.cougaar.core.qos.coordinations.sweep.bundled.BundledSweep.EventType;
+import org.cougaar.core.qos.coordinations.sweep.bundled.BundledSweepLeaderFacePlugin;
 import org.cougaar.core.util.UniqueObject;
 
 public class BundleQueryFacePlugin extends BundledSweepLeaderFacePlugin {

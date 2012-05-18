@@ -235,7 +235,8 @@ public class KnodeDiffServSequencerPlugin
 		logExperimentDescription();
 	}
 
-    public void load() {
+    @Override
+   public void load() {
         super.load();
         suiteName="Length";
         addLengthExperimentSteps();
@@ -246,6 +247,7 @@ public class KnodeDiffServSequencerPlugin
         final Anova thrpSummary = (Anova) StatisticKind.ANOVA.makeStatistic("Throughput");
         final Anova delaySummary = (Anova) StatisticKind.ANOVA.makeStatistic("Delay");
         StatisticsAccumulator acc = new StatisticsAccumulator(log) {
+            @Override
             protected void accumulate(Statistic statistic) {
                 double itemPerSec = ((Anova) statistic).itemPerSec();
                 thrpSummary.newValue(itemPerSec);
@@ -260,7 +262,8 @@ public class KnodeDiffServSequencerPlugin
         CsvWriter.writeRow(row, new KnodeRunSummaryCvsFormat(), csvFileName, log);
     }
     
-    protected Set<Report> makeNodeTimoutFailureReport(ExperimentStep step, String reason) {
+    @Override
+   protected Set<Report> makeNodeTimoutFailureReport(ExperimentStep step, String reason) {
         Report report = new StatisticsReport(agentId.getAddress(), reason);
         return Collections.singleton(report);
     }

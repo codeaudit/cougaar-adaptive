@@ -30,7 +30,8 @@ public class TimedImageFromURLPlugin
     private byte[] lastImage; 
     private long lastImageTime;
 
-    public void load() {
+    @Override
+   public void load() {
         super.load();
         // Find the Image Files
         // Advertise the Timed Image service
@@ -38,7 +39,8 @@ public class TimedImageFromURLPlugin
         getServiceBroker().addService(TimedImageService.class, provider);
     }
 
-    public void unload() {
+    @Override
+   public void unload() {
         if (provider != null) {
             getServiceBroker().revokeService(TimedImageService.class, provider);
         }

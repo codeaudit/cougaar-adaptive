@@ -50,19 +50,25 @@ public class PingBBSubscriberPlugin extends AnnotatedSubscriptionsPlugin {
     public int wasteSubsriptionTime;
 
     
-    protected void setupSubscriptions() {
+    @Override
+   protected void setupSubscriptions() {
         for (int i=0; i < numSubscriptions; i++){
             Subscription sub = new Subscription(i,wasteSubsriptionTime);
             subscriptions.add((IncrementalSubscription) blackboard.subscribe(sub));
         }
     }
     
-    protected void execute() {
+    @Override
+   protected void execute() {
         log.info("Null Subscription is being executed");
     }
 
     private class Subscription implements UnaryPredicate {
-        int id;
+        /**
+       * 
+       */
+      private static final long serialVersionUID = 1L;
+      int id;
         int wasteTime;
         
         private Subscription(int id, int wasteTime) {

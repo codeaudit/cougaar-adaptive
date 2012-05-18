@@ -71,7 +71,8 @@ abstract public class SequencerPlugin<S extends Step, R extends Report, C extend
         return new NodeRequest<S, C>(uids, step, ctx);
     }
 
-    public void setupSubscriptions() {
+    @Override
+   public void setupSubscriptions() {
         super.setupSubscriptions();
         if (log.isInfoEnabled()) {
             log.info("Sequencer waiting for nodes to register");
