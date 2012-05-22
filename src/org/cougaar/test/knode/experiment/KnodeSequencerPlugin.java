@@ -36,8 +36,7 @@ import org.cougaar.test.sequencer.experiment.ExperimentStep;
  * KNode test case
  */
 public class KnodeSequencerPlugin
-      extends AbstractKnodExpSequencerPlugin
-      implements KnodeSteps {
+      extends AbstractKnodExpSequencerPlugin {
 
    @Override
    public void load() {

@@ -21,8 +21,6 @@ public class TimedImageFromURLPlugin
    private static final long SAME_THRESHOLD = 99; // max sample frame rate of
                                                   // 10fps
 
-   private static final int MAX_IMAGE_SIZE = 500000; // 500k
-
    @Cougaar.Arg(name = "imageURL", required = true, description = "URL for Web-cam")
    public URI imageURI;
 

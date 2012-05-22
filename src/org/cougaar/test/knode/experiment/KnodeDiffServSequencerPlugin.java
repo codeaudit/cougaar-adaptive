@@ -80,7 +80,7 @@ public class KnodeDiffServSequencerPlugin
 
    private void addPingSteps(long size, long delay, StatisticKind statKind, String runName, String hops, String minSlots,
                              String topology) {
-      long collectionTimeMillis = false ? collectionLengthMillis : 180000;
+      long collectionTimeMillis = /*false ? collectionLengthMillis : */ 180000;
       addStep(START_TEST, steadyStateWaitMillis, null, PING_SIZE_PROPERTY + "=" + size, PING_DELAY_PROPERTY + "=" + delay,
               PING_STATISTICS_PROPERTY + "=" + statKind);
       addStep(START_STEADY_STATE, collectionTimeMillis, null);
@@ -90,6 +90,7 @@ public class KnodeDiffServSequencerPlugin
             + "=" + hops, KNODE_MIN_SLOTS_PROPERTY + "=" + minSlots, KNODE_TOPOLOGY_TYPE_PROPERTY + "=" + topology);
    }
 
+   @SuppressWarnings("unused")
    private void addTeeShapedExperimentSteps() {
       addRestartKnodeSteps();
       addPingSteps("5hops", "5", "33", "Tee");
@@ -126,12 +127,14 @@ public class KnodeDiffServSequencerPlugin
       logExperimentDescription();
    }
 
+   @SuppressWarnings("unused")
    private void addLineShapedExperimentSteps() {
       addRestartKnodeSteps();
       addRunLineExpSteps("33", "50", "line");
       logExperimentDescription();
    }
 
+   @SuppressWarnings("unused")
    private void add1HairyLineShapedExperimentSteps() {
       addRestartKnodeSteps();
       addAddLinkSteps("163", "140");
@@ -143,6 +146,7 @@ public class KnodeDiffServSequencerPlugin
       logExperimentDescription();
    }
 
+   @SuppressWarnings("unused")
    private void add2HairyLineShapedExperimentSteps() {
       addRestartKnodeSteps();
       addAddLinkSteps("163", "140");
@@ -159,6 +163,7 @@ public class KnodeDiffServSequencerPlugin
       logExperimentDescription();
    }
 
+   @SuppressWarnings("unused")
    private void add3HairyLineShapedExperimentSteps() {
       addRestartKnodeSteps();
       addAddLinkSteps("163", "140");
@@ -198,6 +203,7 @@ public class KnodeDiffServSequencerPlugin
       addStep(SHUTDOWN, 0, null);
    }
 
+   @SuppressWarnings("unused")
    private void addStarShapedExperimentSteps() {
       // addRestartKnodeSteps();
       // addDeleteLinkSteps("163", "164");

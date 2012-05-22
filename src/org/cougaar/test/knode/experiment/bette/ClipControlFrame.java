@@ -23,8 +23,6 @@ public class ClipControlFrame
     * 
     */
    private static final long serialVersionUID = 1L;
-   private int frameWidth;
-   private int frameHeight;
    private int xPos, yPos;
    private ImagePanel imagePanel;
    private JButton captureButton;
@@ -39,18 +37,12 @@ public class ClipControlFrame
       this.imagePanel = new ImagePanel();
 
       // Defaults
-      frameWidth = 250;
-      frameHeight = 250;
       xPos = 20;
       yPos = 20;
 
       for (int i = 0; i < args.length; i++) {
          String arg = args[i];
-         if (arg.equals("-frame-width")) {
-            frameWidth = Integer.parseInt(args[++i]);
-         } else if (arg.equals("-frame-height")) {
-            frameHeight = Integer.parseInt(args[++i]);
-         } else if (arg.equals("-image-width")) {
+         if (arg.equals("-image-width")) {
             imagePanel.setImageWidth(Integer.parseInt(args[++i]));
          } else if (arg.equals("-image-height")) {
             imagePanel.setImageHeight(Integer.parseInt(args[++i]));

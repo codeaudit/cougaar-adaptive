@@ -1,7 +1,6 @@
 package org.cougaar.test.knode.experiment.bette;
 
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -30,11 +29,9 @@ public class ClipMetaDataPanel
    private JTextField imageCountField = new JTextField(10);
    private JTextField totalCountField = new JTextField(10);
 
-   private Dimension clipSize;
 
    public ClipMetaDataPanel() {
       super();
-      clipSize = new Dimension(640, 480);
    }
 
    public JPanel createClipMetaDataPanel() {

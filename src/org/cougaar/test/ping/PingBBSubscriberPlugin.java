@@ -68,12 +68,10 @@ public class PingBBSubscriberPlugin
        * 
        */
       private static final long serialVersionUID = 1L;
-      int id;
       int wasteTime;
 
       private Subscription(int id, int wasteTime) {
          super();
-         this.id = id;
          this.wasteTime = wasteTime;
       }
 
