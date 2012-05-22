@@ -28,18 +28,18 @@ package org.cougaar.test.sequencer;
 import org.cougaar.core.util.UniqueObject;
 
 /**
- *  Testers for the three sorts of objects in the sequencer test harness
+ * Testers for the three sorts of objects in the sequencer test harness
  */
 class StoNCoordinationBlackboardPredicates {
-    public boolean isResponse(UniqueObject event) {
-        return event instanceof NodeCompletionEvent;
-    }
-   
-    public boolean isRegistration(UniqueObject event) {
-        return event instanceof NodeRegistrationEvent;
-    }
+   public boolean isResponse(UniqueObject event) {
+      return event instanceof NodeCompletionEvent;
+   }
 
-    public boolean isQuery(UniqueObject event) {
-        return event instanceof NodeRequest;
-    }
+   public boolean isRegistration(UniqueObject event) {
+      return event instanceof NodeRegistrationEvent;
+   }
+
+   public boolean isQuery(UniqueObject event) {
+      return event instanceof NodeRequest;
+   }
 }

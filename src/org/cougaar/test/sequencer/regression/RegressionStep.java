@@ -27,20 +27,15 @@ package org.cougaar.test.sequencer.regression;
 
 import org.cougaar.test.sequencer.Step;
 
-public enum RegressionStep implements Step {
-    START_TEST,
-    START_STEADY_STATE_COLLECTION,
-    END_STEADY_STATE_COLLECTION,
-    END_TEST,
-    SUMMARY,
-    SHUTDOWN;
-    
-    /**
-     * This is here only for the Task servlet object xml
-     * display, since that will only show the values of
-     * bean reader methods.
-     */
-    public String getStepName() {
-        return name();
-    }
+public enum RegressionStep
+      implements Step {
+   START_TEST, START_STEADY_STATE_COLLECTION, END_STEADY_STATE_COLLECTION, END_TEST, SUMMARY, SHUTDOWN;
+
+   /**
+    * This is here only for the Task servlet object xml display, since that will
+    * only show the values of bean reader methods.
+    */
+   public String getStepName() {
+      return name();
+   }
 }

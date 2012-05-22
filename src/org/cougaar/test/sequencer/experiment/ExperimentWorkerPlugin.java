@@ -13,11 +13,12 @@ import org.cougaar.test.sequencer.WorkerPlugin;
 /**
  *
  */
-public class ExperimentWorkerPlugin extends WorkerPlugin<ExperimentStep, Report, Context> {
+public class ExperimentWorkerPlugin
+      extends WorkerPlugin<ExperimentStep, Report, Context> {
 
-    @Override
+   @Override
    protected void doStep(ExperimentStep step, Context context) {
-        // TODO Auto-generated method stub
-    }
+      // TODO Auto-generated method stub
+   }
 
 }

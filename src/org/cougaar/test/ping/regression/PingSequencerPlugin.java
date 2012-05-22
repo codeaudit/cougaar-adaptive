@@ -47,72 +47,66 @@ import org.cougaar.util.annotations.Subscribe;
 /**
  * Ping-specific RegressionSequncer
  */
-public class PingSequencerPlugin 
-    extends AbstractRegressionSequencerPlugin<Report> {
+public class PingSequencerPlugin
+      extends AbstractRegressionSequencerPlugin<Report> {
 
-    @Cougaar.Arg(name="collectionLength", defaultValue="3000",
-                      description="Milliseconds to run collection")
-    public long collectionLengthMillis; 
-    
-    @Cougaar.Arg(name="steadyStateWait", defaultValue="3000",
-                      description="MilliSeconds to wait after test has started, before starting collection")
-    public long steadyStateWaitMillis; 
-    
-    @Cougaar.Arg(name="csvFileName", defaultValue="",
-                      description="File name to append results, default directory is run")
-    public String csvFileName; 
+   @Cougaar.Arg(name = "collectionLength", defaultValue = "3000", description = "Milliseconds to run collection")
+   public long collectionLengthMillis;
 
+   @Cougaar.Arg(name = "steadyStateWait", defaultValue = "3000", description = "MilliSeconds to wait after test has started, before starting collection")
+   public long steadyStateWaitMillis;
 
-    // Override to defer some steps
-    @Override
-   @Cougaar.Execute(on=Subscribe.ModType.ADD)
-    public void executeSocietyCompletion(SocietyCompletionEvent<RegressionStep, Report> event) {
-        if (!event.isSuccessful()) {
-            sequenceFailed(event);
-            return;
-        }
-        switch (event.getStep()) {
-            case START_TEST:
-                deferSocietyCompletion(event, steadyStateWaitMillis);
-                break;
-                
-            case START_STEADY_STATE_COLLECTION:
-                deferSocietyCompletion(event, collectionLengthMillis);
-                break;
-                
-            case SUMMARY:
-                processStats(event.getReports().values());
-                resumeSocietyCompletion(event);
-                break;
-                               
-            default:
-                resumeSocietyCompletion(event);
-                break;
-        }
-    }
+   @Cougaar.Arg(name = "csvFileName", defaultValue = "", description = "File name to append results, default directory is run")
+   public String csvFileName;
 
-   
-    
-    private void processStats(Collection<Set<Report>> reportsCollection) {
-        final Anova summary = (Anova) StatisticKind.ANOVA.makeStatistic("Throughput");
-        StatisticsAccumulator acc = new StatisticsAccumulator(log) {
-            @Override
-            protected void accumulate(Statistic statistic) {
-                Anova anova = (Anova) statistic;
-                summary.newValue(anova.itemPerSec());
-            }
-        };
-        acc.accumulate(reportsCollection);
-        
-        PingRunSummaryBean row = new PingRunSummaryBean(summary, null, suiteName);
-        log.shout(row.toString());
-        CsvWriter.writeRow(row, new PingRunSummaryCsvFormat(), csvFileName, log);
-        
-    }
-    
-    @Override
+   // Override to defer some steps
+   @Override
+   @Cougaar.Execute(on = Subscribe.ModType.ADD)
+   public void executeSocietyCompletion(SocietyCompletionEvent<RegressionStep, Report> event) {
+      if (!event.isSuccessful()) {
+         sequenceFailed(event);
+         return;
+      }
+      switch (event.getStep()) {
+         case START_TEST:
+            deferSocietyCompletion(event, steadyStateWaitMillis);
+            break;
+
+         case START_STEADY_STATE_COLLECTION:
+            deferSocietyCompletion(event, collectionLengthMillis);
+            break;
+
+         case SUMMARY:
+            processStats(event.getReports().values());
+            resumeSocietyCompletion(event);
+            break;
+
+         default:
+            resumeSocietyCompletion(event);
+            break;
+      }
+   }
+
+   private void processStats(Collection<Set<Report>> reportsCollection) {
+      final Anova summary = (Anova) StatisticKind.ANOVA.makeStatistic("Throughput");
+      StatisticsAccumulator acc = new StatisticsAccumulator(log) {
+         @Override
+         protected void accumulate(Statistic statistic) {
+            Anova anova = (Anova) statistic;
+            summary.newValue(anova.itemPerSec());
+         }
+      };
+      acc.accumulate(reportsCollection);
+
+      PingRunSummaryBean row = new PingRunSummaryBean(summary, null, suiteName);
+      log.shout(row.toString());
+      CsvWriter.writeRow(row, new PingRunSummaryCsvFormat(), csvFileName, log);
+
+   }
+
+   @Override
    protected Set<Report> makeNodeTimoutFailureReport(RegressionStep step, String reason) {
-        Report report = new StatisticsReport(agentId.getAddress(), reason);
-        return Collections.singleton(report);
-    }
+      Report report = new StatisticsReport(agentId.getAddress(), reason);
+      return Collections.singleton(report);
+   }
 }

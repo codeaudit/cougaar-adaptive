@@ -32,18 +32,19 @@ import org.cougaar.core.qos.stats.CsvFormat;
 /**
  *
  */
-public class PingRunSummaryCsvFormat extends CsvFormat<PingRunSummaryBean> {
-	public PingRunSummaryCsvFormat() {
-		super(PingRunSummaryBean.class);
-		DecimalFormat format = new DecimalFormat("#0.00");
-		defineField("pingers", "Pingers", null);
-		defineField("thrpPings", "Ping/Sec", format);
-		defineField("thrpBits","Bits/Sec",format);
-		defineField("minThrpPerPinger", "MinPingerThrp", format);
-		defineField("avgThrpPerPinger", "AvgPingerThrp", format);
-		defineField("maxThrpPerPinger", "MaxPingerThrp", format);
-		defineField("runId", "Run ID", null);
-		defineField("suiteId", "Suite", null);
-	}
+public class PingRunSummaryCsvFormat
+      extends CsvFormat<PingRunSummaryBean> {
+   public PingRunSummaryCsvFormat() {
+      super(PingRunSummaryBean.class);
+      DecimalFormat format = new DecimalFormat("#0.00");
+      defineField("pingers", "Pingers", null);
+      defineField("thrpPings", "Ping/Sec", format);
+      defineField("thrpBits", "Bits/Sec", format);
+      defineField("minThrpPerPinger", "MinPingerThrp", format);
+      defineField("avgThrpPerPinger", "AvgPingerThrp", format);
+      defineField("maxThrpPerPinger", "MaxPingerThrp", format);
+      defineField("runId", "Run ID", null);
+      defineField("suiteId", "Suite", null);
+   }
 
 }

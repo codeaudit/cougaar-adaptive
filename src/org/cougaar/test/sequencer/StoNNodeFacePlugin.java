@@ -34,22 +34,22 @@ import org.cougaar.core.util.UniqueObject;
  * from sequencer agent. Transfer is accomplished by copying the blackboard
  * events onto the query field of a simple relay.
  */
-public class StoNNodeFacePlugin extends RIRMulticastResponseFacePlugin {
-    private final StoNCoordinationBlackboardPredicates predicates = 
-         new StoNCoordinationBlackboardPredicates();
+public class StoNNodeFacePlugin
+      extends RIRMulticastResponseFacePlugin {
+   private final StoNCoordinationBlackboardPredicates predicates = new StoNCoordinationBlackboardPredicates();
 
-    public boolean match(EventType type, UniqueObject event) {
-        switch (type) {
-            case QUERY:
-                return predicates.isQuery(event);
-                
-            case REGISTRATION:
-                return predicates.isRegistration(event);
-                
-            case RESPONSE:
-                return predicates.isResponse(event);
-        }
-        return false;
-    }
-    
+   public boolean match(EventType type, UniqueObject event) {
+      switch (type) {
+         case QUERY:
+            return predicates.isQuery(event);
+
+         case REGISTRATION:
+            return predicates.isRegistration(event);
+
+         case RESPONSE:
+            return predicates.isResponse(event);
+      }
+      return false;
+   }
+
 }

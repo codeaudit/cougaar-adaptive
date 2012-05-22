@@ -1,28 +1,28 @@
 /* =============================================================================
-*
-*                  COPYRIGHT 2007 BBN Technologies Corp.
-*                  10 Moulton St
-*                  Cambridge MA 02138
-*                  (617) 873-8000
-*
-*       This program is the subject of intellectual property rights
-*       licensed from BBN Technologies
-*
-*       This legend must continue to appear in the source code
-*       despite modifications or enhancements by any party.
-*
-*
-* =============================================================================
-*
-* Created : Aug 14, 2007
-* Workfile: PingReceiverPlugin.java
-* $Revision: 1.4 $
-* $Date: 2008-09-02 09:17:34 $
-* $Author: jzinky $
-*
-* =============================================================================
-*/
- 
+ *
+ *                  COPYRIGHT 2007 BBN Technologies Corp.
+ *                  10 Moulton St
+ *                  Cambridge MA 02138
+ *                  (617) 873-8000
+ *
+ *       This program is the subject of intellectual property rights
+ *       licensed from BBN Technologies
+ *
+ *       This legend must continue to appear in the source code
+ *       despite modifications or enhancements by any party.
+ *
+ *
+ * =============================================================================
+ *
+ * Created : Aug 14, 2007
+ * Workfile: PingReceiverPlugin.java
+ * $Revision: 1.4 $
+ * $Date: 2008-09-02 09:17:34 $
+ * $Author: jzinky $
+ *
+ * =============================================================================
+ */
+
 package org.cougaar.test.ping;
 
 import java.net.InetAddress;
@@ -42,78 +42,84 @@ import org.cougaar.core.util.UID;
 import org.cougaar.util.annotations.Cougaar;
 import org.cougaar.util.annotations.Subscribe;
 
-public class MulticastPingReceiverPlugin extends AnnotatedSubscriptionsPlugin {
-    private Map<MessageAddress,SimpleRelay> returnRelays 
-        = new HashMap<MessageAddress,SimpleRelay>();
-    
-    @Cougaar.Arg(name = "multicastAddress", required = true, description = "Multicast Address")
-    public InetAddress multicastAddress;
-    
-    @Cougaar.Arg(name = "multicastPort", required = true, description = "Multicast Port")
-    public int multicastPort;
-    
-  
-    @Cougaar.Arg(name = "pluginId", defaultValue="a", description = "Receiver Plugin Id")
-    public String pluginId;
-    
-    private InetMulticastMessageAddress targetMulticastGroup;
+public class MulticastPingReceiverPlugin
+      extends AnnotatedSubscriptionsPlugin {
+   private Map<MessageAddress, SimpleRelay> returnRelays = new HashMap<MessageAddress, SimpleRelay>();
 
+   @Cougaar.Arg(name = "multicastAddress", required = true, description = "Multicast Address")
+   public InetAddress multicastAddress;
 
-    @Override
+   @Cougaar.Arg(name = "multicastPort", required = true, description = "Multicast Port")
+   public int multicastPort;
+
+   @Cougaar.Arg(name = "pluginId", defaultValue = "a", description = "Receiver Plugin Id")
+   public String pluginId;
+
+   private InetMulticastMessageAddress targetMulticastGroup;
+
+   @Override
    public void setupSubscriptions() {
-        super.setupSubscriptions();
-        targetMulticastGroup = new InetMulticastMessageAddress(multicastAddress, multicastPort);
-        ServiceBroker sb = getServiceBroker();
-        MessageSwitchService mss = sb.getService(this, MessageSwitchService.class, null);
-        mss.joinGroup(targetMulticastGroup);
-        sb.releaseService(this, MessageSwitchService.class, mss);
-        // TODO: leaveGroup on unload?
-    }
-   
-    
-    @Cougaar.Execute(on=Subscribe.ModType.ADD, when="isMyPingQuery")
-    public void executeNewQueryRelay(SimpleRelay senderRelay) {
-        MessageAddress sender = senderRelay.getSource();
-        SimpleRelay receiverRelay = returnRelays.get(sender);
-        if (receiverRelay == null) {
-            PingQuery query = (PingQuery) senderRelay.getQuery();
-            PingReply reply = 
-                new PingReply(uids,query.getCount(),
-                              query.getSenderAgent(), query.getSenderPlugin(), 
-                              agentId,pluginId,query.getPayload());
-            UID uid = uids.nextUID();
-            receiverRelay = new SimpleRelaySource(uid, agentId, sender, reply);
-            returnRelays.put(sender, receiverRelay);
-            blackboard.publishAdd(receiverRelay);   
-        } else {
-            log.error("Multiple request from same sender=" +sender);
-        }
-    }
+      super.setupSubscriptions();
+      targetMulticastGroup = new InetMulticastMessageAddress(multicastAddress, multicastPort);
+      ServiceBroker sb = getServiceBroker();
+      MessageSwitchService mss = sb.getService(this, MessageSwitchService.class, null);
+      mss.joinGroup(targetMulticastGroup);
+      sb.releaseService(this, MessageSwitchService.class, mss);
+      // TODO: leaveGroup on unload?
+   }
 
-    @Cougaar.Execute(on=Subscribe.ModType.CHANGE, when="isMyPingQuery")
-    public void executeQuery(SimpleRelay senderRelay) {
-        MessageAddress sender = senderRelay.getSource();
-        SimpleRelay receiverRelay = returnRelays.get(sender);
-        if (receiverRelay != null) {
-            PingQuery query = (PingQuery) senderRelay.getQuery();
-            PingReply reply = new PingReply(uids,query.getCount(),
-                                            query.getSenderAgent(), query.getSenderPlugin(), 
-                                            agentId,pluginId,query.getPayload());
-            receiverRelay.setQuery(reply);
-            Collection<?> changes = Collections.singleton(reply);
-            blackboard.publishChange(receiverRelay, changes);
-        } else {
-            log.error("No returnRelay for query from sender=" +sender);
-        }
-    }
-    
-    public boolean isMyPingQuery(SimpleRelay relay) {
-        if (targetMulticastGroup.equals(relay.getTarget())) {
-            if (relay.getQuery() instanceof PingQuery) {
-               PingQuery pingQuery = (PingQuery) relay.getQuery();
-               return pluginId.equals(pingQuery.getReceiverPlugin());
-            }
-        }
-        return false;
-     }
+   @Cougaar.Execute(on = Subscribe.ModType.ADD, when = "isMyPingQuery")
+   public void executeNewQueryRelay(SimpleRelay senderRelay) {
+      MessageAddress sender = senderRelay.getSource();
+      SimpleRelay receiverRelay = returnRelays.get(sender);
+      if (receiverRelay == null) {
+         PingQuery query = (PingQuery) senderRelay.getQuery();
+         PingReply reply =
+               new PingReply(uids,
+                             query.getCount(),
+                             query.getSenderAgent(),
+                             query.getSenderPlugin(),
+                             agentId,
+                             pluginId,
+                             query.getPayload());
+         UID uid = uids.nextUID();
+         receiverRelay = new SimpleRelaySource(uid, agentId, sender, reply);
+         returnRelays.put(sender, receiverRelay);
+         blackboard.publishAdd(receiverRelay);
+      } else {
+         log.error("Multiple request from same sender=" + sender);
+      }
+   }
+
+   @Cougaar.Execute(on = Subscribe.ModType.CHANGE, when = "isMyPingQuery")
+   public void executeQuery(SimpleRelay senderRelay) {
+      MessageAddress sender = senderRelay.getSource();
+      SimpleRelay receiverRelay = returnRelays.get(sender);
+      if (receiverRelay != null) {
+         PingQuery query = (PingQuery) senderRelay.getQuery();
+         PingReply reply =
+               new PingReply(uids,
+                             query.getCount(),
+                             query.getSenderAgent(),
+                             query.getSenderPlugin(),
+                             agentId,
+                             pluginId,
+                             query.getPayload());
+         receiverRelay.setQuery(reply);
+         Collection<?> changes = Collections.singleton(reply);
+         blackboard.publishChange(receiverRelay, changes);
+      } else {
+         log.error("No returnRelay for query from sender=" + sender);
+      }
+   }
+
+   public boolean isMyPingQuery(SimpleRelay relay) {
+      if (targetMulticastGroup.equals(relay.getTarget())) {
+         if (relay.getQuery() instanceof PingQuery) {
+            PingQuery pingQuery = (PingQuery) relay.getQuery();
+            return pluginId.equals(pingQuery.getReceiverPlugin());
+         }
+      }
+      return false;
+   }
 }

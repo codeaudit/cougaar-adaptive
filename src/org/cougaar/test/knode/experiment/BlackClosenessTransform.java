@@ -27,15 +27,16 @@ package org.cougaar.test.knode.experiment;
 
 import org.cougaar.qos.qrs.ospf.OspfMetricTransform;
 
-public class BlackClosenessTransform implements OspfMetricTransform {
-    
-    public long toMaxCapacity(long linkMetric) {
-    	if (linkMetric == Long.MAX_VALUE) {
-    		// this value indicates a link that has disappeared and
-    		// which is therefore unreachable.
-    		return 0;
-    	} else {
-    		return 80-linkMetric;
-    	}
-    }
+public class BlackClosenessTransform
+      implements OspfMetricTransform {
+
+   public long toMaxCapacity(long linkMetric) {
+      if (linkMetric == Long.MAX_VALUE) {
+         // this value indicates a link that has disappeared and
+         // which is therefore unreachable.
+         return 0;
+      } else {
+         return 80 - linkMetric;
+      }
+   }
 }

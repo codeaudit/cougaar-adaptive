@@ -13,124 +13,124 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class ClipMetaDataPanel implements ActionListener{
-	private static final DecimalFormat f6_4 = new DecimalFormat("00.0000");
-	
-    private ClipHolder clip ;
-	private JPanel metaDataPanel;
-	private JLabel latitudeLabel = new JLabel("Lat");
-	private JLabel longitudeLabel = new JLabel("Long");
-	private JLabel noteLabel = new JLabel("Note:");
-	private JLabel imageCountLabel = new JLabel("Available Images");
-	private JLabel totalCountLabel = new JLabel("Captured Images");
-	private JTextField latitudeField = new JTextField(10);
-	private JTextField longitudeField = new JTextField(10);
-	private JTextField noteField = new JTextField(25);
-	private JTextField imageCountField = new JTextField(10);
-	private JTextField totalCountField = new JTextField(10);
-	
-	private Dimension clipSize;
-	
-	public ClipMetaDataPanel() {
-		super();
-		clipSize = new Dimension(640,480);
-	}
+public class ClipMetaDataPanel
+      implements ActionListener {
+   private static final DecimalFormat f6_4 = new DecimalFormat("00.0000");
 
-	
-	
-	public JPanel createClipMetaDataPanel() {
-		noteLabel.setLabelFor(noteField);
-		noteField.setActionCommand("note");
-		noteField.addActionListener(this);
-		
-		longitudeLabel.setLabelFor(longitudeField);
-		longitudeField.setActionCommand("longitude");
-		longitudeField.setEditable(false);
-		
-		latitudeLabel.setLabelFor(latitudeField);
-		latitudeField.setActionCommand("latitude");
-		latitudeField.setEditable(false);
-		
-		imageCountLabel.setLabelFor(imageCountField);
-		imageCountField.setActionCommand("imageCount");
-		imageCountField.setEditable(false);
-		
-		totalCountLabel.setLabelFor(totalCountField);
-		totalCountField.setActionCommand("totalCount");
-		totalCountField.setEditable(false);
+   private ClipHolder clip;
+   private JPanel metaDataPanel;
+   private JLabel latitudeLabel = new JLabel("Lat");
+   private JLabel longitudeLabel = new JLabel("Long");
+   private JLabel noteLabel = new JLabel("Note:");
+   private JLabel imageCountLabel = new JLabel("Available Images");
+   private JLabel totalCountLabel = new JLabel("Captured Images");
+   private JTextField latitudeField = new JTextField(10);
+   private JTextField longitudeField = new JTextField(10);
+   private JTextField noteField = new JTextField(25);
+   private JTextField imageCountField = new JTextField(10);
+   private JTextField totalCountField = new JTextField(10);
 
-		JLabel[] labels = {latitudeLabel,longitudeLabel,imageCountLabel, totalCountLabel};
-		JTextField[] textFields = {latitudeField,longitudeField,imageCountField,totalCountField};
-		
-		GridBagLayout bag = new GridBagLayout();
-		metaDataPanel = new JPanel();
-		metaDataPanel.setLayout(bag);
-		GridBagConstraints c = new GridBagConstraints();
-		c.insets = new Insets(5, 5, 5, 5);
-		c.fill = GridBagConstraints.BOTH;
-		
-		addLabelTextRows(labels, textFields, bag, metaDataPanel);
-		
-		return metaDataPanel;
-	}
+   private Dimension clipSize;
 
-    public void updateWithClip(ClipHolder newClip){
-    	setClip(newClip);
-    	noteField.setText(clip.getNote());
-    	latitudeField.setText(f6_4.format(clip.getLatitude()));
-    	longitudeField.setText(f6_4.format(clip.getLongitude()));
-    	imageCountField.setText(Integer.toString(clip.getImageCount()));
-    	totalCountField.setText(Integer.toString(clip.getTotalImages()));
-    }
-    
-    public void clear(){
-    	setClip(null);
-    	noteField.setText("");
-    	latitudeField.setText("");
-    	longitudeField.setText("");
-    	imageCountField.setText("");
-    	totalCountField.setText("");
-    }
-	
+   public ClipMetaDataPanel() {
+      super();
+      clipSize = new Dimension(640, 480);
+   }
 
-	public ClipHolder getClip() {
-		return clip;
-	}
+   public JPanel createClipMetaDataPanel() {
+      noteLabel.setLabelFor(noteField);
+      noteField.setActionCommand("note");
+      noteField.addActionListener(this);
 
+      longitudeLabel.setLabelFor(longitudeField);
+      longitudeField.setActionCommand("longitude");
+      longitudeField.setEditable(false);
 
+      latitudeLabel.setLabelFor(latitudeField);
+      latitudeField.setActionCommand("latitude");
+      latitudeField.setEditable(false);
 
-	public void setClip(ClipHolder clip) {
-		this.clip = clip;
-	}
+      imageCountLabel.setLabelFor(imageCountField);
+      imageCountField.setActionCommand("imageCount");
+      imageCountField.setEditable(false);
 
-	//from swing tutorial
-	private void addLabelTextRows(JLabel[] labels,
-			JTextField[] textFields,
-			GridBagLayout gridbag,
-			Container container) {
-		GridBagConstraints c = new GridBagConstraints();
-		c.anchor = GridBagConstraints.EAST;
-		int numLabels = labels.length;
+      totalCountLabel.setLabelFor(totalCountField);
+      totalCountField.setActionCommand("totalCount");
+      totalCountField.setEditable(false);
 
-		for (int i = 0; i < numLabels; i++) {
-			c.gridwidth = GridBagConstraints.RELATIVE; //next-to-last
-			c.fill = GridBagConstraints.NONE;      //reset to default
-			c.weightx = 0.0;                       //reset to default
-			container.add(labels[i], c);
+      JLabel[] labels = {
+         latitudeLabel,
+         longitudeLabel,
+         imageCountLabel,
+         totalCountLabel
+      };
+      JTextField[] textFields = {
+         latitudeField,
+         longitudeField,
+         imageCountField,
+         totalCountField
+      };
 
-			c.gridwidth = GridBagConstraints.REMAINDER;     //end row
-			c.fill = GridBagConstraints.HORIZONTAL;
-			c.weightx = 1.0;
-			container.add(textFields[i], c);
-		}
-}
+      GridBagLayout bag = new GridBagLayout();
+      metaDataPanel = new JPanel();
+      metaDataPanel.setLayout(bag);
+      GridBagConstraints c = new GridBagConstraints();
+      c.insets = new Insets(5, 5, 5, 5);
+      c.fill = GridBagConstraints.BOTH;
 
+      addLabelTextRows(labels, textFields, bag, metaDataPanel);
 
+      return metaDataPanel;
+   }
 
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+   public void updateWithClip(ClipHolder newClip) {
+      setClip(newClip);
+      noteField.setText(clip.getNote());
+      latitudeField.setText(f6_4.format(clip.getLatitude()));
+      longitudeField.setText(f6_4.format(clip.getLongitude()));
+      imageCountField.setText(Integer.toString(clip.getImageCount()));
+      totalCountField.setText(Integer.toString(clip.getTotalImages()));
+   }
 
+   public void clear() {
+      setClip(null);
+      noteField.setText("");
+      latitudeField.setText("");
+      longitudeField.setText("");
+      imageCountField.setText("");
+      totalCountField.setText("");
+   }
+
+   public ClipHolder getClip() {
+      return clip;
+   }
+
+   public void setClip(ClipHolder clip) {
+      this.clip = clip;
+   }
+
+   // from swing tutorial
+   private void addLabelTextRows(JLabel[] labels, JTextField[] textFields, GridBagLayout gridbag, Container container) {
+      GridBagConstraints c = new GridBagConstraints();
+      c.anchor = GridBagConstraints.EAST;
+      int numLabels = labels.length;
+
+      for (int i = 0; i < numLabels; i++) {
+         c.gridwidth = GridBagConstraints.RELATIVE; // next-to-last
+         c.fill = GridBagConstraints.NONE; // reset to default
+         c.weightx = 0.0; // reset to default
+         container.add(labels[i], c);
+
+         c.gridwidth = GridBagConstraints.REMAINDER; // end row
+         c.fill = GridBagConstraints.HORIZONTAL;
+         c.weightx = 1.0;
+         container.add(textFields[i], c);
+      }
+   }
+
+   public void actionPerformed(ActionEvent e) {
+      // TODO Auto-generated method stub
+
+   }
 
 }

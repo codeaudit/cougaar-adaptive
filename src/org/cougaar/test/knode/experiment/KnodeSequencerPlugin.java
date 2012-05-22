@@ -35,26 +35,25 @@ import org.cougaar.test.sequencer.experiment.ExperimentStep;
 /**
  * KNode test case
  */
-public class KnodeSequencerPlugin 
-    extends AbstractKnodExpSequencerPlugin
-    implements KnodeSteps {
+public class KnodeSequencerPlugin
+      extends AbstractKnodExpSequencerPlugin
+      implements KnodeSteps {
 
-
-    @Override
+   @Override
    public void load() {
-        super.load();
-        addRestartKnodeSteps();
-        addMoveLinkSteps("163","164","40.0");
-        addMoveLinkSteps("164","165","50.0");
-        addMoveLinkSteps("165","166","60.0");
-        addMoveLinkSteps("166","167","70.0");
-        addStep(SHUTDOWN, 0, null);
-        logExperimentDescription();
-    }
+      super.load();
+      addRestartKnodeSteps();
+      addMoveLinkSteps("163", "164", "40.0");
+      addMoveLinkSteps("164", "165", "50.0");
+      addMoveLinkSteps("165", "166", "60.0");
+      addMoveLinkSteps("166", "167", "70.0");
+      addStep(SHUTDOWN, 0, null);
+      logExperimentDescription();
+   }
 
-    @Override
+   @Override
    protected Set<Report> makeNodeTimoutFailureReport(ExperimentStep step, String reason) {
-        Report report = new StatisticsReport(agentId.getAddress(), reason);
-        return Collections.singleton(report);
-    }
+      Report report = new StatisticsReport(agentId.getAddress(), reason);
+      return Collections.singleton(report);
+   }
 }

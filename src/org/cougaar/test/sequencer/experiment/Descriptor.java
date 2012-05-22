@@ -8,18 +8,18 @@ import org.cougaar.test.sequencer.SocietyCompletionEvent;
 
 public interface Descriptor<S extends ExperimentStep, R extends Report> {
 
-	public S getStep();
+   public S getStep();
 
-	public long getDeferMillis();
+   public long getDeferMillis();
 
-	public Properties getProperties();
+   public Properties getProperties();
 
-	public boolean hasWork();
+   public boolean hasWork();
 
-	public void doWork(SocietyCompletionEvent<S, R> event);
-	
-	public S getNextStep();
-	
-	public void logDescription(LoggingService log, StringBuffer buf, int indent);
-	
+   public void doWork(SocietyCompletionEvent<S, R> event);
+
+   public S getNextStep();
+
+   public void logDescription(LoggingService log, StringBuffer buf, int indent);
+
 }

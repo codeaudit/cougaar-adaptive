@@ -23,25 +23,25 @@ import org.cougaar.test.sequencer.SocietyCompletionEvent;
  * @param <S> the step type
  * @param <R> the report type
  */
-abstract public class StepBody<S extends ExperimentStep, R extends Report> implements Runnable {
-    private SocietyCompletionEvent<S, R> event;
-    private Properties props;
+abstract public class StepBody<S extends ExperimentStep, R extends Report>
+      implements Runnable {
+   private SocietyCompletionEvent<S, R> event;
+   private Properties props;
 
-    public Properties getProps() {
-		return props;
-	}
+   public Properties getProps() {
+      return props;
+   }
 
-	public void setProps(Properties props) {
-		this.props = props;
-	}
+   public void setProps(Properties props) {
+      this.props = props;
+   }
 
-	public SocietyCompletionEvent<S, R> getEvent() {
-        return event;
-    }
+   public SocietyCompletionEvent<S, R> getEvent() {
+      return event;
+   }
 
-    void setEvent(SocietyCompletionEvent<S, R> event) {
-        this.event = event;
-    }
-    
-    
+   void setEvent(SocietyCompletionEvent<S, R> event) {
+      this.event = event;
+   }
+
 }

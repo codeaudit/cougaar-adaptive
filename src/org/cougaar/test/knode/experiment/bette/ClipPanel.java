@@ -9,87 +9,87 @@ import javax.swing.JPanel;
 
 public class ClipPanel {
 
-	private ImagePanel imagePanel;
-	private JPanel clipPanel;
-	private JPanel imgPanel;
-	private ClipMetaDataPanel clipMetaDataPanel;
-	private JPanel metaPanel;
-	
-	private Dimension clipSize;
-	
-	public ClipPanel() {
-		super();
-		clipSize = new Dimension(640,480);
-	}
+   private ImagePanel imagePanel;
+   private JPanel clipPanel;
+   private JPanel imgPanel;
+   private ClipMetaDataPanel clipMetaDataPanel;
+   private JPanel metaPanel;
 
-	
-	
-	public JPanel createClipPanel() {
-		GridBagLayout bag = new GridBagLayout();
-		clipPanel = new JPanel();
-		clipPanel.setLayout(bag);
-		GridBagConstraints c = new GridBagConstraints();
-		c.insets = new Insets(5, 5, 5, 5);
-		c.fill = GridBagConstraints.BOTH;
+   private Dimension clipSize;
 
-		// Image
-		c.gridwidth = GridBagConstraints.REMAINDER; // Make new row after this cell
-		imagePanel = new ImagePanel();
-		imgPanel = imagePanel.createImagePanel();
-		bag.setConstraints(imgPanel, c);
-		clipPanel.add(imgPanel);
-		
-		//
-		c.gridwidth = GridBagConstraints.REMAINDER; // Make new row after this cell
-		clipMetaDataPanel = new ClipMetaDataPanel();
-		metaPanel=clipMetaDataPanel.createClipMetaDataPanel();
-		bag.setConstraints(metaPanel, c);
-		clipPanel.add(metaPanel);
-		return clipPanel;
+   public ClipPanel() {
+      super();
+      clipSize = new Dimension(640, 480);
+   }
 
-	}
+   public JPanel createClipPanel() {
+      GridBagLayout bag = new GridBagLayout();
+      clipPanel = new JPanel();
+      clipPanel.setLayout(bag);
+      GridBagConstraints c = new GridBagConstraints();
+      c.insets = new Insets(5, 5, 5, 5);
+      c.fill = GridBagConstraints.BOTH;
 
-	public void update(byte[] pixels, long count) {
-		imagePanel.update(pixels, count);
-	}
-	
-	public void updateWithClip(ClipHolder clip) {
-		clipMetaDataPanel.updateWithClip(clip);
-	}
-	
-	public void clearImage() {
-	   imagePanel.clearImage();
-	   clipMetaDataPanel.clear();
-	}
+      // Image
+      c.gridwidth = GridBagConstraints.REMAINDER; // Make new row after this
+                                                  // cell
+      imagePanel = new ImagePanel();
+      imgPanel = imagePanel.createImagePanel();
+      bag.setConstraints(imgPanel, c);
+      clipPanel.add(imgPanel);
 
-	public boolean isShowSlides() {
-		return imagePanel.isShowSlides();
-	}
+      //
+      c.gridwidth = GridBagConstraints.REMAINDER; // Make new row after this
+                                                  // cell
+      clipMetaDataPanel = new ClipMetaDataPanel();
+      metaPanel = clipMetaDataPanel.createClipMetaDataPanel();
+      bag.setConstraints(metaPanel, c);
+      clipPanel.add(metaPanel);
+      return clipPanel;
 
-	public void setShowSlides(boolean showSlides) {
-		imagePanel.setShowSlides(showSlides);
-	}
+   }
 
-	public JPanel getPanel() {
-		return clipPanel;
-	}
+   public void update(byte[] pixels, long count) {
+      imagePanel.update(pixels, count);
+   }
 
-	public int getImageWidth() {
-		return (int) clipSize.getWidth();
-	}
+   public void updateWithClip(ClipHolder clip) {
+      clipMetaDataPanel.updateWithClip(clip);
+   }
 
-	public void setImageWidth(int width) {
-		int height = (int) clipSize.getHeight();
-		this.clipSize = new Dimension(width, height);
-	}
+   public void clearImage() {
+      imagePanel.clearImage();
+      clipMetaDataPanel.clear();
+   }
 
-	public int getImageHeight() {
-		return (int) clipSize.getHeight();
-	}
+   public boolean isShowSlides() {
+      return imagePanel.isShowSlides();
+   }
 
-	public void setImageHeight(int height) {
-		int width = (int) clipSize.getWidth();
-		this.clipSize = new Dimension(width, height);
-	}
+   public void setShowSlides(boolean showSlides) {
+      imagePanel.setShowSlides(showSlides);
+   }
+
+   public JPanel getPanel() {
+      return clipPanel;
+   }
+
+   public int getImageWidth() {
+      return (int) clipSize.getWidth();
+   }
+
+   public void setImageWidth(int width) {
+      int height = (int) clipSize.getHeight();
+      this.clipSize = new Dimension(width, height);
+   }
+
+   public int getImageHeight() {
+      return (int) clipSize.getHeight();
+   }
+
+   public void setImageHeight(int height) {
+      int width = (int) clipSize.getWidth();
+      this.clipSize = new Dimension(width, height);
+   }
 
 }

@@ -28,9 +28,13 @@ package org.cougaar.test.sequencer;
 import java.io.Serializable;
 import java.util.Properties;
 
-public interface Context extends Serializable {
-    public boolean hasFailed();
-    public int getWorkerTimeout();
-    public String getParameter(String key);
-	public Properties getProperties();
+public interface Context
+      extends Serializable {
+   public boolean hasFailed();
+
+   public int getWorkerTimeout();
+
+   public String getParameter(String key);
+
+   public Properties getProperties();
 }

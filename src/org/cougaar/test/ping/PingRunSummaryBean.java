@@ -33,69 +33,69 @@ import org.cougaar.core.qos.stats.Anova;
 import org.cougaar.test.ping.experiment.PingSteps;
 
 public class PingRunSummaryBean {
-	private final Anova summary;
-	private double pingSize=0.0;
-	private final String runId;
-	private final String suiteName;
-	
-	public PingRunSummaryBean(Anova summary, Properties props, String suiteName) {
-		this.summary = summary;
-		if (props != null) {
-			this.runId = props.getProperty(PingSteps.PING_RUN_PROPERTY);
-			String pingSizeString=props.getProperty(PingSteps.PING_SIZE_PROPERTY);
-			this.pingSize=pingSizeString == null? 0.0 : Double.parseDouble(pingSizeString);
-		} else {
-			runId = null;
-		}
-		this.suiteName = suiteName;
-	}
+   private final Anova summary;
+   private double pingSize = 0.0;
+   private final String runId;
+   private final String suiteName;
 
-	public String getSuiteId() {
-		return suiteName;
-	}
-	
-	public int getPingers() {
-		return summary.getValueCount();
-	}
-	
-	public double getMinThrpPerPinger() {
-		return summary.min();
-	}
-	
-	public double getMaxThrpPerPinger() {
-		return summary.max();
-	}
-	
-	public double getThrpPings() {
-		return summary.getSum();
-	}
-	
-	public double getThrpBits() {
-		return getThrpPings()*pingSize*8.0;
-	}
+   public PingRunSummaryBean(Anova summary, Properties props, String suiteName) {
+      this.summary = summary;
+      if (props != null) {
+         this.runId = props.getProperty(PingSteps.PING_RUN_PROPERTY);
+         String pingSizeString = props.getProperty(PingSteps.PING_SIZE_PROPERTY);
+         this.pingSize = pingSizeString == null ? 0.0 : Double.parseDouble(pingSizeString);
+      } else {
+         runId = null;
+      }
+      this.suiteName = suiteName;
+   }
 
-	public double getAvgThrpPerPinger() {
-		return summary.average();
-	}
-	
-	public String getRunId() {
-		return runId;
-	}
-	
-	public double getPingSize() {
-		return pingSize;
-	}
-		
-	@Override
+   public String getSuiteId() {
+      return suiteName;
+   }
+
+   public int getPingers() {
+      return summary.getValueCount();
+   }
+
+   public double getMinThrpPerPinger() {
+      return summary.min();
+   }
+
+   public double getMaxThrpPerPinger() {
+      return summary.max();
+   }
+
+   public double getThrpPings() {
+      return summary.getSum();
+   }
+
+   public double getThrpBits() {
+      return getThrpPings() * pingSize * 8.0;
+   }
+
+   public double getAvgThrpPerPinger() {
+      return summary.average();
+   }
+
+   public String getRunId() {
+      return runId;
+   }
+
+   public double getPingSize() {
+      return pingSize;
+   }
+
+   @Override
    public String toString() {
-		DecimalFormat fmt = new DecimalFormat("#0.00");
-		StringWriter writer = new StringWriter();
-		writer.append("Pingers=").append(fmt.format(getPingers()));
-		writer.append(" Pings/second=").append(fmt.format(getThrpPings()));
-		writer.append(" Min/Avg/Max=").append(fmt.format(getMinThrpPerPinger()));
-		writer.append("/").append(fmt.format(getAvgThrpPerPinger()));
-		writer.append("/").append(fmt.format(getMaxThrpPerPinger()));
-		return writer.toString();
-	}
-	
+      DecimalFormat fmt = new DecimalFormat("#0.00");
+      StringWriter writer = new StringWriter();
+      writer.append("Pingers=").append(fmt.format(getPingers()));
+      writer.append(" Pings/second=").append(fmt.format(getThrpPings()));
+      writer.append(" Min/Avg/Max=").append(fmt.format(getMinThrpPerPinger()));
+      writer.append("/").append(fmt.format(getAvgThrpPerPinger()));
+      writer.append("/").append(fmt.format(getMaxThrpPerPinger()));
+      return writer.toString();
+   }
+
 }

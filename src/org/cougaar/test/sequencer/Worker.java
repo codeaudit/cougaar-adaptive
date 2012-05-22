@@ -26,17 +26,16 @@
 package org.cougaar.test.sequencer;
 
 /**
- * An arbitrary processing engine that will be asked
- * to construct a report for each step in a sequence.
- * The work is asynchronous and can happen in a thread
+ * An arbitrary processing engine that will be asked to construct a report for
+ * each step in a sequence. The work is asynchronous and can happen in a thread
  * other than the one in which {@link #perform} invoked.
  * 
- * The Worker must register with some {@link SequencerService}, 
- * and will invoke its 'done' method when a report is available.
+ * The Worker must register with some {@link SequencerService}, and will invoke
+ * its 'done' method when a report is available.
  * 
  * @see SequencerService
  * 
  */
 public interface Worker<S extends Step, C extends Context> {
-    void perform(S step, C context);
+   void perform(S step, C context);
 }

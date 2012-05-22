@@ -10,12 +10,13 @@ import org.cougaar.core.qos.coordinations.sweep.bundled.BundledSweep.EventType;
 import org.cougaar.core.qos.coordinations.sweep.bundled.BundledSweepLeaderFacePlugin;
 import org.cougaar.core.util.UniqueObject;
 
-public class BundleQueryFacePlugin extends BundledSweepLeaderFacePlugin {
+public class BundleQueryFacePlugin
+      extends BundledSweepLeaderFacePlugin {
    public boolean match(EventType type, UniqueObject object) {
-        if (type == EventType.REQUEST && object instanceof PingQuery) {
-             PingQuery query = (PingQuery) object;
-             return query.getReceiverAgent().equals(followerAgent);
-        }
-        return false;
-    }
+      if (type == EventType.REQUEST && object instanceof PingQuery) {
+         PingQuery query = (PingQuery) object;
+         return query.getReceiverAgent().equals(followerAgent);
+      }
+      return false;
+   }
 }

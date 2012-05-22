@@ -30,5 +30,6 @@ import java.io.Serializable;
 /**
  * Marker to identify the current 'state' of a sequencer
  */
-public interface Step extends Serializable {
+public interface Step
+      extends Serializable {
 }

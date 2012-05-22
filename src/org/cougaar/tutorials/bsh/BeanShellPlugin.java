@@ -29,27 +29,28 @@ import org.cougaar.core.plugin.ParameterizedPlugin;
 
 /**
  * @author jzinky
- *
+ * 
  */
-public class BeanShellPlugin extends ParameterizedPlugin {
+public class BeanShellPlugin
+      extends ParameterizedPlugin {
 
-    @Override
+   @Override
    public void load() {
-	super.load();
-	BeanShellFrame bshFrame = new BeanShellFrame();
-	bshFrame.set("sb", getServiceBroker());
-	bshFrame.set("component", this);
-	bshFrame.interpreterImport("com.mdcs.joi.Inspector");
-	bshFrame.interpreterImport("org.cougaar.core.service.ThreadService");
-	bshFrame.runInThread();
-	bshFrame.setVisible(true);
-    }
+      super.load();
+      BeanShellFrame bshFrame = new BeanShellFrame();
+      bshFrame.set("sb", getServiceBroker());
+      bshFrame.set("component", this);
+      bshFrame.interpreterImport("com.mdcs.joi.Inspector");
+      bshFrame.interpreterImport("org.cougaar.core.service.ThreadService");
+      bshFrame.runInThread();
+      bshFrame.setVisible(true);
+   }
 
-    @Override
+   @Override
    protected void execute() {
-    }
+   }
 
-    @Override
+   @Override
    protected void setupSubscriptions() {
-    }
+   }
 }

@@ -27,8 +27,11 @@ package org.cougaar.test.sequencer;
 
 import java.io.Serializable;
 
-public interface Report extends Serializable {
-    String  getWorker();
-    boolean isSuccessful();
-    String  getReason();
+public interface Report
+      extends Serializable {
+   String getWorker();
+
+   boolean isSuccessful();
+
+   String getReason();
 }

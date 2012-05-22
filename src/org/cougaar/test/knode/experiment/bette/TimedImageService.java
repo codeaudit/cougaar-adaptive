@@ -1,6 +1,5 @@
 package org.cougaar.test.knode.experiment.bette;
 
-
 /*
  * Service which supplies images for a specific time. 
  * 
@@ -16,20 +15,19 @@ package org.cougaar.test.knode.experiment.bette;
  */
 
 public interface TimedImageService {
-		
-	/*
-	 * Supply an image for a specific time
-	 * 
-	 * @param time  Time of the image in same units as System.getTimeMillis()
-	 */
-	public byte[] getImage(long time);
-	
-        /*
-         * Get Image of the current time. Equivalent of getImage(System.currentTimeMillis()), 
-         * but for image sources without memory
-         */
-	
-	public byte[] getCurrentImage();
 
-	
+   /*
+    * Supply an image for a specific time
+    * 
+    * @param time Time of the image in same units as System.getTimeMillis()
+    */
+   public byte[] getImage(long time);
+
+   /*
+    * Get Image of the current time. Equivalent of
+    * getImage(System.currentTimeMillis()), but for image sources without memory
+    */
+
+   public byte[] getCurrentImage();
+
 }

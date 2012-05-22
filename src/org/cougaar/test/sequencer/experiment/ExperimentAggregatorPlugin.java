@@ -34,89 +34,90 @@ import org.cougaar.test.sequencer.Report;
 import org.cougaar.test.sequencer.ReportBase;
 import org.cougaar.util.annotations.Cougaar;
 import org.cougaar.util.annotations.Subscribe;
+
 /**
  * Handles node termination based on the status held in the
  * {@link ExperimentSteps#SHUTDOWN} Context.
  */
 public class ExperimentAggregatorPlugin
-    extends NodeAggregatorPlugin<ExperimentStep, Report, Context>
-    implements ExperimentSteps {
+      extends NodeAggregatorPlugin<ExperimentStep, Report, Context>
+      implements ExperimentSteps {
 
-    @Cougaar.Arg(name = "maxIdleTime", defaultValue = "120000", // two minutes
-                 description="Timeout for max time between steps. The Node will Crash when this timeout is exceeded") 
-    public int maxIdleTime;
+   @Cougaar.Arg(name = "maxIdleTime", defaultValue = "120000", // two minutes
+   description = "Timeout for max time between steps. The Node will Crash when this timeout is exceeded")
+   public int maxIdleTime;
 
-    private Context shutdownContext;
-    private Alarm deadManAlarm;
-    
-    @Override
+   private Context shutdownContext;
+   private Alarm deadManAlarm;
+
+   @Override
    protected Report makeWorkerTimoutFailureReport(ExperimentStep step, String reason) {
-        return new ReportBase(nodeId,false,reason);
-    }
-    
-    @Override
+      return new ReportBase(nodeId, false, reason);
+   }
+
+   @Override
    protected void setupSubscriptions() {
-        super.setupSubscriptions();
-        deadManAlarm=executeLater(maxIdleTime, new DeadManTimer());
-    }
-        
-    @Cougaar.Execute(on = Subscribe.ModType.ADD)
-    public void executeCompletionEvent(NodeRequest<ExperimentStep, Context> event) {
-        ExperimentStep step = event.getStep();
-        deadManAlarm=restartDeadManTimer(deadManAlarm, maxIdleTime);
-        if (step == SHUTDOWN) {
-            shutdownContext = event.getContext();
-        }
-    }
+      super.setupSubscriptions();
+      deadManAlarm = executeLater(maxIdleTime, new DeadManTimer());
+   }
 
-    @Cougaar.Execute(on = Subscribe.ModType.ADD)
-    public void executeCompletionEvent(NodeCompletionEvent<ExperimentStep, Report> event) {
+   @Cougaar.Execute(on = Subscribe.ModType.ADD)
+   public void executeCompletionEvent(NodeRequest<ExperimentStep, Context> event) {
+      ExperimentStep step = event.getStep();
+      deadManAlarm = restartDeadManTimer(deadManAlarm, maxIdleTime);
+      if (step == SHUTDOWN) {
+         shutdownContext = event.getContext();
+      }
+   }
 
-        if (event.getStep() == SHUTDOWN) {
-            log.info("Shutdown: Delaying shutdown by " + shutdownContext.getWorkerTimeout()
-            +" hasFailed=" + shutdownContext.hasFailed());
-            executeLater(shutdownContext.getWorkerTimeout(), new Terminator());
-        }
-    }
+   @Cougaar.Execute(on = Subscribe.ModType.ADD)
+   public void executeCompletionEvent(NodeCompletionEvent<ExperimentStep, Report> event) {
 
-  
-        
-    private final class Terminator implements Runnable {
-        public void run() {
-            if (shutdownContext.hasFailed()) {
-                log.shout("Crashing Node now");
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                }
-                System.exit(1);
-            } else {
-                log.shout("Shutting down Node Cleanly");
-                //TODO: clean shutdown is not clean
-                //getNodeControlService().shutdown();
-                System.exit(0);
-            }
-        }
-    }
-    
-    // Helper method to restart an DeadManTimer
-    Alarm restartDeadManTimer(Alarm alarm, int timeOut){
-        if (alarm != null) {
-            alarm.cancel();
-        }
-        return executeLater(timeOut, new DeadManTimer());
-    }
-    private final class DeadManTimer implements Runnable {
-        public void run() {
-            log.error("Crashing Node Now!!!! Exceeded Max Idle Time " + maxIdleTime);
+      if (event.getStep() == SHUTDOWN) {
+         log.info("Shutdown: Delaying shutdown by " + shutdownContext.getWorkerTimeout() + " hasFailed="
+               + shutdownContext.hasFailed());
+         executeLater(shutdownContext.getWorkerTimeout(), new Terminator());
+      }
+   }
+
+   private final class Terminator
+         implements Runnable {
+      public void run() {
+         if (shutdownContext.hasFailed()) {
+            log.shout("Crashing Node now");
             try {
-                Thread.sleep(500);
+               Thread.sleep(500);
             } catch (InterruptedException e) {
             }
             System.exit(1);
-        }
- 
-       
-    }
+         } else {
+            log.shout("Shutting down Node Cleanly");
+            // TODO: clean shutdown is not clean
+            // getNodeControlService().shutdown();
+            System.exit(0);
+         }
+      }
+   }
+
+   // Helper method to restart an DeadManTimer
+   Alarm restartDeadManTimer(Alarm alarm, int timeOut) {
+      if (alarm != null) {
+         alarm.cancel();
+      }
+      return executeLater(timeOut, new DeadManTimer());
+   }
+
+   private final class DeadManTimer
+         implements Runnable {
+      public void run() {
+         log.error("Crashing Node Now!!!! Exceeded Max Idle Time " + maxIdleTime);
+         try {
+            Thread.sleep(500);
+         } catch (InterruptedException e) {
+         }
+         System.exit(1);
+      }
+
+   }
 
 }

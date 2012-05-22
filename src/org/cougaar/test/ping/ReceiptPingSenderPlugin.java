@@ -53,165 +53,162 @@ import org.cougaar.util.annotations.Subscribe;
 // TODO refactor to extend PingSender
 // TODO Do something with receipt besides log
 public class ReceiptPingSenderPlugin
-        extends TodoPlugin {
-    @Cougaar.Arg(name = "preambleCount", defaultValue = "10", description = "Number of pings to send before declaring the pinger has started")
-    public int preambleCount;
+      extends TodoPlugin {
+   @Cougaar.Arg(name = "preambleCount", defaultValue = "10", description = "Number of pings to send before declaring the pinger has started")
+   public int preambleCount;
 
-    @Cougaar.Arg(name = "targetAgent", required = true, description = "Receiver Agent")
-    public MessageAddress targetAgent;
+   @Cougaar.Arg(name = "targetAgent", required = true, description = "Receiver Agent")
+   public MessageAddress targetAgent;
 
-    @Cougaar.Arg(name = "targetPlugin", defaultValue = "a", description = "Receiver Plugin")
-    public String targetPlugin;
+   @Cougaar.Arg(name = "targetPlugin", defaultValue = "a", description = "Receiver Plugin")
+   public String targetPlugin;
 
-    @Cougaar.Arg(name = "pluginId", defaultValue = "a", description = "Sender Plugin Id")
-    public String pluginId;
+   @Cougaar.Arg(name = "pluginId", defaultValue = "a", description = "Sender Plugin Id")
+   public String pluginId;
 
-    private long lastQueryTime;
-    private SimpleRelay sendRelay;
-    private StartRequest startRequest;
-    private StopRequest stopRequest;
-    private String sessionName;
-    private boolean failed = false;
-    private int payloadBytes;
-    private long waitTime;
+   private long lastQueryTime;
+   private SimpleRelay sendRelay;
+   private StartRequest startRequest;
+   private StopRequest stopRequest;
+   private String sessionName;
+   private boolean failed = false;
+   private int payloadBytes;
+   private long waitTime;
 
-    @Override
+   @Override
    public void load() {
-        super.load();
-        if (targetAgent.equals(agentId)) {
-            throw new IllegalArgumentException("Target matches self: " + targetAgent);
-        }
-        sessionName =
-                "[" + agentId + ":" + pluginId + "]->[" + targetAgent + ":" + targetPlugin + "]";
+      super.load();
+      if (targetAgent.equals(agentId)) {
+         throw new IllegalArgumentException("Target matches self: " + targetAgent);
+      }
+      sessionName = "[" + agentId + ":" + pluginId + "]->[" + targetAgent + ":" + targetPlugin + "]";
 
-        // remake the target address so we can add attributes
-        MessageAttributes attrs = new SimpleMessageAttributes();
-        attrs.setAttribute(AttributeConstants.RECEIPT_REQUESTED, "true");
-        // attrs.setAttribute(AttributeConstants.MESSAGE_SEND_TIMEOUT_ATTRIBUTE,
-        // 5);
-        targetAgent =
-                MessageAddressWithAttributes.getMessageAddressWithAttributes(targetAgent, attrs);
-    }
+      // remake the target address so we can add attributes
+      MessageAttributes attrs = new SimpleMessageAttributes();
+      attrs.setAttribute(AttributeConstants.RECEIPT_REQUESTED, "true");
+      // attrs.setAttribute(AttributeConstants.MESSAGE_SEND_TIMEOUT_ATTRIBUTE,
+      // 5);
+      targetAgent = MessageAddressWithAttributes.getMessageAddressWithAttributes(targetAgent, attrs);
+   }
 
-    @Cougaar.Execute(on = Subscribe.ModType.ADD)
-    public void executeStartRun(StartRequest request) {
-        startRequest = request;
-        // Ping count starts negative, when zero the pinger has started
-        waitTime = startRequest.getWaitTimeMillis();
-        payloadBytes = startRequest.getPayloadBytes();
-        byte[] payload = new byte[payloadBytes];
-        // TODO initialize array to something that compresses normally
-        UID uid = uids.nextUID();
-        // Ping count starts negative, when zero the pinger has started
-        Object query =
-                new PingQuery(uids,
-                              -preambleCount,
-                              StatisticKind.ANOVA.makeStatistic(sessionName),
-                              agentId,
-                              pluginId,
-                              targetAgent,
-                              targetPlugin,
-                              payload);
-        sendRelay = new SimpleRelaySource(uid, agentId, targetAgent, query);
-        lastQueryTime = System.nanoTime();
-        blackboard.publishAdd(sendRelay);
-    }
+   @Cougaar.Execute(on = Subscribe.ModType.ADD)
+   public void executeStartRun(StartRequest request) {
+      startRequest = request;
+      // Ping count starts negative, when zero the pinger has started
+      waitTime = startRequest.getWaitTimeMillis();
+      payloadBytes = startRequest.getPayloadBytes();
+      byte[] payload = new byte[payloadBytes];
+      // TODO initialize array to something that compresses normally
+      UID uid = uids.nextUID();
+      // Ping count starts negative, when zero the pinger has started
+      Object query =
+            new PingQuery(uids,
+                          -preambleCount,
+                          StatisticKind.ANOVA.makeStatistic(sessionName),
+                          agentId,
+                          pluginId,
+                          targetAgent,
+                          targetPlugin,
+                          payload);
+      sendRelay = new SimpleRelaySource(uid, agentId, targetAgent, query);
+      lastQueryTime = System.nanoTime();
+      blackboard.publishAdd(sendRelay);
+   }
 
-    @Cougaar.Execute(on = Subscribe.ModType.ADD)
-    public void executeStopRun(StopRequest request) {
-        stopRequest = request;
-    }
+   @Cougaar.Execute(on = Subscribe.ModType.ADD)
+   public void executeStopRun(StopRequest request) {
+      stopRequest = request;
+   }
 
-    @Cougaar.Execute(on = Subscribe.ModType.CHANGE, when = "isMyReceipt")
-    public void executeMessageReceipt(SimpleRelay receipt) {
-        Object rawReply = receipt.getReply();
-        if (rawReply instanceof MessageAttributes) {
+   @Cougaar.Execute(on = Subscribe.ModType.CHANGE, when = "isMyReceipt")
+   public void executeMessageReceipt(SimpleRelay receipt) {
+      Object rawReply = receipt.getReply();
+      if (rawReply instanceof MessageAttributes) {
+         MessageAttributes reply = (MessageAttributes) rawReply;
+         Object status = reply.getAttribute(AttributeConstants.DELIVERY_ATTRIBUTE);
+         log.shout("Receipt for " + receipt.getUID() + " was " + status);
+         reply.clearAttributes(); // signal to show we've already processed
+                                  // the receipt
+      }
+   }
+
+   @Cougaar.Execute(on = {
+      Subscribe.ModType.ADD,
+      Subscribe.ModType.CHANGE
+   }, when = "isMyPingReply")
+   public void executePingResponse(SimpleRelay recvRelay) {
+      PingReply reply = (PingReply) recvRelay.getQuery();
+      final PingQuery query = (PingQuery) sendRelay.getQuery();
+
+      // Validate that the counts match
+      if (reply.getCount() != query.getCount()) {
+         failed = true;
+         log.warn("Counts don't match reply=" + reply.getCount() + " query=" + query.getCount());
+      } else {
+         if (log.isDebugEnabled()) {
+            log.debug("Count=" + reply.getCount());
+         }
+      }
+      // Update statistics from incoming ack
+      Statistic stat = query.getStatistic();
+      long now = System.nanoTime();
+      stat.newValue(now - lastQueryTime);
+      // check if pinger has finished starting
+      if (query.getCount() == 0) {
+         stat.reset();
+         startRequest.inc();
+         blackboard.publishChange(startRequest);
+      }
+      // check if test should stop
+      if (stopRequest != null) {
+         stopRequest.inc();
+         if (failed) {
+            stopRequest.forceFailed();
+         }
+         blackboard.publishChange(stopRequest);
+         blackboard.publishRemove(sendRelay);
+         return;
+      }
+      // Do the next ping
+      if (waitTime == 0) {
+         sendNextQuery(query);
+      } else {
+         Runnable work = new Runnable() {
+            public void run() {
+               sendNextQuery(query);
+            }
+         };
+         executeLater(waitTime, work);
+      }
+   }
+
+   private void sendNextQuery(PingQuery sendQuery) {
+      sendQuery.inc();
+      lastQueryTime = System.nanoTime();
+      // Note the change in Query
+      Collection<?> changeList = Collections.singleton(sendQuery);
+      blackboard.publishChange(sendRelay, changeList);
+   }
+
+   public boolean isMyReceipt(SimpleRelay relay) {
+      if (sendRelay.equals(relay)) {
+         Object rawReply = relay.getReply();
+         if (rawReply instanceof MessageAttributes) {
             MessageAttributes reply = (MessageAttributes) rawReply;
-            Object status = reply.getAttribute(AttributeConstants.DELIVERY_ATTRIBUTE);
-            log.shout("Receipt for " + receipt.getUID() + " was " + status);
-            reply.clearAttributes(); // signal to show we've already processed
-                                     // the receipt
-        }
-    }
+            return !reply.isEmpty();
+         }
+      }
+      return false;
+   }
 
-    @Cougaar.Execute(on = {
-        Subscribe.ModType.ADD,
-        Subscribe.ModType.CHANGE
-    }, when = "isMyPingReply")
-    public void executePingResponse(SimpleRelay recvRelay) {
-        PingReply reply = (PingReply) recvRelay.getQuery();
-        final PingQuery query = (PingQuery) sendRelay.getQuery();
-
-        // Validate that the counts match
-        if (reply.getCount() != query.getCount()) {
-            failed = true;
-            log.warn("Counts don't match reply=" + reply.getCount() + " query=" + query.getCount());
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Count=" + reply.getCount());
-            }
-        }
-        // Update statistics from incoming ack
-        Statistic stat = query.getStatistic();
-        long now = System.nanoTime();
-        stat.newValue(now - lastQueryTime);
-        // check if pinger has finished starting
-        if (query.getCount() == 0) {
-            stat.reset();
-            startRequest.inc();
-            blackboard.publishChange(startRequest);
-        }
-        // check if test should stop
-        if (stopRequest != null) {
-            stopRequest.inc();
-            if (failed)
-                stopRequest.forceFailed();
-            blackboard.publishChange(stopRequest);
-            blackboard.publishRemove(sendRelay);
-            return;
-        }
-        // Do the next ping
-        if (waitTime == 0) {
-            sendNextQuery(query);
-        } else {
-            Runnable work = new Runnable() {
-                public void run() {
-                    sendNextQuery(query);
-                }
-            };
-            executeLater(waitTime, work);
-        }
-    }
-
-    private void sendNextQuery(PingQuery sendQuery) {
-        sendQuery.inc();
-        lastQueryTime = System.nanoTime();
-        // Note the change in Query
-        Collection<?> changeList = Collections.singleton(sendQuery);
-        blackboard.publishChange(sendRelay, changeList);
-    }
-
-    public boolean isMyReceipt(SimpleRelay relay) {
-        if (sendRelay.equals(relay)) {
-            Object rawReply = relay.getReply();
-            if (rawReply instanceof MessageAttributes) {
-                MessageAttributes reply = (MessageAttributes) rawReply;
-                return !reply.isEmpty();
-            }
-        }
-        return false;
-    }
-
-    public boolean isMyPingReply(SimpleRelay relay) {
-        if (agentId.equals(relay.getTarget())
-                && targetAgent.getPrimary().equals(relay.getSource().getPrimary())) {
-            if (relay.getQuery() instanceof PingReply) {
-                PingReply pingReply = (PingReply) relay.getQuery();
-                return pluginId.equals(pingReply.getSenderPlugin())
-                        && targetPlugin.equals(pingReply.getReceiverPlugin());
-            }
-        }
-        return false;
-    }
+   public boolean isMyPingReply(SimpleRelay relay) {
+      if (agentId.equals(relay.getTarget()) && targetAgent.getPrimary().equals(relay.getSource().getPrimary())) {
+         if (relay.getQuery() instanceof PingReply) {
+            PingReply pingReply = (PingReply) relay.getQuery();
+            return pluginId.equals(pingReply.getSenderPlugin()) && targetPlugin.equals(pingReply.getReceiverPlugin());
+         }
+      }
+      return false;
+   }
 
 }
