@@ -59,14 +59,13 @@ public class KnodeImageSequencerPlugin
    private static final String L2_ROUTER = "163";
    private static final String C_ROUTER = "162";
 
-   @Cougaar.Arg(name = "collectionLength", defaultValue = "3000", description = "Milliseconds to run collection")
-   public long collectionLengthMillis;
+   @Cougaar.Arg(defaultValue = "3000", description = "Milliseconds to run collection")
+   public long collectionLength;
 
-   @Cougaar.Arg(name = "steadyStateWait", defaultValue = "3000", description = "MilliSeconds to wait after test has started,"
-         + " before starting collection")
-   public long steadyStateWaitMillis;
+   @Cougaar.Arg(defaultValue = "3000", description = "MilliSeconds to wait after test has started, before starting collection")
+   public long steadyStateWait;
 
-   @Cougaar.Arg(name = "csvFileName", defaultValue = "", description = "File name to append results, default directory is run")
+   @Cougaar.Arg(defaultValue = "", description = "File name to append results, default directory is run")
    public String csvFileName;
 
    private final StepRunnable summaryWork = new StepRunnable() {
@@ -75,19 +74,19 @@ public class KnodeImageSequencerPlugin
       }
    };
 
-   @Cougaar.Arg(name = "payloadSize", defaultValue = "0", description = "Payload Sizes in Bytes")
+   @Cougaar.Arg(defaultValue = "0", description = "Payload Sizes in Bytes")
    public long payloadSize;
 
-   @Cougaar.Arg(name = "interPingDelay", defaultValue = "0", description = "Time between sending next ping after receiving reply (in milliseconds)")
+   @Cougaar.Arg(defaultValue = "0", description = "Time between sending next ping after receiving reply (in milliseconds)")
    public long interPingDelay;
 
    // TODO JAZ why can't I use StatisticKind.ANOVA.toString()
-   @Cougaar.Arg(name = "statisticsKind", defaultValue = "ANOVA", description = "Kind of statistics to collect (ANOVA, TRACE, or BOTH)")
+   @Cougaar.Arg(defaultValue = "ANOVA", description = "Kind of statistics to collect (ANOVA, TRACE, or BOTH)")
    public StatisticKind statisticsKind;
 
    private void addPingSteps(LoopDescriptor<ExperimentStep, Report> loop, String runName, String hops, String minSlots,
                              String topology) {
-      loop.addStep(START_STEADY_STATE, collectionLengthMillis, null);
+      loop.addStep(START_STEADY_STATE, collectionLength, null);
       loop.addStep(END_STEADY_STATE, 0, null);
       loop.addStep(SUMMARY_TEST, 0, summaryWork, PING_RUN_PROPERTY + "=" + runName, KNODE_HOPS_PROPERTY + "=" + hops,
                    KNODE_MIN_SLOTS_PROPERTY + "=" + minSlots, KNODE_TOPOLOGY_TYPE_PROPERTY + "=" + topology);
@@ -125,7 +124,7 @@ public class KnodeImageSequencerPlugin
    public void load() {
       super.load();
       addRestartKnodeSteps();
-      addStep(START_TEST, steadyStateWaitMillis, null);
+      addStep(START_TEST, steadyStateWait, null);
       addLoop(teeLoop(100));
       addStep(END_TEST, 0, null);
       addStep(SHUTDOWN, 0, null);

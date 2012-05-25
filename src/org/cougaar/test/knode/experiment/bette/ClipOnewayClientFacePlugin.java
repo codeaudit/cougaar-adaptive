@@ -24,8 +24,7 @@ public class ClipOnewayClientFacePlugin
    private Map<Long, ClipHolder> clips = new HashMap<Long, ClipHolder>();
    private Map<Long, Set<ImageHolder>> unclaimedImages = new HashMap<Long, Set<ImageHolder>>();
 
-   @Cougaar.Arg(name = "clipName", defaultValue = ANY_CLIP, description = "Name of the Clip. If set to " + ANY_CLIP
-         + " then all clips will be recieved")
+   @Cougaar.Arg(defaultValue = ANY_CLIP, description = "Name of the Clip. If set to " + ANY_CLIP  + " then all clips will be recieved")
    public String clipName;
 
    public ClipOnewayClientFacePlugin() {

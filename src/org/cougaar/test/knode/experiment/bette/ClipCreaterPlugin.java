@@ -19,13 +19,13 @@ import org.cougaar.util.annotations.Subscribe;
 public class ClipCreaterPlugin
       extends TodoPlugin {
 
-   @Cougaar.Arg(name = "clipName", defaultValue = "DefaultStream", description = "Name of the Clip")
+   @Cougaar.Arg(defaultValue = "DefaultStream", description = "Name of the Clip")
    public String clipName;
 
-   @Cougaar.Arg(name = "frameRate", defaultValue = "10", description = "frames per second (max is 100fps)")
+   @Cougaar.Arg(defaultValue = "10", description = "frames per second (max is 100fps)")
    public float frameRate;
 
-   @Cougaar.Arg(name = "waitForIncarnationNumber", defaultValue = "false", description = "Wait to capture clip, until agent is assigned and IncarnationNumber")
+   @Cougaar.Arg(defaultValue = "false", description = "Wait to capture clip, until agent is assigned and IncarnationNumber")
    public boolean waitForIncarnationNumber;
 
    // TODO use Annotated Service lookup

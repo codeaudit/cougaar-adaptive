@@ -16,8 +16,7 @@ public class ImageOnewayClientFacePlugin
 
    public static final String ANY_STREAM = "AnyStream";
 
-   @Cougaar.Arg(name = "streamName", defaultValue = ANY_STREAM, description = "Name of the Stream. If set to " + ANY_STREAM
-         + " then all streams will be recieved")
+   @Cougaar.Arg(defaultValue = ANY_STREAM, description = "Name of the Stream. If set to " + ANY_STREAM  + " then all streams will be recieved")
    public String streamName;
 
    public boolean match(EventType type, UniqueObject object) {

@@ -22,21 +22,21 @@ public class ClipControlPlugin
    private Schedulable displayNextSchedulable;
    private ThreadService threadService;
 
-   @Cougaar.Arg(name = "clipName", defaultValue = "DefaultClip", description = "Name of the Clip")
+   @Cougaar.Arg(defaultValue = "DefaultClip", description = "Name of the Clip")
    public String clipName;
 
    // TODO should the clip be displayed in separate window or on control panel?
    @Cougaar.Arg(name = "displayImages", defaultValue = "true", description = "Images should be displayed on GUI during capture")
    public boolean isDisplayGifs;
 
-   @Cougaar.Arg(name = "title", defaultValue = "Clip Capture", description = "text for title on clip capture frame")
+   @Cougaar.Arg(defaultValue = "Clip Capture", description = "text for title on clip capture frame")
    public String title;
 
-   @Cougaar.Arg(name = "xPosition", defaultValue = "0", description = "X Position for Display window")
-   public int xPos;
+   @Cougaar.Arg(defaultValue = "0", description = "X Position for Display window")
+   public int xPosition;
 
-   @Cougaar.Arg(name = "yPosition", defaultValue = "20", description = "y Position for Display window")
-   public int yPos;
+   @Cougaar.Arg(defaultValue = "20", description = "y Position for Display window")
+   public int yPosition;
 
    @Override
    public void start() {
@@ -55,9 +55,9 @@ public class ClipControlPlugin
       args[0] = "-show-slides";
       args[1] = Boolean.toString(isDisplayGifs);
       args[2] = "-x-position";
-      args[3] = Integer.toString(xPos);
+      args[3] = Integer.toString(xPosition);
       args[4] = "-y-position";
-      args[5] = Integer.toString(yPos);
+      args[5] = Integer.toString(yPosition);
       frame = new ClipControlFrame(title, args, this);
       frame.setVisible(true);
    }

@@ -50,10 +50,10 @@ public class KnodeWorkerPlugin
    @Cougaar.ObtainService
    public MetricsService metricsService;
 
-   @Cougaar.Arg(name = "knodeControllerHost", required = true)
+   @Cougaar.Arg(required = true)
    public InetAddress knodeControllerHost;
 
-   @Cougaar.Arg(name = "knodeControllerPort", defaultValue = "1175")
+   @Cougaar.Arg(defaultValue = "1175")
    public short knodeControllerPort;
 
    private Callback validityCallback;

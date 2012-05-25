@@ -17,8 +17,7 @@ public class ImageOnewaySenderFacePlugin
       extends OnewayServerFacePlugin {
    static final String ANY_STREAM = "AnyStream";
 
-   @Cougaar.Arg(name = "streamName", defaultValue = ANY_STREAM, description = "Name of the Stream. If not set to " + ANY_STREAM
-         + " then all streams will be sent")
+   @Cougaar.Arg(defaultValue = ANY_STREAM, description = "Name of the Stream. If not set to " + ANY_STREAM  + " then all streams will be sent")
    public String streamName;
 
    public boolean match(EventType type, UniqueObject object) {

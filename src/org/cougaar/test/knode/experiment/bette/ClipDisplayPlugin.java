@@ -20,17 +20,17 @@ public class ClipDisplayPlugin
    private ClipHolder displayingClip = null;
    private ThreadService threadService;
 
-   @Cougaar.Arg(name = "clipName", defaultValue = "DefaultClip", description = "Name of the clip")
+   @Cougaar.Arg(defaultValue = "DefaultClip", description = "Name of the clip")
    public String clipName;
 
-   @Cougaar.Arg(name = "title", defaultValue = "ClipDisplay", description = "text for title on slide viewer frame")
+   @Cougaar.Arg(defaultValue = "ClipDisplay", description = "text for title on slide viewer frame")
    public String title;
 
-   @Cougaar.Arg(name = "xPosition", defaultValue = "0", description = "X Position for Display window")
-   public int xPos;
+   @Cougaar.Arg(defaultValue = "0", description = "X Position for Display window")
+   public int xPosition;
 
-   @Cougaar.Arg(name = "yPosition", defaultValue = "20", description = "y Position for Display window")
-   public int yPos;
+   @Cougaar.Arg(defaultValue = "20", description = "y Position for Display window")
+   public int yPosition;
 
    @Override
    public void start() {
@@ -45,9 +45,9 @@ public class ClipDisplayPlugin
       // Setup Swing frame
       String[] args = new String[4];
       args[0] = "-x-position";
-      args[1] = Integer.toString(xPos);
+      args[1] = Integer.toString(xPosition);
       args[2] = "-y-position";
-      args[3] = Integer.toString(yPos);
+      args[3] = Integer.toString(yPosition);
       frame = new ClipFrame(title, args, this);
       frame.setVisible(true);
    }

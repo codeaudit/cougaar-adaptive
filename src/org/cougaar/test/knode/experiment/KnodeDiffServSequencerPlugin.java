@@ -48,14 +48,13 @@ public class KnodeDiffServSequencerPlugin
       extends AbstractKnodExpSequencerPlugin
       implements PingSteps {
 
-   @Cougaar.Arg(name = "collectionLength", defaultValue = "3000", description = "Milliseconds to run collection")
-   public long collectionLengthMillis;
+   @Cougaar.Arg(defaultValue = "3000", description = "Milliseconds to run collection")
+   public long collectionLength;
 
-   @Cougaar.Arg(name = "steadyStateWait", defaultValue = "3000", description = "MilliSeconds to wait after test has started,"
-         + " before starting collection")
-   public long steadyStateWaitMillis;
+   @Cougaar.Arg(defaultValue = "3000", description = "MilliSeconds to wait after test has started, before starting collection")
+   public long steadyStateWait;
 
-   @Cougaar.Arg(name = "csvFileName", defaultValue = "", description = "File name to append results, default directory is run")
+   @Cougaar.Arg(defaultValue = "", description = "File name to append results, default directory is run")
    public String csvFileName;
 
    private final StepRunnable summaryWork = new StepRunnable() {
@@ -64,14 +63,14 @@ public class KnodeDiffServSequencerPlugin
       }
    };
 
-   @Cougaar.Arg(name = "payloadSize", defaultValue = "0", description = "Payload Sizes in Bytes")
+   @Cougaar.Arg(defaultValue = "0", description = "Payload Sizes in Bytes")
    public long payloadSize;
 
-   @Cougaar.Arg(name = "interPingDelay", defaultValue = "0", description = "Time between sending next ping after receiving reply (in milliseconds)")
+   @Cougaar.Arg(defaultValue = "0", description = "Time between sending next ping after receiving reply (in milliseconds)")
    public long interPingDelay;
 
    // TODO JAZ why can't I use StatisticKind.ANOVA.toString()
-   @Cougaar.Arg(name = "statisticsKind", defaultValue = "ANOVA", description = "Kind of statistics to collect (ANOVA, TRACE, or BOTH)")
+   @Cougaar.Arg(defaultValue = "ANOVA", description = "Kind of statistics to collect (ANOVA, TRACE, or BOTH)")
    public StatisticKind statisticsKind;
 
    private void addPingSteps(String runName, String hops, String minSlots, String topology) {
@@ -81,7 +80,7 @@ public class KnodeDiffServSequencerPlugin
    private void addPingSteps(long size, long delay, StatisticKind statKind, String runName, String hops, String minSlots,
                              String topology) {
       long collectionTimeMillis = /*false ? collectionLengthMillis : */ 180000;
-      addStep(START_TEST, steadyStateWaitMillis, null, PING_SIZE_PROPERTY + "=" + size, PING_DELAY_PROPERTY + "=" + delay,
+      addStep(START_TEST, steadyStateWait, null, PING_SIZE_PROPERTY + "=" + size, PING_DELAY_PROPERTY + "=" + delay,
               PING_STATISTICS_PROPERTY + "=" + statKind);
       addStep(START_STEADY_STATE, collectionTimeMillis, null);
       addStep(END_STEADY_STATE, 0, null);

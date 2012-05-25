@@ -10,10 +10,10 @@ public class ImageDisplaySenderPlugin
    @Cougaar.Arg(name = "displayImages", defaultValue = "true", description = "Images should be displayed on GUI")
    public boolean isDisplayGifs;
 
-   @Cougaar.Arg(name = "realTime", defaultValue = "false", description = "When false, image sequence will start from begining (time=0.0)")
-   public boolean isRealTime;
+   @Cougaar.Arg(defaultValue = "false", description = "When false, image sequence will start from begining (time=0.0)")
+   public boolean realTime;
 
-   @Cougaar.Arg(name = "title", defaultValue = "Slide Client", description = "text for title on slide viewer frame")
+   @Cougaar.Arg(defaultValue = "Slide Client", description = "text for title on slide viewer frame")
    public String title;
 
    private ImageFrame frame;
@@ -29,7 +29,7 @@ public class ImageDisplaySenderPlugin
       frame = new ImageFrame(title, args, this);
       frame.setVisible(true);
       // initalize Payload array
-      startTime = isRealTime ? 0 : System.currentTimeMillis();
+      startTime = realTime ? 0 : System.currentTimeMillis();
       sentTime = 0;
       byte[] queryPayload = TimeBytesConverter.timeToBytes(sentTime);
       return queryPayload;

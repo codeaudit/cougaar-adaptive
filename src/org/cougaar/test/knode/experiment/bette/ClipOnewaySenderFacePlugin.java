@@ -27,14 +27,13 @@ public class ClipOnewaySenderFacePlugin
    @Cougaar.Arg(name = "clientName", required = true)
    public MessageAddress clientAddress;
 
-   @Cougaar.Arg(name = "defaultTimeoutMillis", defaultValue = "30000")
+   @Cougaar.Arg(defaultValue = "30000")
    public int defaultTimeoutMillis;
 
-   @Cougaar.Arg(name = "deleteOnSend", defaultValue = "true")
+   @Cougaar.Arg(defaultValue = "true")
    public boolean deleteOnSend;
 
-   @Cougaar.Arg(name = "clipName", defaultValue = ANY_CLIP, description = "Name of the Clip. If set to " + ANY_CLIP
-         + " then all clips will be sent")
+   @Cougaar.Arg(defaultValue = ANY_CLIP, description = "Name of the Clip. If set to " + ANY_CLIP  + " then all clips will be sent")
    public String clipName;
 
    public ClipOnewaySenderFacePlugin() {
