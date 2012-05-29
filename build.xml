@@ -173,7 +173,7 @@
     
     <!-- jarfiles required by this module, relative to various other paths -->
     <!-- WARNING: Only relative paths work here. -->
-    <property name="compile.jarlist" value="${target.lib}/core.jar,${target.lib}/util.jar,${target.lib}/qos.jar,${target.lib}/qrs.jar,${target.sys}/SNMP4.jar"/>
+    <property name="compile.jarlist" value="${target.lib}/core.jar,${target.lib}/util.jar,${target.lib}/qos.jar,${target.lib}/qrs.jar,${target.sys}/SNMP4J.jar"/>
     <!-- Put absolute paths on this list, in the form of a path. -->
     <property name="compile.abs.jarlist" value=""/>
 
@@ -182,7 +182,7 @@
 
     <!-- Extra jars needed at run / unit-test time. -->
     <!-- WARNING: Only relative paths work here. -->
-    <property name="run.jarlist" value="${target.lib}/core.jar,${target.lib}/util.jar,${target.lib}/qos.jar,${target.lib}/qrs.jar,${target.sys}/SNMP4.jar"/>
+    <property name="run.jarlist" value="${target.lib}/core.jar,${target.lib}/util.jar,${target.lib}/qos.jar,${target.lib}/qrs.jar,${target.sys}/SNMP4J.jar"/>
     <!-- Put absolute paths on this list, in the form of a path. -->
     <property name="run.abs.jarlist" value=""/>
     
