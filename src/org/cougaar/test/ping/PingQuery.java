@@ -25,16 +25,15 @@
 
 package org.cougaar.test.ping;
 
+import org.cougaar.core.blackboard.ChangeReport;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.qos.stats.Statistic;
 import org.cougaar.core.service.UIDService;
 import org.cougaar.core.util.UniqueObjectBase;
 
 public class PingQuery
-      extends UniqueObjectBase {
-   /**
-    * 
-    */
+      extends UniqueObjectBase
+      implements ChangeReport {
    private static final long serialVersionUID = 1L;
    private int count;
    private transient Statistic statistic;

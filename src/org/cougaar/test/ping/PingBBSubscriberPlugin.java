@@ -53,7 +53,7 @@ public class PingBBSubscriberPlugin
    protected void setupSubscriptions() {
       for (int i = 0; i < numSubscriptions; i++) {
          Subscription sub = new Subscription(i, wasteSubsriptionTime);
-         subscriptions.add((IncrementalSubscription) blackboard.subscribe(sub));
+         subscriptions.add(blackboard.subscribe(sub));
       }
    }
 

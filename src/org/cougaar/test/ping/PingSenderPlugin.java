@@ -25,7 +25,6 @@
 
 package org.cougaar.test.ping;
 
-import java.util.Collection;
 import java.util.Collections;
 
 import org.cougaar.core.mts.MessageAddress;
@@ -153,8 +152,7 @@ public class PingSenderPlugin
       sendQuery.inc();
       lastQueryTime = System.nanoTime();
       // Note the change in Query
-      Collection<?> changeList = Collections.singleton(sendQuery);
-      blackboard.publishChange(sendRelay, changeList);
+      blackboard.publishChange(sendRelay,  Collections.singleton(sendQuery));
    }
 
    public boolean isMyPingReply(SimpleRelay relay) {

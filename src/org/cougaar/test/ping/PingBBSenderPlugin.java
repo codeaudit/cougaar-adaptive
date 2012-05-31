@@ -25,7 +25,6 @@
 
 package org.cougaar.test.ping;
 
-import java.util.Collection;
 import java.util.Collections;
 
 import org.cougaar.core.mts.MessageAddress;
@@ -155,8 +154,13 @@ public class PingBBSenderPlugin
       sendQuery.setPayload(nextPayload(replyPayload));
       lastQueryTime = System.nanoTime();
       // Note the change in Query
-      Collection<?> changeList = Collections.singleton(sendQuery.getCount());
-      blackboard.publishChange(sendQuery, changeList);
+      
+      /*
+       * The ChangeReport used to be the sendQuery's count! 
+       * 
+       * FIXME: find thesubscribers and adjust them accordingly.
+       */
+      blackboard.publishChange(sendQuery, Collections.singleton(sendQuery));
    }
 
    private class sendNextQueryRunnable

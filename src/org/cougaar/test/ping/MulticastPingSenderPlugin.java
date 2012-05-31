@@ -26,7 +26,6 @@
 package org.cougaar.test.ping;
 
 import java.net.InetAddress;
-import java.util.Collection;
 import java.util.Collections;
 
 import org.cougaar.core.agent.service.alarm.Alarm;
@@ -188,8 +187,7 @@ public class MulticastPingSenderPlugin
          initializeStatisticsForNewQuery(lastQuery.getCount());
 
          // publish Query
-         Collection<?> changeList = Collections.singleton(lastQuery);
-         blackboard.publishChange(sendRelay, changeList);
+         blackboard.publishChange(sendRelay, Collections.singleton(lastQuery));
 
          // Schedule Query after Next
          sendNextAlarm = executeLater(waitTime, new sendNextQueryRunnable(lastQuery));

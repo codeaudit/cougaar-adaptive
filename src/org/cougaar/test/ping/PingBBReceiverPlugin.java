@@ -25,7 +25,6 @@
 
 package org.cougaar.test.ping;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -79,8 +78,14 @@ public class PingBBReceiverPlugin
          int count = query.getCount();
          reply.setCount(count);
          reply.setPayload(nextPayload(query.getPayload()));
-         Collection<?> changes = Collections.singleton(count);
-         blackboard.publishChange(reply, changes);
+         
+         /*
+          * The ChangeReport used to be the query's count! 
+          * 
+          * FIXME: find thesubscribers and adjust them accordingly.
+          */
+
+         blackboard.publishChange(reply, Collections.singleton(query));
       }
    }
 

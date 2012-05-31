@@ -25,7 +25,6 @@
 
 package org.cougaar.test.ping;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -83,8 +82,7 @@ public class PingReceiverPlugin
                              pluginId,
                              query.getPayload());
          receiverRelay.setQuery(reply);
-         Collection<?> changes = Collections.singleton(reply);
-         blackboard.publishChange(receiverRelay, changes);
+         blackboard.publishChange(receiverRelay, Collections.singleton(reply));
       } else {
          log.error("No returnRelay for query from sender=" + sender);
       }
