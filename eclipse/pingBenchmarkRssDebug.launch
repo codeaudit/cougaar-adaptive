@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
 <listEntry value="/datafeeds"/>
@@ -8,8 +8,8 @@
 </listAttribute>
 <booleanAttribute key="org.eclipse.debug.core.appendEnvironmentVariables" value="true"/>
 <listAttribute key="org.eclipse.debug.ui.favoriteGroups">
-<listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
 <listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
+<listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
 </listAttribute>
 <listAttribute key="org.eclipse.jdt.launching.CLASSPATH">
 <listEntry value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;runtimeClasspathEntry containerPath=&quot;org.eclipse.jdt.launching.JRE_CONTAINER&quot; javaProject=&quot;datafeeds&quot; path=&quot;1&quot; type=&quot;4&quot;/&gt;&#10;"/>
@@ -23,6 +23,6 @@
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.cougaar.bootstrap.Bootstrapper"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="datafeeds"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dorg.cougaar.society.file=../configs/PingBasicSociety.xml -Dorg.cougaar.runtime.file=PingBenchmarkRuntime.xml -Dorg.cougaar.node.name=Node1  -Dorg.cougaar.demo.ping.PingSender.delayMillis=500 -Dorg.cougaar.demo.ping.PingSender.verbose=false -Dorg.cougaar.demo.ping.PingReceiver.verbose=false -Dorg.cougaar.society.xsl.param.template=single_debug -Dorg.cougaar.core.logging.config.filename=${project_loc:datafeeds}/run/logging.props -Dorg.cougaar.install.path=${env_var:COUGAAR_INSTALL_PATH} -Dorg.cougaar.society.path=${project_loc:datafeeds} -Dorg.cougaar.runtime.path=${project_loc:datafeeds}/run -Dorg.cougaar.bootstrap.application=org.cougaar.core.node.Node -Dorg.cougaar.core.node.InitializationComponent=XML -Dorg.cougaar.core.agent.quiet=true -Dorg.cougaar.core.agent.heartbeat=false -Dorg.xml.sax.driver=com.sun.org.apache.xerces.internal.parsers.SAXParser -Dcom.apple.mrj.application.apple.menu.about.name=&quot;PingBenchmark&quot;  -Xmx256m -XX:ThreadStackSize=256 -Dorg.cougaar.metrics.properties=file:qrs.conf"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dorg.cougaar.society.file=../configs/PingBasicSociety.xml&#10;-Dorg.cougaar.runtime.file=PingBenchmarkRuntime.xml -Dorg.cougaar.node.name=Node1  -Dorg.cougaar.demo.ping.PingSender.delayMillis=500 -Dorg.cougaar.demo.ping.PingSender.verbose=false -Dorg.cougaar.demo.ping.PingReceiver.verbose=false -Dorg.cougaar.society.xsl.param.template=single_debug -Dorg.cougaar.core.logging.config.filename=${project_loc:datafeeds}/run/logging.props -Dorg.cougaar.install.path=${project_loc:Cougaar}&#10;-Dorg.cougaar.society.path=${project_loc:datafeeds} -Dorg.cougaar.runtime.path=${project_loc:datafeeds}/run -Dorg.cougaar.bootstrap.application=org.cougaar.core.node.Node -Dorg.cougaar.core.node.InitializationComponent=XML -Dorg.cougaar.core.agent.quiet=true -Dorg.cougaar.core.agent.heartbeat=false -Dorg.xml.sax.driver=com.sun.org.apache.xerces.internal.parsers.SAXParser -Dcom.apple.mrj.application.apple.menu.about.name=&quot;PingBenchmark&quot;  -Xmx256m -XX:ThreadStackSize=256 -Dorg.cougaar.metrics.properties=file:qrs.conf"/>
 <stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${project_loc:datafeeds}/run"/>
 </launchConfiguration>
