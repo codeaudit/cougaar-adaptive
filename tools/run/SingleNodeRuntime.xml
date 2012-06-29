@@ -1,0 +1,21 @@
+<?xml version='1.0'?>
+
+<!--
+This file contains the "hello world" runtime System Properties.
+-->
+<runtime>
+
+  <!-- Set infrastructure to single-JVM, see doc/OnlineManual/Templates.html -->
+  <vm_parameter
+    name="-Dorg.cougaar.society.xsl.param.template"
+    value="single_node"/>
+
+  <!-- Optional log4j config file -->
+  <vm_parameter
+    name="-Dorg.cougaar.core.logging.config.filename"
+    value="logging.props"/>
+    
+  <!--  Prepend tools.jar to the standard CIP jar path (trailing colon) -->   
+  <vm_parameter name="-Dorg.cougaar.jar.path" value="../lib/tools.jar:"/>
+
+</runtime>
