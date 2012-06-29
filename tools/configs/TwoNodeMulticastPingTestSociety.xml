@@ -1,0 +1,177 @@
+<?xml version='1.0'?>
+
+<!--
+	Example regression test society
+-->
+<society>
+	<node name="Node1">
+	
+        <vm_parameter name="-Dorg.cougaar.name.server" 
+                      value="NameServer@localhost:8888"/>
+                      
+        <component class='org.cougaar.mts.std.OldIncarnationAspect'
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component"/>
+            
+        <component class="org.cougaar.mts.udp.UdpMulticastLinkProtocol"
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
+        </component>
+        
+        <component class="org.cougaar.mts.rmi.RMILinkProtocol"
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
+        </component>
+    
+        <component class="org.cougaar.mts.base.LoopbackLinkProtocol"
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
+        </component>
+        
+		<component class="org.cougaar.test.sequencer.regression.RegressionAggregatorPlugin">
+			<argument name="workerCount" value="1" />
+			<argument name="maxIdleTime" value="600010" />
+		</component>
+		<component
+			class="org.cougaar.test.sequencer.StoNNodeFacePlugin">
+			<argument name="sequencerName" value="Sequencer" />
+		</component>
+
+		<agent name="Sequencer">
+		<component
+			class="org.cougaar.test.ping.regression.PingSequencerPlugin">
+			<argument name="suiteName" value="Two UDP Node Ping" />
+			<argument name="nodeCount" value="1" />
+			<argument name="defaultWorkerTimeout" value="1000100" />
+			<argument name="defaultNodeTimeout" value="100100" />
+			<argument name="csvFileName" value="test.csv" />
+			<argument name="collectionLength" value="100000" />
+			<argument name="steadyStateWait" value="1000" />
+		</component>
+		<component
+			class="org.cougaar.test.sequencer.StoNSequencerFacePlugin">
+		</component>
+		
+		</agent>
+		<agent name='NameServer'
+			class='org.cougaar.core.agent.SimpleAgent'>
+			<facet role='NameServer' />
+			<component class='org.cougaar.core.wp.server.Server'>
+			</component>
+		</agent>
+
+		<agent name="source1">
+			<component
+				class="org.cougaar.test.ping.MulticastPingSenderPlugin">
+				<argument name="pluginId" value="A"/>
+				<argument name="multicastAddress" value="234.0.0.234" />
+				<argument name="multicastPort" value="6660" />
+				<argument name="targetPlugin" value="Z"/>
+				<argument name="preambleCount" value="2" />
+				<argument name="expectedRepliesPerPing" value="3" />
+			</component>
+			<component
+				class="org.cougaar.test.ping.regression.PingTesterPlugin">
+				<argument name="workerId" value="source1" />
+				<argument name="pingerCount" value="1" />
+			</component>
+		</agent>
+		
+		<agent name="sink1">
+			<component
+				class="org.cougaar.test.ping.MulticastPingReceiverPlugin">
+				<argument name="pluginId" value="Z"/>
+				<argument name="multicastAddress" value="234.0.0.234" />
+                <argument name="multicastPort" value="6660" />
+				
+			</component>
+			<component
+				class="org.cougaar.test.ping.MulticastPingReceiverPlugin">
+				<argument name="pluginId" value="Y"/>
+				<argument name="multicastAddress" value="234.0.0.234" />
+                <argument name="multicastPort" value="6660" />
+				
+			</component>
+		</agent>
+		
+
+
+	</node>
+
+	<node name="Node2">
+         <vm_parameter name="-Dorg.cougaar.name.server" 
+                      value="NameServer@localhost:8888"/>
+                      
+        <component class='org.cougaar.mts.std.OldIncarnationAspect'
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component"/>
+                          
+        <component class="org.cougaar.mts.udp.UdpMulticastLinkProtocol"
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
+        </component>
+        
+        <component class="org.cougaar.mts.rmi.RMILinkProtocol"
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
+        </component>
+        
+		<component class="org.cougaar.mts.base.LoopbackLinkProtocol"
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
+        </component>
+        
+		<agent name="sink2">
+			<component
+				class="org.cougaar.test.ping.MulticastPingReceiverPlugin">
+				<argument name="pluginId" value="Z"/>
+				<argument name="multicastAddress" value="234.0.0.234" />
+                <argument name="multicastPort" value="6660" />
+				
+			</component>
+			<component
+				class="org.cougaar.test.ping.MulticastPingReceiverPlugin">
+				<argument name="pluginId" value="Y"/>
+				<argument name="multicastAddress" value="234.0.0.234" />
+                <argument name="multicastPort" value="6660" />
+				
+			</component>
+		</agent>
+		
+	</node>
+	
+	<node name="Node3">
+	
+       <vm_parameter name="-Dorg.cougaar.name.server" 
+                      value="NameServer@localhost:8888"/>
+                      
+        <component class='org.cougaar.mts.std.OldIncarnationAspect'
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component"/>
+            
+        <component class="org.cougaar.mts.udp.UdpMulticastLinkProtocol"
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
+        </component>
+        
+        <component class="org.cougaar.mts.rmi.RMILinkProtocol"
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
+        </component>
+    
+        <component class="org.cougaar.mts.base.LoopbackLinkProtocol"
+            insertionpoint="Node.AgentManager.Agent.MessageTransport.Component">
+        </component>
+        
+        <agent name="sink3">
+			<component
+				class="org.cougaar.test.ping.MulticastPingReceiverPlugin">
+				<argument name="pluginId" value="Z"/>
+				<argument name="multicastAddress" value="234.0.0.234" />
+                <argument name="multicastPort" value="6660" />
+				
+			</component>
+			<component
+				class="org.cougaar.test.ping.MulticastPingReceiverPlugin">
+				<argument name="pluginId" value="Y"/>
+				<argument name="multicastAddress" value="234.0.0.234" />
+                <argument name="multicastPort" value="6660" />
+				
+			</component>
+		</agent>
+        
+        
+	</node>
+	
+	
+
+</society>

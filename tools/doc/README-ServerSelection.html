@@ -1,0 +1,19 @@
+<html>
+<head><title>Server selection</title></head>
+<body>
+<h1>Server Selection</h1>
+
+
+<h2> Running Society </h2>
+<pre>
+<code>
+  cd $COUGAAR_INSTALL_PATH/tools
+  setenv COUGAAR_SOCIETY_PATH `pwd`
+  setenv COUGAAR_RUNTIME_PATH `pwd`/run
+  cd $COUGAAR_RUNTIME_PATH
+  $COUGAAR_INSTALL_PATH/bin/cougaar ../configs/PingBBSelectionTestSociety.xml LANRuntime.xml Node1
+  $COUGAAR_INSTALL_PATH/bin/cougaar ../configs/PingBBSelectionTestSociety.xml LANRuntime.xml Node2
+</code>
+</pre>
+</body>
+</html>

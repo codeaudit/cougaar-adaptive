@@ -1,0 +1,51 @@
+<?xml version='1.0'?>
+<!--
+plugins: Test Society for 1 pinger and  1 plugins on a single agents blackboard
+-->
+<society>
+  <node name="Node1">
+    <component class="org.cougaar.test.ping.regression.PingSequencerPlugin">
+      <argument name="suiteName" value="plugins 1" />
+      <argument name="nodeCount" value="1" />
+      <argument name="defaultWorkerTimeout" value="1050" />
+      <argument name="defaultNodeTimeout" value="11050" />
+      <argument name="csvFileName" value="plugins.csv" />
+      <argument name="collectionLength" value="15000" />
+      <argument name="steadyStateWait" value="1000" />
+    </component>
+    <component class="org.cougaar.test.sequencer.regression.RegressionAggregatorPlugin">
+      <argument name="workerCount" value="1" />
+      <argument name="maxIdleTime" value="22100" />
+    </component>
+	
+    <agent name='NameServer' class='org.cougaar.core.agent.SimpleAgent'>
+      <facet role='NameServer'/>
+      <component class='org.cougaar.core.wp.server.Server'/>
+    </agent>
+
+    <agent name="BBtester">
+      <component class="org.cougaar.test.ping.regression.PingBBTesterPlugin">
+         <argument name="workerId" value="source1"/>
+         <argument name="pingerCount" value="1"/>
+       </component>
+      <!--Single Pinger  -->
+      <component class="org.cougaar.test.ping.PingBBSenderPlugin">
+        <argument name="pluginId" value="Src"/>
+        <argument name="targetAgent" value="BBtester"/>
+        <argument name="targetPlugin" value="Snk"/>
+        <argument name="preambleCount" value="3" />
+      </component>
+      <component class="org.cougaar.test.ping.PingBBReceiverPlugin">
+        <argument name="pluginId" value="Snk"/>
+      </component>
+
+       
+      <component class="org.cougaar.test.ping.PingBBSubscriberPlugin">
+        <argument name="pluginId" value="Subs1"/>
+        <argument name="wasteSubscriptionTime" value="0"/>
+        <argument name="numSubscriptions" value="1"/>
+      </component>
+
+    </agent>
+  </node>
+</society>
